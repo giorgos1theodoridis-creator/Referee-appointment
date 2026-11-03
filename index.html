@@ -3,131 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ε.Π.Σ. ΔΡΑΜΑΣ - Πίνακας Επιτροπής</title>
+<title>EPS Drama - Πίνακας Επιτροπής Διαιτησίας</title>
 <style>
 :root {
---primary: #1b4d3e;
---secondary: #2c7a51;
---accent: #d97706;
---bg: #f3f4f6;
---card-bg: #ffffff;
---text: #1f2937;
---danger: #dc2626;
+--primary: #1b365d;
+--secondary: #d9534f;
+--light: #f4f6f9;
+--dark: #333;
+--success: #28a745;
 }
-• { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background-color: var(--bg); color: var(--text); padding-bottom: 30px; }
-header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-header h1 { font-size: 1.2rem; margin-bottom: 5px; }
-header p { font-size: 0.85rem; opacity: 0.85; }
+body { font-family: Arial, sans-serif; background: var(--light); color: var(--dark); margin: 0; padding: 0; }
+header { background: var(--primary); color: white; padding: 15px; text-align: center; }
+.container { max-width: 1000px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); }
+.form-group { margin-bottom: 15px; }
+label { display: block; font-weight: bold; margin-bottom: 5px; }
+select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; margin-top: 5px; }
+button:hover { opacity: 0.9; }
+.btn-success { background: var(--success); }
+.btn-danger { background: var(--secondary); }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+th { background: var(--primary); color: white; }
+.rules-box { background: #eef2f7; padding: 15px; border-left: 4px solid var(--primary); margin-top: 20px; border-radius: 4px; }
 
-.container { padding: 15px; max-width: 800px; margin: 0 auto; }
-.card { background: var(--card-bg); border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid var(--secondary); }
-
-.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
-.badge-a { background: #fee2e2; color: #991b1b; }
-.badge-youth { background: #e0f2fe; color: #0369a1; }
-
-.btn { background: var(--secondary); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 8px; font-size: 0.95rem; }
-.btn-danger { background: var(--danger); }
-.btn-accent { background: var(--accent); }
-.btn-group { display: flex; gap: 8px; margin-top: 10px; }
-
-input, select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.95rem; }
-
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-.modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+/* Στυλ Εκτύπωσης / PDF */
+@media print {
+body { background: white; }
+header, .no-print { display: none !important; }
+.container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
+}
 </style>
 </head>
 <body>
 
 <header>
-<h1>⚙️ Ε.Π.Σ. ΔΡΑΜΑΣ</h1>
-<p>Πίνακας Επιτροπής & Διαχείριση Ορισμών (2026-2027)</p>
+<h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Επιτροπή Διαιτησίας</h1>
+<p>Πίνακας Ορισμών & Διαχείρισης Αγώνων</p>
 </header>
 
 <div class="container">
-<h3>Διαχείριση Αγωνιστικής</h3>
-<p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 15px;">Ορισμοί Α', Β' Κατηγορίας & Παιδικών Πρωταθλημάτων.</p>
-
-<div class="btn-group" style="margin-bottom: 15px;">
-<button class="btn btn-accent" id="auto-assign-btn">🤖 ΑΥΤΟΜΑΤΟΣ ΟΡΙΣΜΟΣ</button>
-<button class="btn" id="eps-modal-open" style="background: #0284c7;">📋 ΠΡΟΒΟΛΗ ΛΙΣΤΑΣ ΕΠΣ</button>
-</div>
-
-<div class="card">
-<span class="badge badge-a">Α' ΚΑΤΗΓΟΡΙΑ</span>
-<h4 style="margin-top: 5px;">1. Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ vs Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ</h4>
-<p style="font-size: 0.85rem;">📅 31/10/2026 | 🕒 15:00 | 🏟️ ΑΜΠΕΛΟΚΗΠΩΝ (ΚΡΑΧΤΙΔΗ)</p>
-<label style="font-size: 0.8rem; font-weight: bold;">Διαιτητής:</label>
-<select>
-<option selected>Παπαδόπουλος Δημήτριος (Α')</option>
-<option>Παρασκευούδης Νικόλαος (Α')</option>
+<div class="no-print">
+<h2>🗓️ Επιλογή Αγώνων & Ορισμοί</h2>
+<div class="form-group">
+<label for="categorySelect">Κατηγορία:</label>
+<select id="categorySelect" onchange="loadMatchdaySchedules()">
+<option value="A">Α' Κατηγορία</option>
+<option value="B1">Β' Κατηγορία (Όμιλος 1)</option>
+<option value="B2">Β' Κατηγορία (Όμιλος 2)</option>
 </select>
-<label style="font-size: 0.8rem; font-weight: bold;">Α' Βοηθός:</label>
-<select><option selected>Ζήσης Αχιλλέας (Β')</option></select>
-<label style="font-size: 0.8rem; font-weight: bold;">Β' Βοηθός:</label>
-<select><option selected>Μαρμαρίδης Αναστάσιος (Γ')</option></select>
 </div>
 
-<div class="card">
-<span class="badge badge-youth">Κ-15 ΠΑΙΔΙΚΑ</span>
-<h4 style="margin-top: 5px;">2. Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 1 vs ΑΚΡΙΤΑΣ ΚΑΤΩ ΝΕΥΡΟΚΟΠΙΟΥ</h4>
-<p style="font-size: 0.85rem;">📅 31/10/2026 | 🕒 10:30 | 🏟️ ΔΟΞΑΣ (ΠΛΑΣΤΙΚΟ)</p>
-<label style="font-size: 0.8rem; font-weight: bold;">Διαιτητής:</label>
-<select><option selected>Ιορδανίδου Ελένη</option></select>
+<div class="form-group">
+<label for="matchdaySelect">Αγωνιστική:</label>
+<select id="matchdaySelect" onchange="renderMatches()">
+<!-- Γεμίζει αυτόματα με JS -->
+</select>
 </div>
 
-<div class="card">
-<span class="badge badge-youth">Κ-13 ΠΑΙΔΙΚΑ</span>
-<h4 style="margin-top: 5px;">3. ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ vs ΠΑΟΠ ΝΕΑΣ ΑΜΙΣΟΥ</h4>
-<p style="font-size: 0.85rem;">📅 31/10/2026 | 🕒 12:30 | 🏟️ ΧΩΡΙΣΤΗΣ</p>
-<label style="font-size: 0.8rem; font-weight: bold;">Διαιτητής:</label>
-<select><option selected>Ζήσης Αχιλλέας</option></select>
+<button class="btn-success" onclick="autoAssignReferees()">🤖 Αυτόματος Ορισμός</button>
+<button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
 </div>
 
-<div style="margin-top: 25px; text-align: center; border-top: 1px solid #d1d5db; padding-top: 15px;">
-<p style="font-size: 0.85rem; color: #6b7280;">Σύνδεσμος για τους διαιτητές:</p>
-<a href="referee.html" style="color: var(--secondary); font-weight: bold; text-decoration: none;">📱 Άνοιγμα Εφαρμογής Διαιτητή →</a>
-</div>
+<h2>📋 Επίσημος Πίνακας Ορισμών Αγώνων</h2>
+<div id="matchesContainer">
+<!-- Εδώ θα εμφανίζονται οι αγώνες και οι διαιτητές -->
 </div>
 
-<!-- Modal -->
-<div id="eps-modal" class="modal">
-<div class="modal-content">
-<h3>📄 Επίσημος Πίνακας Ορισμών Ε.Π.Σ. Δράμας</h3>
-<hr style="margin: 10px 0;">
-<div id="eps-list-content" style="font-size: 0.85rem; line-height: 1.5;">
-<p><strong>Α' ΚΑΤΗΓΟΡΙΑ - 2026-2027</strong></p>
-<p>1. Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ - Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ (31/10 - 15:00)</p>
-<p>    Διαιτητής: Παπαδόπουλος Δ. | Βοηθοί: Ζήσης, Μαρμαρίδης</p>
-<br>
-<p><strong>Κ-15 ΠΑΙΔΙΚΑ</strong></p>
-<p>1. Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 1 - ΑΚΡΙΤΑΣ Κ. ΝΕΥΡΟΚΟΠΙΟΥ (31/10 - 10:30)</p>
-<p>    Διαιτητής: Ιορδανίδου Ελένη</p>
-<br>
-<p><strong>Κ-13 ΠΑΙΔΙΚΑ</strong></p>
-<p>1. ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ - ΠΑΟΠ ΝΕΑΣ ΑΜΙΣΟΥ (31/10 - 12:30)</p>
-<p>    Διαιτητής: Ζήσης Αχιλλέας</p>
-</div>
-<div class="btn-group" style="margin-top: 15px;">
-<button class="btn" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
-<button class="btn btn-danger" id="eps-modal-close">Κλείσιμο</button>
-</div>
+<div class="rules-box">
+<h3>📖 Κανονισμοί Διαιτησίας (IFAB) & Προκηρύξεις</h3>
+<p><strong>Κανόνας 5 (Διαιτητής):</strong> Έχει την απόλυτη εξουσία στην τήρηση των κανόνων, οι αποφάσεις του επί των γεγονότων του αγώνα είναι οριστικές.</p>
+<p><strong>Κανόνας 6 (Βοηθοί):</strong> Υποδεικνύουν εκτός ορίων, οφσάιντ και υποστηρίζουν τον διαιτητή σε παραβάσεις εκτός οπτικού πεδίου.</p>
 </div>
 </div>
 
 <script>
-document.getElementById('auto-assign-btn').addEventListener('click', function() {
-alert('🤖 Ο αυτόματος αλγόριθμος έτρεξε επιτυχώς! Οι διαθέσιμοι διαιτητές τοποθετήθηκαν βάσει κατηγορίας και κωλυμάτων.');
-});
+// 54 Διαιτητές Ε.Π.Σ. Δράμας
+const REFEREES = [
+"ΑΛΒΑΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΑΝΔΡΕΟΓΛΟΥ ΣΤΕΡΓΙΟΣ", "ΑΡΜΕΝ ΔΗΜΗΤΡΙΟΣ", "ΑΧΘΟΦΟΡΙΔΗΣ ΝΙΚΟΛΑΟΣ",
+"ΓΕΩΡΓΙΑΔΟΥ ΑΓΑΠΗ", "ΓΚΑΙΤΑΤΖΗ ΜΑΤΟΥΛΑ", "ΓΚΑΙΤΑΤΖΗΣ ΔΗΜΗΤΡΙΟΣ", "ΓΚΟΝΤΕ ΑΡΗΣ",
+"ΔΗΛΓΕΡΑΚΗΣ ΑΘΑΝΑΣΙΟΣ", "ΔΗΜΗΤΡΙΑΔΟΥ ΓΕΩΡΓΙΑ", "ΔΗΜΟΠΟΥΛΟΣ ΚΩΝ/ΝΟΣ", "ΖΑΜΠΑΣ ΧΡΗΣΤΟΣ",
+"ΖΗΡΔΑΣ ΑΓΓΕΛΟΣ", "ΖΗΣΗΣ ΑΧΙΛΛΕΑΣ", "ΘΑΜΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΘΕΟΔΩΡΙΔΗΣ ΓΕΩΡΓΙΟΣ",
+"ΘΕΟΔΩΡΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΘΕΟΦΑΝΙΔΗΣ ΜΑΡΙΟΣ", "ΙΟΡΔΑΝΙΔΟΥ ΕΛΕΝΗ", "ΚΑΛΟΣΙΔΗΣ ΑΝΘΙΜΟΣ",
+"ΚΟΡΜΟΥΛΗΣ ΘΕΟΦΑΝΗΣ", "ΚΟΤΑΝΙΔΟΥ ΔΗΜΗΤΡΑ", "ΚΟΥΒΑΛΑΚΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΛΑΠΑΡΙΔΗΣ ΔΗΜΗΤΡΙΟΣ",
+"ΛΕΥΚΟΠΟΥΛΟΣ ΠΕΤΡΟΣ", "ΜΑΜΣΑΚΟΣ ΘΕΟΔΩΡΟΣ", "ΜΑΡΜΑΡΙΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΜΑΥΡΙΔΗΣ ΓΕΩΡΓΙΟΣ",
+"ΜΑΥΡΙΔΗΣ ΕΥΑΓΓΕΛΟΣ", "ΜΠΑΛΤΖΙΔΗΣ ΛΑΖΑΡΟΣ", "ΜΠΑΡΟΥΜΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΜΠΟΙΤΣΟΣ ΠΑΥΛΟΣ",
+"ΜΠΟΥΛΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΝΕΒΟΛΙΑΝΗΣ ΑΘΑΝΑΣΙΟΣ", "ΠΑΡΑΣΚΕΥΟΥΔΗ ΣΟΦΙΑ", "ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΑΛΕΞΑΝΔΡΟΣ",
+"ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΝΙΚΟΛΑΟΣ", "ΠΑΡΩΤΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΠΑΣΤΙΑΔΗΣ ΜΑΝΟΣ", "ΠΑΥΛΙΔΗΣ ΝΙΚΟΛΑΟΣ",
+"ΠΑΥΛΙΔΗΣ ΣΤΑΥΡΟΣ", "ΡΑΒΙΚΑΛΗΣ ΠΕΤΡΟΣ", "ΣΑΠΑΝΙΔΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΣΙΟΥΜΠΑΡΑΣ ΝΙΚΟΛΑΟΣ",
+"ΤΕΓΞΙΖΟΓΛΟΥ ΝΙΚΟΛΑΟΣ", "ΤΕΣΤΕΜΠΑΣΗΣ ΜΙΧΑΗΛ-ΑΓΓΕΛΟΣ", "ΤΟΠΟΥΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ", "ΤΟΡΟΥΝΟΓΛΟΥ ΣΑΒΒΑΣ",
+"ΤΣΑΚΙΡΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΤΣΕΝΕΚΙΔΟΥ ΙΩΑΝΝΑ", "ΤΣΙΜΠΗΡΙΑΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΦΡΑΓΚΑΛΑΣ ΡΑΦΑΗΛ",
+"ΧΑΣΙΩΤΗΣ ΕΥΑΓΓΕΛΟΣ", "ΧΟΡΟΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ"
+ ];
 
-document.getElementById('eps-modal-open').addEventListener('click', function() {
-document.getElementById('eps-modal').style.display = 'flex';
-});
+// Δεδομένα Προγράμματος ανά Κατηγορία
+const SCHEDULES = {
+"A": {
 
-document.getElementById('eps-modal-close').addEventListener('click', function() {
-document.getElementById('eps-modal').style.display = 'none';
-});
-</script>
-</body>
-</html>
+
