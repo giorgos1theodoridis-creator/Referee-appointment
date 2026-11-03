@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPS Drama - Πύλη Διαιτητών</title>
+<style>
+:root {
+--primary: #1b365d;
+--secondary: #d9534f;
+--light: #f4f6f9;
+--dark: #333;
+--success: #28a745;
+}
+body { font-family: Arial, sans-serif; background: var(--light); color: var(--dark); margin: 0; padding: 0; }
+header { background: var(--primary); color: white; padding: 15px; text-align: center; }
+.container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); }
+.form-group { margin-bottom: 15px; }
+label { display: block; font-weight: bold; margin-bottom: 5px; }
+select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 5px; }
+button:hover { opacity: 0.9; }
+.card { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 4px; border-left: 4px solid var(--success); }
+.rules-box { background: #eef2f7; padding: 15px; border-left: 4px solid var(--primary); margin-top: 20px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Πύλη Διαιτητή</h1>
+<p>Κωλύματα, Ορισμοί & Κανονισμοί</p>
+</header>
+
+<div class="container">
+<h2>👤 Επιλογή Διαιτητή</h2>
+<div class="form-group">
+<label for="myRefereeSelect">Επιλέξτε το όνομα σας:</label>
+<select id="myRefereeSelect">
+<!-- Γεμίζει αυτόματα με JS -->
+</select>
+</div>
+
+<h2>⚽ Οι Ορισμοί μου</h2>
+<div id="myAppointments">
+<div class="card">
+<p><strong>Αγώνας:</strong> (Παρακαλώ επιλέξτε όνομα παραπάνω)</p>
+<p><strong>Καθήκον:</strong> -</p>
+<button class="btn" style="background:#28a745;">✅ Επιβεβαίωση Ορισμού</button>
+</div>
+</div>
+
+<h2>🚫 Δήλωση Κωλύματος</h2>
+<div class="form-group">
+<label for="kolymaDate">Ημερομηνία Κωλύματος:</label>
+<input type="date" id="kolymaDate">
+</div>
+<div class="form-group">
+<label for="kolymaReason">Αιτιολογία:</label>
+<input type="text" id="kolymaReason" placeholder="π.χ. Επαγγελματικές υποχρεώσεις">
+</div>
+<button onclick="submitKolyma()">Υποβολή Κωλύματος</button>
+
+<div class="rules-box">
+<h3>📖 Υπενθύμιση Κανονισμών IFAB</h3>
+<p><strong>Πειθαρχικός Έλεγχος:</strong> Ο διαιτητής οφείλει να εφαρμόζει το πλεονέκτημα σωστά και να τιμωρεί με κάρτες τις αντιαθλητικές ενέργειες.</p>
+<p><strong>Συνεργασία:</strong> Οι βοηθοί διαιτητές συνεργάζονται στενά με τον άρχοντα του αγώνα για την τήρηση των κανονισμών.</p>
+</div>
+</div>
+
+<script>
+const REFEREES = [
+"ΑΛΒΑΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΑΝΔΡΕΟΓΛΟΥ ΣΤΕΡΓΙΟΣ", "ΑΡΜΕΝ ΔΗΜΗΤΡΙΟΣ", "ΑΧΘΟΦΟΡΙΔΗΣ ΝΙΚΟΛΑΟΣ",
+"ΓΕΩΡΓΙΑΔΟΥ ΑΓΑΠΗ", "ΓΚΑΙΤΑΤΖΗ ΜΑΤΟΥΛΑ", "ΓΚΑΙΤΑΤΖΗΣ ΔΗΜΗΤΡΙΟΣ", "ΓΚΟΝΤΕ ΑΡΗΣ",
+"ΔΗΛΓΕΡΑΚΗΣ ΑΘΑΝΑΣΙΟΣ", "ΔΗΜΗΤΡΙΑΔΟΥ ΓΕΩΡΓΙΑ", "ΔΗΜΟΠΟΥΛΟΣ ΚΩΝ/ΝΟΣ", "ΖΑΜΠΑΣ ΧΡΗΣΤΟΣ",
+"ΖΗΡΔΑΣ ΑΓΓΕΛΟΣ", "ΖΗΣΗΣ ΑΧΙΛΛΕΑΣ", "ΘΑΜΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΘΕΟΔΩΡΙΔΗΣ ΓΕΩΡΓΙΟΣ",
+"ΘΕΟΔΩΡΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΘΕΟΦΑΝΙΔΗΣ ΜΑΡΙΟΣ", "ΙΟΡΔΑΝΙΔΟΥ ΕΛΕΝΗ", "ΚΑΛΟΣΙΔΗΣ ΑΝΘΙΜΟΣ",
+"ΚΟΡΜΟΥΛΗΣ ΘΕΟΦΑΝΗΣ", "ΚΟΤΑΝΙΔΟΥ ΔΗΜΗΤΡΑ", "ΚΟΥΒΑΛΑΚΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΛΑΠΑΡΙΔΗΣ ΔΗΜΗΤΡΙΟΣ",
+"ΛΕΥΚΟΠΟΥΛΟΣ ΠΕΤΡΟΣ", "ΜΑΜΣΑΚΟΣ ΘΕΟΔΩΡΟΣ", "ΜΑΡΜΑΡΙΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΜΑΥΡΙΔΗΣ ΓΕΩΡΓΙΟΣ",
+"ΜΑΥΡΙΔΗΣ ΕΥΑΓΓΕΛΟΣ", "ΜΠΑΛΤΖΙΔΗΣ ΛΑΖΑΡΟΣ", "ΜΠΑΡΟΥΜΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΜΠΟΙΤΣΟΣ ΠΑΥΛΟΣ",
+"ΜΠΟΥΛΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΝΕΒΟΛΙΑΝΗΣ ΑΘΑΝΑΣΙΟΣ", "ΠΑΡΑΣΚΕΥΟΥΔΗ ΣΟΦΙΑ", "ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΑΛΕΞΑΝΔΡΟΣ",
+"ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΝΙΚΟΛΑΟΣ", "ΠΑΡΩΤΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΠΑΣΤΙΑΔΗΣ ΜΑΝΟΣ", "ΠΑΥΛΙΔΗΣ ΝΙΚΟΛΑΟΣ",
+"ΠΑΥΛΙΔΗΣ ΣΤΑΥΡΟΣ", "ΡΑΒΙΚΑΛΗΣ ΠΕΤΡΟΣ", "ΣΑΠΑΝΙΔΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΣΙΟΥΜΠΑΡΑΣ ΝΙΚΟΛΑΟΣ",
+"ΤΕΓΞΙΖΟΓΛΟΥ ΝΙΚΟΛΑΟΣ", "ΤΕΣΤΕΜΠΑΣΗΣ ΜΙΧΑΗΛ-ΑΓΓΕΛΟΣ", "ΤΟΠΟΥΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ", "ΤΟΡΟΥΝΟΓΛΟΥ ΣΑΒΒΑΣ",
+"ΤΣΑΚΙΡΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΤΣΕΝΕΚΙΔΟΥ ΙΩΑΝΝΑ", "ΤΣΙΜΠΗΡΙΑΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΦΡΑΓΚΑΛΑΣ ΡΑΦΑΗΛ",
+"ΧΑΣΙΩΤΗΣ ΕΥΑΓΓΕΛΟΣ", "ΧΟΡΟΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ"
+ ];
+
+window.onload = function() {
+const select = document.getElementById('myRefereeSelect');
+REFEREES.forEach(ref => {
+let opt = document.createElement('option');
+opt.value = ref;
+opt.textContent = ref;
+select.appendChild(opt);
+});
+};
+
+function submitKolyma() {
+const date = document.getElementById('kolymaDate').value;
+const reason = document.getElementById('kolymaReason').value;
+if (!date) {
+alert('Παρακαλώ επιλέξτε ημερομηνία κωλύματος.');
+return;
+}
+alert(Το κώλυμα για την ημερομηνία ${date} καταχωρήθηκε επιτυχώς.);
+document.getElementById('kolymaDate').value = '';
+document.getElementById('kolymaReason').value = '';
+}
+</script>
+
+</body>
+</html>
+
