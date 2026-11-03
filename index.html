@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,8 @@
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background: var(--primary); color: white; }
-        .kolyma-alert { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .info-box { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
         
         @media print {
             body { background: white; }
@@ -39,7 +40,7 @@
 
 <header>
     <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Επιτροπή Διαιτησίας</h1>
-    <p>Πίνακας Ορισμών & Έλεγχος Κωλυμάτων</p>
+    <p>Πίνακας Ορισμών & Παρακολούθηση Διαιτητών</p>
 </header>
 
 <div class="container">
@@ -65,7 +66,7 @@
             </select>
         </div>
 
-        <button class="btn-success" onclick="autoAssignReferees()">🤖 Αυτόματος Ορισμός</button>
+        <button class="btn-success" onclick="autoAssignReferees()">🤖 Αυτόματος Ορισμός (Εξαιρουμένων Κωλυμάτων)</button>
         <button class="btn-success" style="background:#0275d8;" onclick="saveAssignments()">💾 Αποθήκευση Ορισμών</button>
         <button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
     </div>
@@ -74,9 +75,13 @@
     <div id="matchesContainer"></div>
 
     <h2>🚫 Live Έλεγχος Κωλυμάτων Διαιτητών</h2>
-    <div id="kolymataListContainer">
-        <p>Δεν υπάρχουν καταχωρημένα κώλυματα.</p>
-    </div>
+    <div id="kolymataListContainer"><p>Δεν υπάρχουν ενεργά κώλυματα.</p></div>
+
+    <h2>💪 Live Έλεγχος Προπονήσεων Διαιτητών</h2>
+    <div id="trainingsListContainer"><p>Δεν έχουν καταχωρηθεί προπονήσεις.</p></div>
+
+    <h2>📚 Live Έλεγχος Παρουσιών σε Μαθήματα</h2>
+    <div id="classesListContainer"><p>Δεν έχουν καταχωρηθεί παρουσίες σε μαθήματα.</p></div>
 </div>
 
 <script>
@@ -114,14 +119,13 @@
 
     window.onload = function() {
         loadMatchdaySchedules();
-        loadKolymataForAdmin();
+        loadAllAdminData();
     };
 
     function loadMatchdaySchedules() {
         const cat = document.getElementById('categorySelect').value;
         const matchdaySel = document.getElementById('matchdaySelect');
         matchdaySel.innerHTML = '';
-        
         const matchdays = SCHEDULES[cat] || {};
         for (let md in matchdays) {
             let opt = document.createElement('option');
@@ -136,21 +140,18 @@
         const cat = document.getElementById('categorySelect').value;
         const md = document.getElementById('matchdaySelect').value;
         const container = document.getElementById('matchesContainer');
-        
         let matches = (SCHEDULES[cat] && SCHEDULES[cat][md]) ? SCHEDULES[cat][md] : [];
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
         
         if (matches.length === 0) {
-            container.innerHTML = '<p>Δεν υπάρχουν καταχωρημένοι αγώνες.</p>';
+            container.innerHTML = '<p>Δεν υπάρχουν αγώνες.</p>';
             return;
         }
 
         let html = `<table><tr><th>Γηπεδούχος - Φιλοξενούμενος</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th></tr>`;
-        
         matches.forEach((match, index) => {
             let key = `${cat}_${md}_${index}`;
             let current = savedAssignments[key] || {ref0:'', ref1:'', ref2:''};
-            
             html += `<tr>
                 <td><strong>${match[0]}</strong> - <strong>${match[1]}</strong></td>
                 <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0)}</select></td>
@@ -163,10 +164,15 @@
     }
 
     function getRefereeOptions(selectedVal) {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let blockedRefs = kolymata.map(k => k.referee);
+
         let options = '<option value="">-- Επιλογή --</option>';
         REFEREES.forEach(ref => {
+            let isBlocked = blockedRefs.includes(ref);
+            let label = isBlocked ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : ref;
             let sel = (ref === selectedVal) ? 'selected' : '';
-            options += `<option value="${ref}" ${sel}>${ref}</option>`;
+            options += `<option value="${ref}" ${sel}>${label}</option>`;
         });
         return options;
     }
@@ -175,18 +181,21 @@
         const cat = document.getElementById('categorySelect').value;
         const md = document.getElementById('matchdaySelect').value;
         let matches = (SCHEDULES[cat] && SCHEDULES[cat][md]) ? SCHEDULES[cat][md] : [];
-        
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let blockedRefs = kolymata.map(k => k.referee);
+        let availableReferees = REFEREES.filter(ref => !blockedRefs.includes(ref));
+
         let refIndex = 0;
         matches.forEach((match, index) => {
             for (let pos = 0; pos < 3; pos++) {
                 let selectElem = document.getElementById(`ref_${index}_${pos}`);
-                if (selectElem) {
-                    selectElem.value = REFEREES[refIndex % REFEREES.length];
+                if (selectElem && availableReferees.length > 0) {
+                    selectElem.value = availableReferees[refIndex % availableReferees.length];
                     refIndex++;
                 }
             }
         });
-        alert('Ο αυτόματος ορισμός ολοκληρώθηκε!');
+        alert('Ο αυτόματος ορισμός ολοκληρώθηκε εξαιρώντας τα κώλυματα!');
     }
 
     function saveAssignments() {
@@ -207,35 +216,58 @@
         });
 
         localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
-        alert('Οι ορισμοί αποθηκεύτηκαν επιτυχώς!');
+        alert('Οι ορισμοί αποθηκεύτηκαν!');
     }
 
-    function loadKolymataForAdmin() {
-        const container = document.getElementById('kolymataListContainer');
+    function loadAllAdminData() {
+        // Κώλυματα
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-
+        let kContainer = document.getElementById('kolymataListContainer');
         if (kolymata.length === 0) {
-            container.innerHTML = '<p>Δεν υπάρχουν ενεργά κώλυματα από διαιτητές.</p>';
-            return;
+            kContainer.innerHTML = '<p>Δεν υπάρχουν ενεργά κώλυματα.</p>';
+        } else {
+            let html = '';
+            kolymata.forEach((k, idx) => {
+                html += `<div class="alert-box">
+                    <p><strong>Διαιτητής:</strong> ${k.referee}</p>
+                    <p><strong>Ημερομηνία & Διάστημα:</strong> ${k.date} (${k.timeSlot})</p>
+                    <p><strong>Αιτιολογία:</strong> ${k.reason || '-'}</p>
+                </div>`;
+            });
+            kContainer.innerHTML = html;
         }
 
-        let html = '';
-        kolymata.forEach((k, idx) => {
-            html += `<div class="kolyma-alert">
-                <p><strong>Διαιτητής:</strong> ${k.referee}</p>
-                <p><strong>Ημερομηνία & Διάστημα:</strong> ${k.date} (${k.timeSlot})</p>
-                <p><strong>Αιτιολογία:</strong> ${k.reason || 'Χωρίς αιτιολογία'}</p>
-                <button class="btn-danger" style="padding: 5px 10px; font-size:12px;" onclick="deleteKolyma(${idx})">Διαγραφή</button>
-            </div>`;
-        });
-        container.innerHTML = html;
-    }
+        // Προπονήσεις
+        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]");
+        let tContainer = document.getElementById('trainingsListContainer');
+        if (trainings.length === 0) {
+            tContainer.innerHTML = '<p>Δεν υπάρχουν καταχωρημένες προπονήσεις.</p>';
+        } else {
+            let html = '';
+            trainings.forEach(t => {
+                html += `<div class="info-box">
+                    <p><strong>Διαιτητής:</strong> ${t.referee}</p>
+                    <p><strong>Ημερομηνία & Τύπος:</strong> ${t.date} - ${t.type}</p>
+                </div>`;
+            });
+            tContainer.innerHTML = html;
+        }
 
-    function deleteKolyma(index) {
-        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        kolymata.splice(index, 1);
-        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
-        loadKolymataForAdmin();
+        // Μαθήματα
+        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]");
+        let cContainer = document.getElementById('classesListContainer');
+        if (classes.length === 0) {
+            cContainer.innerHTML = '<p>Δεν υπάρχουν δηλωμένες παρουσίες σε μαθήματα.</p>';
+        } else {
+            let html = '';
+            classes.forEach(c => {
+                html += `<div class="info-box">
+                    <p><strong>Διαιτητής:</strong> ${c.referee}</p>
+                    <p><strong>Μάθημα / Συνάντηση:</strong> ${c.title} (Ημ/νία: ${c.date})</p>
+                </div>`;
+            });
+            cContainer.innerHTML = html;
+        }
     }
 </script>
 
