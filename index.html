@@ -1,104 +1,188 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EPS Drama - Πίνακας Επιτροπής Διαιτησίας</title>
-<style>
-:root {
---primary: #1b365d;
---secondary: #d9534f;
---light: #f4f6f9;
---dark: #333;
---success: #28a745;
-}
-body { font-family: Arial, sans-serif; background: var(--light); color: var(--dark); margin: 0; padding: 0; }
-header { background: var(--primary); color: white; padding: 15px; text-align: center; }
-.container { max-width: 1000px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); }
-.form-group { margin-bottom: 15px; }
-label { display: block; font-weight: bold; margin-bottom: 5px; }
-select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; margin-top: 5px; }
-button:hover { opacity: 0.9; }
-.btn-success { background: var(--success); }
-.btn-danger { background: var(--secondary); }
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-th { background: var(--primary); color: white; }
-.rules-box { background: #eef2f7; padding: 15px; border-left: 4px solid var(--primary); margin-top: 20px; border-radius: 4px; }
-
-/* Στυλ Εκτύπωσης / PDF */
-@media print {
-body { background: white; }
-header, .no-print { display: none !important; }
-.container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPS Drama - Πίνακας Επιτροπής Διαιτησίας</title>
+    <style>
+        :root {
+            --primary: #1b365d;
+            --secondary: #d9534f;
+            --light: #f4f6f9;
+            --dark: #333;
+            --success: #28a745;
+        }
+        body { font-family: Arial, sans-serif; background: var(--light); color: var(--dark); margin: 0; padding: 0; }
+        header { background: var(--primary); color: white; padding: 15px; text-align: center; }
+        .container { max-width: 1000px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; margin-top: 5px; }
+        button:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--secondary); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: var(--primary); color: white; }
+        .rules-box { background: #eef2f7; padding: 15px; border-left: 4px solid var(--primary); margin-top: 20px; border-radius: 4px; }
+        
+        /* Στυλ Εκτύπωσης / PDF */
+        @media print {
+            body { background: white; }
+            header, .no-print { display: none !important; }
+            .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
 <header>
-<h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Επιτροπή Διαιτησίας</h1>
-<p>Πίνακας Ορισμών & Διαχείρισης Αγώνων</p>
+    <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Επιτροπή Διαιτησίας</h1>
+    <p>Πίνακας Ορισμών & Διαχείρισης Αγώνων</p>
 </header>
 
 <div class="container">
-<div class="no-print">
-<h2>🗓️ Επιλογή Αγώνων & Ορισμοί</h2>
-<div class="form-group">
-<label for="categorySelect">Κατηγορία:</label>
-<select id="categorySelect" onchange="loadMatchdaySchedules()">
-<option value="A">Α' Κατηγορία</option>
-<option value="B1">Β' Κατηγορία (Όμιλος 1)</option>
-<option value="B2">Β' Κατηγορία (Όμιλος 2)</option>
-</select>
-</div>
+    <div class="no-print">
+        <h2>🗓️ Επιλογή Αγώνων & Ορισμοί</h2>
+        <div class="form-group">
+            <label for="categorySelect">Κατηγορία:</label>
+            <select id="categorySelect" onchange="loadMatchdaySchedules()">
+                <option value="A">Α' Κατηγορία</option>
+                <option value="B1">Β' Κατηγορία (Όμιλος 1)</option>
+                <option value="B2">Β' Κατηγορία (Όμιλος 2)</option>
+            </select>
+        </div>
 
-<div class="form-group">
-<label for="matchdaySelect">Αγωνιστική:</label>
-<select id="matchdaySelect" onchange="renderMatches()">
-<!-- Γεμίζει αυτόματα με JS -->
-</select>
-</div>
+        <div class="form-group">
+            <label for="matchdaySelect">Αγωνιστική:</label>
+            <select id="matchdaySelect" onchange="renderMatches()">
+                <!-- Γεμίζει αυτόματα με JS -->
+            </select>
+        </div>
 
-<button class="btn-success" onclick="autoAssignReferees()">🤖 Αυτόματος Ορισμός</button>
-<button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
-</div>
+        <button class="btn-success" onclick="autoAssignReferees()">🤖 Αυτόματος Ορισμός</button>
+        <button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+    </div>
 
-<h2>📋 Επίσημος Πίνακας Ορισμών Αγώνων</h2>
-<div id="matchesContainer">
-<!-- Εδώ θα εμφανίζονται οι αγώνες και οι διαιτητές -->
-</div>
+    <h2>📋 Επίσημος Πίνακας Ορισμών Αγώνων</h2>
+    <div id="matchesContainer">
+        <!-- Εδώ θα εμφανίζονται οι αγώνες και οι διαιτητές -->
+    </div>
 
-<div class="rules-box">
-<h3>📖 Κανονισμοί Διαιτησίας (IFAB) & Προκηρύξεις</h3>
-<p><strong>Κανόνας 5 (Διαιτητής):</strong> Έχει την απόλυτη εξουσία στην τήρηση των κανόνων, οι αποφάσεις του επί των γεγονότων του αγώνα είναι οριστικές.</p>
-<p><strong>Κανόνας 6 (Βοηθοί):</strong> Υποδεικνύουν εκτός ορίων, οφσάιντ και υποστηρίζουν τον διαιτητή σε παραβάσεις εκτός οπτικού πεδίου.</p>
-</div>
+    <div class="rules-box">
+        <h3>📖 Κανονισμοί Διαιτησίας (IFAB) & Προκηρύξεις</h3>
+        <p><strong>Κανόνας 5 (Διαιτητής):</strong> Έχει την απόλυτη εξουσία στην τήρηση των κανόνων, οι αποφάσεις του επί των γεγονότων του αγώνα είναι οριστικές.</p>
+        <p><strong>Κανόνας 6 (Βοηθοί):</strong> Υποδεικνύουν εκτός ορίων, οφσάιντ και υποστηρίζουν τον διαιτητή σε παραβάσεις εκτός οπτικού πεδίου.</p>
+    </div>
 </div>
 
 <script>
-// 54 Διαιτητές Ε.Π.Σ. Δράμας
-const REFEREES = [
-"ΑΛΒΑΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΑΝΔΡΕΟΓΛΟΥ ΣΤΕΡΓΙΟΣ", "ΑΡΜΕΝ ΔΗΜΗΤΡΙΟΣ", "ΑΧΘΟΦΟΡΙΔΗΣ ΝΙΚΟΛΑΟΣ",
-"ΓΕΩΡΓΙΑΔΟΥ ΑΓΑΠΗ", "ΓΚΑΙΤΑΤΖΗ ΜΑΤΟΥΛΑ", "ΓΚΑΙΤΑΤΖΗΣ ΔΗΜΗΤΡΙΟΣ", "ΓΚΟΝΤΕ ΑΡΗΣ",
-"ΔΗΛΓΕΡΑΚΗΣ ΑΘΑΝΑΣΙΟΣ", "ΔΗΜΗΤΡΙΑΔΟΥ ΓΕΩΡΓΙΑ", "ΔΗΜΟΠΟΥΛΟΣ ΚΩΝ/ΝΟΣ", "ΖΑΜΠΑΣ ΧΡΗΣΤΟΣ",
-"ΖΗΡΔΑΣ ΑΓΓΕΛΟΣ", "ΖΗΣΗΣ ΑΧΙΛΛΕΑΣ", "ΘΑΜΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΘΕΟΔΩΡΙΔΗΣ ΓΕΩΡΓΙΟΣ",
-"ΘΕΟΔΩΡΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΘΕΟΦΑΝΙΔΗΣ ΜΑΡΙΟΣ", "ΙΟΡΔΑΝΙΔΟΥ ΕΛΕΝΗ", "ΚΑΛΟΣΙΔΗΣ ΑΝΘΙΜΟΣ",
-"ΚΟΡΜΟΥΛΗΣ ΘΕΟΦΑΝΗΣ", "ΚΟΤΑΝΙΔΟΥ ΔΗΜΗΤΡΑ", "ΚΟΥΒΑΛΑΚΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΛΑΠΑΡΙΔΗΣ ΔΗΜΗΤΡΙΟΣ",
-"ΛΕΥΚΟΠΟΥΛΟΣ ΠΕΤΡΟΣ", "ΜΑΜΣΑΚΟΣ ΘΕΟΔΩΡΟΣ", "ΜΑΡΜΑΡΙΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΜΑΥΡΙΔΗΣ ΓΕΩΡΓΙΟΣ",
-"ΜΑΥΡΙΔΗΣ ΕΥΑΓΓΕΛΟΣ", "ΜΠΑΛΤΖΙΔΗΣ ΛΑΖΑΡΟΣ", "ΜΠΑΡΟΥΜΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΜΠΟΙΤΣΟΣ ΠΑΥΛΟΣ",
-"ΜΠΟΥΛΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΝΕΒΟΛΙΑΝΗΣ ΑΘΑΝΑΣΙΟΣ", "ΠΑΡΑΣΚΕΥΟΥΔΗ ΣΟΦΙΑ", "ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΑΛΕΞΑΝΔΡΟΣ",
-"ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΝΙΚΟΛΑΟΣ", "ΠΑΡΩΤΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΠΑΣΤΙΑΔΗΣ ΜΑΝΟΣ", "ΠΑΥΛΙΔΗΣ ΝΙΚΟΛΑΟΣ",
-"ΠΑΥΛΙΔΗΣ ΣΤΑΥΡΟΣ", "ΡΑΒΙΚΑΛΗΣ ΠΕΤΡΟΣ", "ΣΑΠΑΝΙΔΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΣΙΟΥΜΠΑΡΑΣ ΝΙΚΟΛΑΟΣ",
-"ΤΕΓΞΙΖΟΓΛΟΥ ΝΙΚΟΛΑΟΣ", "ΤΕΣΤΕΜΠΑΣΗΣ ΜΙΧΑΗΛ-ΑΓΓΕΛΟΣ", "ΤΟΠΟΥΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ", "ΤΟΡΟΥΝΟΓΛΟΥ ΣΑΒΒΑΣ",
-"ΤΣΑΚΙΡΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΤΣΕΝΕΚΙΔΟΥ ΙΩΑΝΝΑ", "ΤΣΙΜΠΗΡΙΑΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΦΡΑΓΚΑΛΑΣ ΡΑΦΑΗΛ",
-"ΧΑΣΙΩΤΗΣ ΕΥΑΓΓΕΛΟΣ", "ΧΟΡΟΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ"
- ];
+    const REFEREES = [
+        "ΑΛΒΑΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΑΝΔΡΕΟΓΛΟΥ ΣΤΕΡΓΙΟΣ", "ΑΡΜΕΝ ΔΗΜΗΤΡΙΟΣ", "ΑΧΘΟΦΟΡΙΔΗΣ ΝΙΚΟΛΑΟΣ", 
+        "ΓΕΩΡΓΙΑΔΟΥ ΑΓΑΠΗ", "ΓΚΑΙΤΑΤΖΗ ΜΑΤΟΥΛΑ", "ΓΚΑΙΤΑΤΖΗΣ ΔΗΜΗΤΡΙΟΣ", "ΓΚΟΝΤΕ ΑΡΗΣ", 
+        "ΔΗΛΓΕΡΑΚΗΣ ΑΘΑΝΑΣΙΟΣ", "ΔΗΜΗΤΡΙΑΔΟΥ ΓΕΩΡΓΙΑ", "ΔΗΜΟΠΟΥΛΟΣ ΚΩΝ/ΝΟΣ", "ΖΑΜΠΑΣ ΧΡΗΣΤΟΣ", 
+        "ΖΗΡΔΑΣ ΑΓΓΕΛΟΣ", "ΖΗΣΗΣ ΑΧΙΛΛΕΑΣ", "ΘΑΜΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΘΕΟΔΩΡΙΔΗΣ ΓΕΩΡΓΙΟΣ", 
+        "ΘΕΟΔΩΡΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΘΕΟΦΑΝΙΔΗΣ ΜΑΡΙΟΣ", "ΙΟΡΔΑΝΙΔΟΥ ΕΛΕΝΗ", "ΚΑΛΟΣΙΔΗΣ ΑΝΘΙΜΟΣ", 
+        "ΚΟΡΜΟΥΛΗΣ ΘΕΟΦΑΝΗΣ", "ΚΟΤΑΝΙΔΟΥ ΔΗΜΗΤΡΑ", "ΚΟΥΒΑΛΑΚΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΛΑΠΑΡΙΔΗΣ ΔΗΜΗΤΡΙΟΣ", 
+        "ΛΕΥΚΟΠΟΥΛΟΣ ΠΕΤΡΟΣ", "ΜΑΜΣΑΚΟΣ ΘΕΟΔΩΡΟΣ", "ΜΑΡΜΑΡΙΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΜΑΥΡΙΔΗΣ ΓΕΩΡΓΙΟΣ", 
+        "ΜΑΥΡΙΔΗΣ ΕΥΑΓΓΕΛΟΣ", "ΜΠΑΛΤΖΙΔΗΣ ΛΑΖΑΡΟΣ", "ΜΠΑΡΟΥΜΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΜΠΟΙΤΣΟΣ ΠΑΥΛΟΣ", 
+        "ΜΠΟΥΛΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΝΕΒΟΛΙΑΝΗΣ ΑΘΑΝΑΣΙΟΣ", "ΠΑΡΑΣΚΕΥΟΥΔΗ ΣΟΦΙΑ", "ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΑΛΕΞΑΝΔΡΟΣ", 
+        "ΠΑΡΑΣΚΕΥΟΥΔΗΣ ΝΙΚΟΛΑΟΣ", "ΠΑΡΩΤΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΠΑΣΤΙΑΔΗΣ ΜΑΝΟΣ", "ΠΑΥΛΙΔΗΣ ΝΙΚΟΛΑΟΣ", 
+        "ΠΑΥΛΙΔΗΣ ΣΤΑΥΡΟΣ", "ΡΑΒΙΚΑΛΗΣ ΠΕΤΡΟΣ", "ΣΑΠΑΝΙΔΗΣ ΠΑΝΑΓΙΩΤΗΣ", "ΣΙΟΥΜΠΑΡΑΣ ΝΙΚΟΛΑΟΣ", 
+        "ΤΕΓΞΙΖΟΓΛΟΥ ΝΙΚΟΛΑΟΣ", "ΤΕΣΤΕΜΠΑΣΗΣ ΜΙΧΑΗΛ-ΑΓΓΕΛΟΣ", "ΤΟΠΟΥΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ", "ΤΟΡΟΥΝΟΓΛΟΥ ΣΑΒΒΑΣ", 
+        "ΤΣΑΚΙΡΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ", "ΤΣΕΝΕΚΙΔΟΥ ΙΩΑΝΝΑ", "ΤΣΙΜΠΗΡΙΑΔΗΣ ΑΝΑΣΤΑΣΙΟΣ", "ΦΡΑΓΚΑΛΑΣ ΡΑΦΑΗΛ", 
+        "ΧΑΣΙΩΤΗΣ ΕΥΑΓΓΕΛΟΣ", "ΧΟΡΟΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ"
+    ];
 
-// Δεδομένα Προγράμματος ανά Κατηγορία
-const SCHEDULES = {
-"A": {
+    const SCHEDULES = {
+        "A": {
+            "8η Αγωνιστική": [["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ"], ["ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο."], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΔΟΞΑ ΒΩΛΑΚΑ"]],
+            "9η Αγωνιστική": [["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["ΔΟΞΑ ΒΩΛΑΚΑ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"]]
+        },
+        "B1": {
+            "6η Αγωνιστική": [["Α.Ε. ΚΥΡΓΙΩΝ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ Β"], ["ΕΘΝ.ΑΣΤΕΡΑΣ ΚΑΛΛΙΦΥΤΟΥ", "ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ"], ["Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ Β", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ"], ["Α.Σ. ΠΗΓΑΣΟΣ ΔΡΑΜΑΣ", "ΗΡΑΚΛΗΣ ΑΔΡΙΑΝΗΣ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ Β", "Γ.Λ.Σ. ΕΛΠΙΣ ΔΡΑΜΑΣ - 1922"], ["ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "ΠΑΟΚ ΠΡΟΑΣΤΙΟΥ ΔΡΑΜΑΣ"]],
+            "7η Αγωνιστική": [["Γ.Λ.Σ. ΕΛΠΙΣ ΔΡΑΜΑΣ - 1922", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ Β"], ["ΠΑΟΚ ΠΡΟΑΣΤΙΟΥ ΔΡΑΜΑΣ", "Α.Σ. ΠΗΓΑΣΟΣ ΔΡΑΜΑΣ"], ["ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ Β"], ["ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ", "Α.Ε. ΚΥΡΓΙΩΝ"], ["ΗΡΑΚΛΗΣ ΑΔΡΙΑΝΗΣ", "ΕΘΝ.ΑΣΤΕΡΑΣ ΚΑΛΛΙΦΥΤΟΥ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ Β", "ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ"]]
+        },
+        "B2": {
+            "6η Αγωνιστική": [["ΔΟΞΑ ΜΙΚΡΟΠΟΛΗΣ", "ΗΡΑΚΛΗΣ ΜΥΛΟΠΟΤΑΜΟΥ"], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ Β", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΓΡΑΜΜΕΝΗΣ"], ["ΑΚΡΙΤΑΣ Ν.ΚΡΩΜΝΗΣ", "ΔΟΞΑ Κ.ΒΡΟΝΤΟΥΣ"], ["ΑΡΗΣ ΦΩΤΟΛΙΒΟΥΣ", "Α.Ε. Κ.ΒΡΥΣΗΣ"], ["ΑΕΤΟΣ ΒΑΘΥΤΟΠΟΥ", "ΔΟΞΑ ΑΝΤΩΝΙΟΣ ΚΑΣΤΡΙΝΟΣ"], ["ΔΟΞΑ ΣИТАГΡΩΝ", "ΑΣΤΕΡΑΣ ΚΟΥΔΟΥΝΙΩΝ"]],
+            "7η Αγωνιστική": [["ΔΟΞΑ ΜΙΚΡΟΠΟΛΗΣ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΓΡΑΜΜΕΝΗΣ"], ["ΔΟΞΑ Κ.ΒΡΟΝΤΟΥΣ", "ΗΡΑΚΛΗΣ ΜΥΛΟΠΟΤΑΜΟΥ"], ["Α.Ε. Κ.ΒΡΥΣΗΣ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ Β"], ["ΔΟΞΑ ΑΝΤΩΝΙΟΣ ΚΑΣΤΡΙΝΟΣ", "ΑΚΡΙΤΑΣ Ν.ΚΡΩΜΝΗΣ"], ["ΑΣΤΕΡΑΣ ΚΟΥΔΟΥΝΙΩΝ", "ΑΡΗΣ ΦΩΤΟΛΙΒΟΥΣ"], ["ΔΟΞΑ ΣΙΤΑΓΡΩΝ", "ΑΕΤΟΣ ΒΑΘΥΤΟΠΟΥ"]]
+        }
+    };
 
+    function loadMatchdaySchedules() {
+        const cat = document.getElementById('categorySelect').value;
+        const matchdaySel = document.getElementById('matchdaySelect');
+        matchdaySel.innerHTML = '';
+        
+        const matchdays = SCHEDULES[cat] || {};
+        for (let md in matchdays) {
+            let opt = document.createElement('option');
+            opt.value = md;
+            opt.textContent = md;
+            matchdaySel.appendChild(opt);
+        }
+        renderMatches();
+    }
 
+    function renderMatches() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        const container = document.getElementById('matchesContainer');
+        
+        let matches = (SCHEDULES[cat] && SCHEDULES[cat][md]) ? SCHEDULES[cat][md] : [];
+        
+        if (matches.length === 0) {
+            container.innerHTML = '<p>Δεν υπάρχουν καταχωρημένοι αγώνες για αυτή την αγωνιστική.</p>';
+            return;
+        }
+
+        let html = `<table><tr><th>Γηπεδούχος - Φιλοξενούμενος</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th></tr>`;
+        
+        matches.forEach((match, index) => {
+            html += `<tr>
+                <td><strong>${match[0]}</strong> - <strong>${match[1]}</strong></td>
+                <td><select id="ref_${index}_0">${getRefereeOptions()}</select></td>
+                <td><select id="ref_${index}_1">${getRefereeOptions()}</select></td>
+                <td><select id="ref_${index}_2">${getRefereeOptions()}</select></td>
+            </tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+    }
+
+    function getRefereeOptions() {
+        let options = '<option value="">-- Επιλογή Διαιτητή --</option>';
+        REFEREES.forEach(ref => {
+            options += `<option value="${ref}">${ref}</option>`;
+        });
+        return options;
+    }
+
+    function autoAssignReferees() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        let matches = (SCHEDULES[cat] && SCHEDULES[cat][md]) ? SCHEDULES[cat][md] : [];
+        
+        let refIndex = 0;
+        matches.forEach((match, index) => {
+            for (let pos = 0; pos < 3; pos++) {
+                let selectElem = document.getElementById(`ref_${index}_${pos}`);
+                if (selectElem) {
+                    selectElem.value = REFEREES[refIndex % REFEREES.length];
+                    refIndex++;
+                }
+            }
+        });
+        alert('Ο αυτόματος ορισμός διαιτητών ολοκληρώθηκε επιτυχώς!');
+    }
+
+    // Εκτελείται αυτόματα με το άνοιγμα της σελίδας
+    window.onload = function() {
+        loadMatchdaySchedules();
+    };
+</script>
+
+</body>
+</html>
