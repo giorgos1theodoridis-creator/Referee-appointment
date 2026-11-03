@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
         body { font-family: Arial, sans-serif; background: var(--light); color: var(--dark); margin: 0; padding: 0; }
         header { background: var(--primary); color: white; padding: 15px; text-align: center; }
         .container { max-width: 1000px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); }
+        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); margin-top: 25px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
         select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
@@ -26,9 +26,8 @@
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background: var(--primary); color: white; }
-        .rules-box { background: #eef2f7; padding: 15px; border-left: 4px solid var(--primary); margin-top: 20px; border-radius: 4px; }
+        .kolyma-alert { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
         
-        /* Στυλ Εκτύπωσης / PDF */
         @media print {
             body { background: white; }
             header, .no-print { display: none !important; }
@@ -40,10 +39,14 @@
 
 <header>
     <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Επιτροπή Διαιτησίας</h1>
-    <p>Πίνακας Ορισμών & Διαχείρισης Αγώνων</p>
+    <p>Πίνακας Ορισμών & Έλεγχος Κωλυμάτων</p>
 </header>
 
 <div class="container">
+    <div class="no-print" style="margin-bottom: 20px;">
+        <a href="referee.html" target="_blank"><button>👉 Μετάβαση στην Πύλη Διαιτητών</button></a>
+    </div>
+
     <div class="no-print">
         <h2>🗓️ Επιλογή Αγώνων & Ορισμοί</h2>
         <div class="form-group">
@@ -58,23 +61,21 @@
         <div class="form-group">
             <label for="matchdaySelect">Αγωνιστική:</label>
             <select id="matchdaySelect" onchange="renderMatches()">
-                <!-- Γεμίζει αυτόματα με JS -->
+                <!-- Γεμίζει αυτόματα -->
             </select>
         </div>
 
         <button class="btn-success" onclick="autoAssignReferees()">🤖 Αυτόματος Ορισμός</button>
+        <button class="btn-success" style="background:#0275d8;" onclick="saveAssignments()">💾 Αποθήκευση Ορισμών</button>
         <button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
     </div>
 
     <h2>📋 Επίσημος Πίνακας Ορισμών Αγώνων</h2>
-    <div id="matchesContainer">
-        <!-- Εδώ θα εμφανίζονται οι αγώνες και οι διαιτητές -->
-    </div>
+    <div id="matchesContainer"></div>
 
-    <div class="rules-box">
-        <h3>📖 Κανονισμοί Διαιτησίας (IFAB) & Προκηρύξεις</h3>
-        <p><strong>Κανόνας 5 (Διαιτητής):</strong> Έχει την απόλυτη εξουσία στην τήρηση των κανόνων, οι αποφάσεις του επί των γεγονότων του αγώνα είναι οριστικές.</p>
-        <p><strong>Κανόνας 6 (Βοηθοί):</strong> Υποδεικνύουν εκτός ορίων, οφσάιντ και υποστηρίζουν τον διαιτητή σε παραβάσεις εκτός οπτικού πεδίου.</p>
+    <h2>🚫 Live Έλεγχος Κωλυμάτων Διαιτητών</h2>
+    <div id="kolymataListContainer">
+        <p>Δεν υπάρχουν καταχωρημένα κώλυματα.</p>
     </div>
 </div>
 
@@ -111,6 +112,11 @@
         }
     };
 
+    window.onload = function() {
+        loadMatchdaySchedules();
+        loadKolymataForAdmin();
+    };
+
     function loadMatchdaySchedules() {
         const cat = document.getElementById('categorySelect').value;
         const matchdaySel = document.getElementById('matchdaySelect');
@@ -132,30 +138,35 @@
         const container = document.getElementById('matchesContainer');
         
         let matches = (SCHEDULES[cat] && SCHEDULES[cat][md]) ? SCHEDULES[cat][md] : [];
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
         
         if (matches.length === 0) {
-            container.innerHTML = '<p>Δεν υπάρχουν καταχωρημένοι αγώνες για αυτή την αγωνιστική.</p>';
+            container.innerHTML = '<p>Δεν υπάρχουν καταχωρημένοι αγώνες.</p>';
             return;
         }
 
         let html = `<table><tr><th>Γηπεδούχος - Φιλοξενούμενος</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th></tr>`;
         
         matches.forEach((match, index) => {
+            let key = `${cat}_${md}_${index}`;
+            let current = savedAssignments[key] || {ref0:'', ref1:'', ref2:''};
+            
             html += `<tr>
                 <td><strong>${match[0]}</strong> - <strong>${match[1]}</strong></td>
-                <td><select id="ref_${index}_0">${getRefereeOptions()}</select></td>
-                <td><select id="ref_${index}_1">${getRefereeOptions()}</select></td>
-                <td><select id="ref_${index}_2">${getRefereeOptions()}</select></td>
+                <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0)}</select></td>
+                <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1)}</select></td>
+                <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2)}</select></td>
             </tr>`;
         });
         html += `</table>`;
         container.innerHTML = html;
     }
 
-    function getRefereeOptions() {
-        let options = '<option value="">-- Επιλογή Διαιτητή --</option>';
+    function getRefereeOptions(selectedVal) {
+        let options = '<option value="">-- Επιλογή --</option>';
         REFEREES.forEach(ref => {
-            options += `<option value="${ref}">${ref}</option>`;
+            let sel = (ref === selectedVal) ? 'selected' : '';
+            options += `<option value="${ref}" ${sel}>${ref}</option>`;
         });
         return options;
     }
@@ -175,13 +186,57 @@
                 }
             }
         });
-        alert('Ο αυτόματος ορισμός διαιτητών ολοκληρώθηκε επιτυχώς!');
+        alert('Ο αυτόματος ορισμός ολοκληρώθηκε!');
     }
 
-    // Εκτελείται αυτόματα με το άνοιγμα της σελίδας
-    window.onload = function() {
-        loadMatchdaySchedules();
-    };
+    function saveAssignments() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        let matches = (SCHEDULES[cat] && SCHEDULES[cat][md]) ? SCHEDULES[cat][md] : [];
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+
+        matches.forEach((match, index) => {
+            let key = `${cat}_${md}_${index}`;
+            savedAssignments[key] = {
+                matchday: `${cat === 'A' ? "Α' Κατηγορία" : "Β' Κατηγορία"} - ${md}`,
+                match: `${match[0]} - ${match[1]}`,
+                ref0: document.getElementById(`ref_${index}_0`).value,
+                ref1: document.getElementById(`ref_${index}_1`).value,
+                ref2: document.getElementById(`ref_${index}_2`).value
+            };
+        });
+
+        localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
+        alert('Οι ορισμοί αποθηκεύτηκαν επιτυχώς!');
+    }
+
+    function loadKolymataForAdmin() {
+        const container = document.getElementById('kolymataListContainer');
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+
+        if (kolymata.length === 0) {
+            container.innerHTML = '<p>Δεν υπάρχουν ενεργά κώλυματα από διαιτητές.</p>';
+            return;
+        }
+
+        let html = '';
+        kolymata.forEach((k, idx) => {
+            html += `<div class="kolyma-alert">
+                <p><strong>Διαιτητής:</strong> ${k.referee}</p>
+                <p><strong>Ημερομηνία & Διάστημα:</strong> ${k.date} (${k.timeSlot})</p>
+                <p><strong>Αιτιολογία:</strong> ${k.reason || 'Χωρίς αιτιολογία'}</p>
+                <button class="btn-danger" style="padding: 5px 10px; font-size:12px;" onclick="deleteKolyma(${idx})">Διαγραφή</button>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function deleteKolyma(index) {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        kolymata.splice(index, 1);
+        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
+        loadKolymataForAdmin();
+    }
 </script>
 
 </body>
