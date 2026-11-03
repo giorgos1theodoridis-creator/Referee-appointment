@@ -23,32 +23,33 @@
         button:hover { opacity: 0.9; }
         .btn-success { background: var(--success); }
         .card { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 4px; border-left: 4px solid var(--success); }
-        
-        /* Στυλ για πτυσσόμενους κανονισμούς */
         .rule-btn { background: #eef2f7; color: var(--primary); border: 1px solid var(--primary); width: 100%; text-align: left; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; }
-        .rule-btn:hover { background: #dce5f0; }
-        .rule-content { display: none; background: #fafbfc; padding: 12px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+        .rule-content { display: none; background: #fafbfc; padding: 12px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px; font-size: 14px; line-height: 1.5; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Πύλη Διαιτητή</h1>
-    <p>Προσωπικοί Ορισμοί & Κωλύματα</p>
+    <p>Προσωπικοί Ορισμοί & Δήλωση Κωλυμάτων</p>
 </header>
 
 <div class="container">
-    <h2>👤 Επιλογή & Ταυτοποίηση Διαιτητή</h2>
+    <div style="margin-bottom: 20px;">
+        <a href="index.html"><button>👈 Επιστροφή στον Πίνακα Επιτροπής</button></a>
+    </div>
+
+    <h2>👤 Ταυτοποίηση Διαιτητή</h2>
     <div class="form-group">
-        <label for="myRefereeSelect">Επιλέξτε το όνομα σας (αποθηκεύεται στη συσκευή σας):</label>
+        <label for="myRefereeSelect">Επιλέξτε το όνομα σας:</label>
         <select id="myRefereeSelect" onchange="saveMyName()">
-            <!-- Γεμίζει αυτόματα με JS -->
+            <!-- Γεμίζει αυτόματα -->
         </select>
     </div>
 
     <h2>⚽ Οι Προσωπικοί μου Ορισμοί</h2>
     <div id="myAppointments">
-        <p>Παρακαλώ επιλέξτε το όνομα σας παραπάνω για να δείτε τους ορισμούς σας.</p>
+        <p>Παρακαλώ επιλέξτε το όνομα σας παραπάνω.</p>
     </div>
 
     <h2>🚫 Δήλωση Κωλύματος</h2>
@@ -57,25 +58,24 @@
         <input type="date" id="kolymaDate">
     </div>
     <div class="form-group">
+        <label for="kolymaTime">Χρονικό Διάστημα (π.χ. για Κυριακή Β' Κατηγορίας):</label>
+        <select id="kolymaTime">
+            <option value="Ολοήμερο">Ολοήμερο</option>
+            <option value="Πρωί">Πρωί (π.χ. 11:00)</option>
+            <option value="Απόγευμα">Απόγευμα (π.χ. 15:00)</option>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="kolymaReason">Αιτιολογία:</label>
-        <input type="text" id="kolymaReason" placeholder="π.χ. Επαγγελματικές υποχρεώσεις">
+        <input type="text" id="kolymaReason" placeholder="π.χ. Προσωπικοί λόγοι / Εργασία">
     </div>
     <button onclick="submitKolyma()">Υποβολή Κωλύματος στην Επιτροπή</button>
 
     <h2>📖 Κανονισμοί Διαιτησίας (IFAB)</h2>
-    <p>Κάντε κλικ στους τίτλους για να διαβάσετε αναλυτικά τους κανόνες:</p>
-    
-    <button class="rule-btn" onclick="toggleRule('rule5')">📜 Κανόνας 5: Ο Διαιτητής (Αρμοδιότητες & Εξουσία) ▼</button>
+    <button class="rule-btn" onclick="toggleRule('rule5')">📜 Κανόνας 5: Ο Διαιτητής ▼</button>
     <div id="rule5" class="rule-content">
         • Κάθε αγώνας ελέγχεται από διαιτητή που έχει την απόλυτη εξουσία στην τήρηση των Κανόνων.<br>
-        • Οι αποφάσεις του για τα γεγονότα του αγώνα (γκέρμ, γκολ, αποτέλεσμα) είναι οριστικές.<br>
-        • Μπορεί να αλλάξει απόφαση μόνο εφόσον αντιληφθεί το λάθος του πριν αρχίσει ξανά το παιχνίδι.
-    </div>
-
-    <button class="rule-btn" onclick="toggleRule('rule6')">📜 Κανόνας 6: Οι Βοηθοί Διαιτητές ▼</button>
-    <div id="rule6" class="rule-content">
-        • Υποδεικνύουν πότε η μπάλα βγαίνει εκτός ορίων και ποια ομάδα δικαιούται επαναφορά.<br>
-        • Υποδεικνύουν θέσεις οφσάιντ και υποστηρίζουν τον διαιτητή σε παραβάσεις εκτός του οπτικού του πεδίου.
+        • Οι αποφάσεις του για τα γεγονότα του αγώνα είναι οριστικές.
     </div>
 </div>
 
@@ -107,7 +107,6 @@
             select.appendChild(opt);
         });
 
-        // Αν έχει επιλεχθεί ήδη όνομα παλιότερα στη συσκευή, φόρτωσέ το αυτόματα
         let savedRef = localStorage.getItem('eps_selected_referee');
         if (savedRef) {
             select.value = savedRef;
@@ -129,7 +128,6 @@
             return;
         }
 
-        // Εδώ διαβάζουμε τους ορισμούς που έχουν γίνει από την επιτροπή
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
         let myMatches = [];
 
@@ -142,17 +140,17 @@
         }
 
         if (myMatches.length === 0) {
-            container.innerHTML = `<div class="card"><p>Δεν βρέθηκαν τρέχοντες ορισμοί για τον/την <strong>${refName}</strong>.</p><p style="font-size:12px; color:#666;">(Όταν η Επιτροπή αποθηκεύσει τους ορισμούς από τον πίνακα διαχείρισης, θα εμφανιστούν εδώ αυτόματα).</p></div>`;
+            container.innerHTML = `<div class="card"><p>Δεν βρέθηκαν τρέχοντες ορισμοί για τον/την <strong>${refName}</strong>.</p></div>`;
             return;
         }
 
         let html = '';
         myMatches.forEach(m => {
             html += `<div class="card">
-                <p><strong>Αγωνιστική:</strong> ${m.matchday}</p>
+                <p><strong>Διοργάνωση:</strong> ${m.matchday}</p>
                 <p><strong>Αγώνας:</strong> ${m.match}</p>
                 <p><strong>Καθήκον:</strong> <span style="color:var(--primary); font-weight:bold;">${m.role}</span></p>
-                <button class="btn-success" onclick="alert('Ο ορισμός επιβεβαιώθηκε επιτυχώς!')">✅ Επιβεβαίωση Ορισμού</button>
+                <button class="btn-success" onclick="alert('Ο ορισμός επιβεβαιώθηκε!')">✅ Επιβεβαίωση</button>
             </div>`;
         });
         container.innerHTML = html;
@@ -160,35 +158,31 @@
 
     function submitKolyma() {
         const date = document.getElementById('kolymaDate').value;
+        const timeSlot = document.getElementById('kolymaTime').value;
         const reason = document.getElementById('kolymaReason').value;
         const refName = document.getElementById('myRefereeSelect').value;
         
         if (!refName) {
-            alert('Παρακαλώ επιλέξτε πρώτα το όνομα σας στην κορυφή της σελίδας.');
+            alert('Επιλέξτε πρώτα το όνομα σας!');
             return;
         }
         if (!date) {
-            alert('Παρακαλώ επιλέξτε ημερομηνία κωλύματος.');
+            alert('Επιλέξτε ημερομηνία κωλύματος!');
             return;
         }
         
-        // Αποθήκευση κωλύματος τοπικά
-        let kolyhmata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        kolymata.push({ referee: refName, date: date, reason: reason });
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        kolymata.push({ referee: refName, date: date, timeSlot: timeSlot, reason: reason });
         localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
 
-        alert(`Το κώλυμα για τον/την ${refName} στις ${date} καταχωρήθηκε επιτυχώς.`);
+        alert(`Το κώλυμα (${timeSlot}) καταχωρήθηκε επιτυχώς.`);
         document.getElementById('kolymaDate').value = '';
         document.getElementById('kolymaReason').value = '';
     }
 
     function toggleRule(id) {
         let content = document.getElementById(id);
-        if (content.style.display === "block") {
-            content.style.display = "none";
-        } else {
-            content.style.display = "block";
-        }
+        content.style.display = (content.style.display === "block") ? "none" : "block";
     }
 </script>
 
