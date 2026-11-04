@@ -92,8 +92,8 @@
         <button class="toggle-btn" onclick="toggleSection('evaluatedContent')">👁️ Επιλογή & Ορισμός Κατηγοριών (Κ1 έως Κ6)</button>
         <div id="evaluatedContent" class="collapsible-content">
             <p style="font-size:13px; color:#555;">
-                <strong>Εθνικές:</strong> Κ1, Κ2, Κ3, Κ4 (Προτεραιότητα ως Διαιτητές)<br>
-                <strong>Τοπικές:</strong> Κ4, Κ5, Κ6 (Προτεραιότητα ως Βοηθοί)
+                <strong>Εθνικές (Προτεραιότητα ως Διαιτητές):</strong> Κ1, Κ2, Κ3, Κ4<br>
+                <strong>Τοπικές (Προτεραιότητα ως Βοηθοί):</strong> Κ4, Κ5, Κ6
             </p>
             <div id="evaluatedListBuilder" style="max-height: 350px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></div>
             <button class="btn-success" onclick="saveEvaluatedReferees()">💾 Αποθήκευση Αξιολογήσεων</button>
@@ -226,11 +226,14 @@
             showAdminPanel();
         }
         let refSelect = document.getElementById('selectRefereeProfile');
-        REFEREES.forEach(r => {
-            let opt = document.createElement('option');
-            opt.value = r; opt.textContent = r;
-            refSelect.appendChild(opt);
-        });
+        if (refSelect) {
+            refSelect.innerHTML = '<option value="">-- Επιλέξτε Διαιτητή --</option>';
+            REFEREES.forEach(r => {
+                let opt = document.createElement('option');
+                opt.value = r; opt.textContent = r;
+                refSelect.appendChild(opt);
+            });
+        }
     };
 
     function loginAdmin() {
@@ -276,15 +279,16 @@
     function loadEvaluatedListBuilder() {
         let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
         let container = document.getElementById('evaluatedListBuilder');
+        if (!container) return;
         container.innerHTML = '';
         REFEREES.forEach((r, idx) => {
             let assignedCat = evaluatedMap[r] || "";
             container.innerHTML += `
                 <div class="eval-row">
                     <span style="flex: 1; font-weight: bold;">${r}</span>
-                    <select id="eval_cat_${idx}" style="width: 200px; padding: 5px;">
+                    <select id="eval_cat_${idx}" style="width: 220px; padding: 5px;">
                         <option value="" ${assignedCat===''?'selected':''}>-- Χωρίς Κατηγορία --</option>
-                        <option value="Κ1" ${assignedCat==== 'Κ1'?'selected':''}>Κ1 (Εθνική - Διαιτητής)</option>
+                        <option value="Κ1" ${assignedCat==='Κ1'?'selected':''}>Κ1 (Εθνική - Διαιτητής)</option>
                         <option value="Κ2" ${assignedCat==='Κ2'?'selected':''}>Κ2 (Εθνική - Διαιτητής)</option>
                         <option value="Κ3" ${assignedCat==='Κ3'?'selected':''}>Κ3 (Εθνική - Διαιτητής)</option>
                         <option value="Κ4" ${assignedCat==='Κ4'?'selected':''}>Κ4 (Εθνική/Τοπική - Διαιτητής/Βοηθός)</option>
@@ -351,11 +355,222 @@
 
             html += `<tr>
                 <td><strong>${match[0]}</strong> - <strong>${match[1]}</strong> ${zoneTag}</td>
-                <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning, 'ref')}</select></td>
-                <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning, 'asst')}</select></td>
-                <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning, 'asst')}</select></td>
+                <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning)}</select></td>
+                <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning)}</select></td>
+                <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning)}</select></td>
             </tr>`;
         });
         html += `</table>`;
         container.innerHTML = html;
-    
+    }
+
+    function addNewCustomMatch() {
+        let home = document.getElementById('newHomeTeam').value.trim();
+        let away = document.getElementById('newAwayTeam').value.trim();
+        let cat = document.getElementById('categorySelect').value;
+        let md = document.getElementById('matchdaySelect').value;
+        if (!home || !away) { alert('Συμπληρώστε τις ομάδες!'); return; }
+        let schedules = getSchedules();
+        if (!schedules[cat]) schedules[cat] = {};
+        if (!schedules[cat][md]) schedules[cat][md] = [];
+        schedules[cat][md].push([home, away]);
+        localStorage.setItem('eps_schedules', JSON.stringify(schedules));
+        document.getElementById('newHomeTeam').value = '';
+        document.getElementById('newAwayTeam').value = '';
+        renderMatches();
+        alert('Ο αγώνας προστέθηκε!');
+    }
+
+    function getRefereeOptions(selectedVal, isMorning) {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+
+        let options = '<option value="">-- Επιλογή --</option>';
+        REFEREES.forEach(ref => {
+            let hasConflict = kolymata.filter(k => k.referee === ref).some(k => {
+                if (k.timeSlot === 'Ολοήμερο') return true;
+                if (isMorning && k.timeSlot === 'Πρωί') return true;
+                if (!isMorning && k.timeSlot === 'Απόγευμα') return true;
+                return false;
+            });
+            let catVal = evaluatedMap[ref];
+            let badge = catVal ? ` ⭐ [${catVal}]` : '';
+            let label = hasConflict ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : `${ref}${badge}`;
+            let sel = (ref === selectedVal) ? 'selected' : '';
+            options += `<option value="${ref}" ${sel}>${label}</option>`;
+        });
+        return options;
+    }
+
+    function autoAssignReferees() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        let schedules = getSchedules();
+        let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+
+        let refsPriority = ["Κ1", "Κ2", "Κ3", "Κ4"];
+        let asstsPriority = ["Κ4", "Κ5", "Κ6"];
+
+        let availableRefs = [];
+        refsPriority.forEach(c => {
+            let found = REFEREES.filter(r => evaluatedMap[r] === c && !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
+            availableRefs.push(...found);
+        });
+        let otherRefs = REFEREES.filter(r => !evaluatedMap[r] || !["Κ1","Κ2","Κ3","Κ4"].includes(evaluatedMap[r]));
+        availableRefs.push(...otherRefs.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο')));
+
+        let availableAssts = [];
+        asstsPriority.forEach(c => {
+            let found = REFEREES.filter(r => evaluatedMap[r] === c && !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
+            availableAssts.push(...found);
+        });
+        let otherAssts = REFEREES.filter(r => !evaluatedMap[r] || !["Κ4","Κ5","Κ6"].includes(evaluatedMap[r]));
+        availableAssts.push(...otherAssts.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο')));
+
+        let refIdx = 0, asstIdx = 0;
+
+        matches.forEach((match, index) => {
+            let isMorning = MORNING_TEAMS.includes(match[0]) || MORNING_TEAMS.includes(match[1]);
+            
+            for (let pos = 0; pos < 3; pos++) {
+                let selectElem = document.getElementById(`ref_${index}_${pos}`);
+                if (selectElem) {
+                    let candidate = "";
+                    if (pos === 0) {
+                        if (availableRefs.length > 0) {
+                            candidate = availableRefs[refIdx % availableRefs.length];
+                            refIdx++;
+                        }
+                    } else {
+                        if (availableAssts.length > 0) {
+                            candidate = availableAssts[asstIdx % availableAssts.length];
+                            asstIdx++;
+                        }
+                    }
+                    if (candidate) selectElem.value = candidate;
+                }
+            }
+        });
+        alert('Ο έξυπνος αυτόματος ορισμός ολοκληρώθηκε!');
+    }
+
+    function saveAssignments() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        let schedules = getSchedules();
+        let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+
+        matches.forEach((match, index) => {
+            let key = `${cat}_${md}_${index}`;
+            savedAssignments[key] = {
+                matchday: `${cat} - ${md}`,
+                match: `${match[0]} - ${match[1]}`,
+                category: cat,
+                ref0: document.getElementById(`ref_${index}_0`).value,
+                ref1: document.getElementById(`ref_${index}_1`).value,
+                ref2: document.getElementById(`ref_${index}_2`).value
+            };
+        });
+        localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
+        alert('Οι ορισμοί ενημερώθηκαν και τα στατιστικά ανανεώθηκαν!');
+        loadAllAdminData();
+    }
+
+    function loadAllAdminData() {
+        let selectedMonth = document.getElementById('monthFilter').value;
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]");
+        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]");
+
+        let filteredTrainings = trainings.filter(t => selectedMonth === 'ALL' || (t.date && t.date.split('-')[1] === selectedMonth));
+        let filteredClasses = classes.filter(c => selectedMonth === 'ALL' || (c.date && c.date.split('-')[1] === selectedMonth));
+
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+        let stats = {};
+        REFEREES.forEach(r => { 
+            stats[r] = { total: 0, refCount: 0, asstCount: 0, cats: {}, trainCount: filteredTrainings.filter(t=>t.referee===r).length, classCount: filteredClasses.filter(c=>c.referee===r).length }; 
+        });
+
+        for (let key in savedAssignments) {
+            let item = savedAssignments[key];
+            let catName = item.category || 'A';
+            [ { name: item.ref0, role: 'ref' }, { name: item.ref1, role: 'asst' }, { name: item.ref2, role: 'asst' } ].forEach(a => {
+                if (a.name && stats[a.name]) {
+                    stats[a.name].total++;
+                    if (a.role === 'ref') stats[a.name].refCount++;
+                    else stats[a.name].asstCount++;
+                    stats[a.name].cats[catName] = (stats[a.name].cats[catName] || 0) + 1;
+                }
+            });
+        }
+
+        let statsHtml = `<table><tr><th>Διαιτητής</th><th>Ματς</th><th>Ως Διαιτητής</th><th>Ως Βοηθός</th><th>Προπονήσεις</th><th>Μαθήματα</th></tr>`;
+        REFEREES.forEach(ref => {
+            let s = stats[ref];
+            let evalBadge = evaluatedMap[ref] ? ` ⭐ [${evaluatedMap[ref]}]` : '';
+            statsHtml += `<tr>
+                <td><strong>${ref}</strong>${evalBadge}</td>
+                <td>${s.total}</td>
+                <td><span style="color:var(--success); font-weight:bold;">${s.refCount}</span></td>
+                <td><span style="color:#0275d8; font-weight:bold;">${s.asstCount}</span></td>
+                <td>${s.trainCount}</td>
+                <td>${s.classCount}</td>
+            </tr>`;
+        });
+        statsHtml += `</table>`;
+        document.getElementById('refereeStatsContainer').innerHTML = statsHtml;
+
+        let passwords = JSON.parse(localStorage.getItem('eps_referee_passwords') || "{}");
+        let passContainer = document.getElementById('adminRefPasswordsList');
+        if (passContainer) {
+            passContainer.innerHTML = `<ul>` + REFEREES.map(ref => `<li><strong>${ref}:</strong> <span style="color:#d9534f; font-family:monospace;">${passwords[ref] || "ref2026"}</span></li>`).join('') + `</ul>`;
+        }
+
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        document.getElementById('kolymataListContainer').innerHTML = kolymata.length === 0 ? '<p>Κανένα κώλυμα.</p>' : kolymata.map(k => `<div class="alert-box"><p><strong>${k.referee}</strong> | ${k.date} (${k.timeSlot}) | ${k.reason || '-'}</p></div>`).join('');
+
+        document.getElementById('trainingsListContainer').innerHTML = trainings.length === 0 ? '<p>Καμία προπόνηση.</p>' : trainings.map(t => `<div class="info-box"><p><strong>${t.referee}</strong> | Ημ/νία: ${t.date} | ${t.type}</p></div>`).join('');
+
+        document.getElementById('classesListContainer').innerHTML = classes.length === 0 ? '<p>Καμία παρουσία.</p>' : classes.map(c => `<div class="info-box"><p><strong>${c.referee}</strong> | Μάθημα: ${c.title} (${c.date}) ✅</p></div>`).join('');
+        
+        renderRefereeProfile();
+    }
+
+    function renderRefereeProfile() {
+        let refNameElem = document.getElementById('selectRefereeProfile');
+        let container = document.getElementById('refereeIndividualProfileContainer');
+        if (!refNameElem || !container) return;
+        let refName = refNameElem.value;
+        if (!refName) { container.innerHTML = ''; return; }
+
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let myMatches = [];
+        for (let key in savedAssignments) {
+            let item = savedAssignments[key];
+            if (item.ref0 === refName || item.ref1 === refName || item.ref2 === refName) {
+                let role = (item.ref0 === refName) ? "Διαιτητής" : "Βοηθός Διαιτητής";
+                myMatches.push(`<li>${item.matchday} - <strong>${item.match}</strong> (<em>${role}</em>)</li>`);
+            }
+        }
+
+        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]").filter(t => t.referee === refName);
+        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]").filter(c => c.referee === refName);
+
+        container.innerHTML = `
+            <div class="card-box">
+                <h3>📁 Ατομικός Φάκελος: ${refName}</h3>
+                <p><strong>⚽ Αγώνες (${myMatches.length}):</strong></p>
+                <ul>${myMatches.length ? myMatches.join('') : '<li>Κανένας αγώνας</li>'}</ul>
+                <p><strong>💪 Προπονήσεις (${trainings.length}):</strong></p>
+                <ul>${trainings.length ? trainings.map(t=>`<li>${t.date} - ${t.type}</li>`).join('') : '<li>Καμία προπόνηση</li>'}</ul>
+                <p><strong>📚 Παρουσίες σε Μαθήματα (${classes.length}):</strong></p>
+                <ul>${classes.length ? classes.map(c=>`<li>${c.date} - ${c.title}</li>`).join('') : '<li>Καμία παρουσία</li>'}</ul>
+            </div>`;
+    }
+</script>
+
+</body>
+</html>
