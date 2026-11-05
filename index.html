@@ -321,6 +321,14 @@
         return [...base, ...added];
     }
 
+    function getAllTeamsFlat() {
+        let all = [];
+        for (let cat in defaultTeams) {
+            all.push(...getTeamsList(cat));
+        }
+        return [...new Set(all)];
+    }
+
     let defaultSchedules = {
         "A": { 
             "7η Αγωνιστική": [["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ"], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΔΟΞΑ ΒΩΛΑΚΑ"]],
@@ -554,7 +562,6 @@
             }
         }
 
-        // Κώλυματα διαιτητή
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         let myKol = kolymata.map((k, idx) => ({...k, origIndex: idx})).filter(k => k.referee === currentLoggedInReferee);
         let kolContainer = document.getElementById('myKolymataListContainer');
@@ -565,7 +572,6 @@
             }
         }
 
-        // Αγώνες διαιτητή
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
         let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
         let allAssigned = {...savedAssignments, ...cupAssignments};
@@ -696,16 +702,28 @@
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
+        let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
+        let customStadiums = JSON.parse(localStorage.getItem('eps_team_stadiums') || "{}");
+        let allTeams = getAllTeamsFlat();
 
         if (matches.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν αγώνες.</p>'; return; }
 
-        let html = `<table><tr><th>Αγώνας</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th><th>Παρατηρητής</th></tr>`;
+        let html = `<table><tr><th>Αγώνας</th><th>🏟️ Γήπεδο</th><th>📅 Ημ/νία & Ώρα</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th><th>Παρατηρητής</th></tr>`;
         matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
             let current = savedAssignments[key] || {ref0:'', ref1:'', ref2:'', observer:''};
+            let currentDateTime = matchDateTimes[key] || '';
+            let defaultHomeStadium = customStadiums[m[0]] || m[0];
+            let currentStadium = matchStadiums[key] || defaultHomeStadium;
             let isMorning = MORNING_TEAMS.includes(m[0]) || MORNING_TEAMS.includes(m[1]);
+
+            let stadiumOptions = allTeams.map(t => `<option value="${t}" ${t===currentStadium?'selected':''}>${t}</option>`).join('');
+
             html += `<tr>
                 <td><strong>${m[0]}</strong> - <strong>${m[1]}</strong></td>
+                <td><select id="stadium_${index}">${stadiumOptions}</select></td>
+                <td><input type="datetime-local" id="datetime_${index}" value="${currentDateTime}" style="width:100%;"></td>
                 <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning)}</select></td>
                 <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning)}</select></td>
                 <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning)}</select></td>
@@ -774,12 +792,21 @@
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
+        let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
 
         matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
+            let dtInput = document.getElementById(`datetime_${index}`);
+            let stadiumInput = document.getElementById(`stadium_${index}`);
+            if (dtInput) matchDateTimes[key] = dtInput.value;
+            if (stadiumInput) matchStadiums[key] = stadiumInput.value;
+
             savedAssignments[key] = {
                 matchday: `${cat} - ${md}`,
                 match: `${m[0]} - ${m[1]}`,
+                datetime: dtInput ? dtInput.value : '',
+                stadium: stadiumInput ? stadiumInput.value : m[0],
                 ref0: document.getElementById(`ref_${index}_0`).value,
                 ref1: document.getElementById(`ref_${index}_1`).value,
                 ref2: document.getElementById(`ref_${index}_2`).value,
@@ -787,22 +814,30 @@
             };
         });
         localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
+        localStorage.setItem('eps_match_datetimes', JSON.stringify(matchDateTimes));
+        localStorage.setItem('eps_match_stadiums', JSON.stringify(matchStadiums));
         alert('💾 Οι ορισμοί αποθηκεύτηκαν και ενημερώθηκαν αυτόματα στις καρτέλες των διαιτητών!');
         loadAllAdminData();
     }
 
     function resetAssignments() {
-        if (!confirm('🔄 Επαναφορά πίνακα στην αρχική προ ορισμών?')) return;
+        if (!confirm('🔄 Επαναφορά πίνακα στην αρχική προ ορισμών;')) return;
         const cat = document.getElementById('categorySelect').value;
         const md = document.getElementById('matchdaySelect').value;
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
+        let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
             delete savedAssignments[key];
+            delete matchDateTimes[key];
+            delete matchStadiums[key];
         });
         localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
+        localStorage.setItem('eps_match_datetimes', JSON.stringify(matchDateTimes));
+        localStorage.setItem('eps_match_stadiums', JSON.stringify(matchStadiums));
         renderMatches();
         alert('🔄 Ο πίνακας επαναφέρθηκε επιτυχώς στην αρχική του κατάσταση και συγχρονίστηκε!');
     }
