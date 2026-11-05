@@ -64,7 +64,7 @@
     <!-- ΑΝΕΒΑΣΜΑ & ΦΩΤΟΓΡΑΦΗΣΗ ΕΓΓΡΑΦΩΝ -->
     <div class="card-box">
         <h3>📂 Ανέβασμα / Φωτογράφηση Επίσημων Εγγράφων</h3>
-        <p style="font-size: 13px; color: #555;">Ανεβάστε ή φωτογραφίστε τα έγγραφα που ζητά η Επιτροπή (Χαρτί γιατρού, Ποινικό μητρώο, Αιτήσεις κ.λπ.):</p>
+        <p style="font-size: 13px; color: #555;">Ανεβάστε ή φωτογραφίστε τα έγγραφα που ζητά η Επιτροπή (Χαρτί γιατρού, Ποινικό μητρώο κ.λπ.):</p>
         <div class="form-group">
             <label>Τύπος Εγγράφου:</label>
             <select id="refDocType">
@@ -138,7 +138,7 @@
 </div>
 
 <script>
-    const REFEREES = [
+    const DEFAULT_REFEREES = [
         "ΑΛΒΑΝΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ", "ΑΝΔΡΕΟΓΛΟΥ ΣΤΕΡΓΙΟΣ", "ΑΡΜΕΝ ΔΗΜΗΤΡΙΟΣ", "ΑΧΘΟΦΟΡΙΔΗΣ ΝΙΚΟΛΑΟΣ", 
         "ΓΕΩΡΓΙΑΔΟΥ ΑΓΑΠΗ", "ΓΚΑΙΤΑΤΖΗ ΜΑΤΟΥΛΑ", "ΓΚΑΙΤΑΤΖΗΣ ΔΗΜΗΤΡΙΟΣ", "ΓΚΟΝΤΕ ΑΡΗΣ", 
         "ΔΗΛΓΕΡΑΚΗΣ ΑΘΑΝΑΣΙΟΣ", "ΔΗΜΗΤΡΙΑΔΟΥ ΓΕΩΡΓΙΑ", "ΔΗΜΟΠΟΥΛΟΣ ΚΩΝ/ΝΟΣ", "ΖΑΜΠΑΣ ΧΡΗΣΤΟΣ", 
@@ -155,11 +155,16 @@
         "ΧΑΣΙΩΤΗΣ ΕΥΑΓΓΕΛΟΣ", "ΧΟΡΟΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ"
     ];
 
+    function getRefereesList() {
+        let custom = JSON.parse(localStorage.getItem('eps_custom_referees') || "[]");
+        return [...DEFAULT_REFEREES, ...custom];
+    }
+
     window.onload = function() {
         let refSel = document.getElementById('refLoginName');
         if (refSel) {
             refSel.innerHTML = '';
-            REFEREES.forEach(r => {
+            getRefereesList().forEach(r => {
                 let opt = document.createElement('option');
                 opt.value = r; opt.textContent = r;
                 refSel.appendChild(opt);
@@ -224,7 +229,6 @@
             `).join('') : '<p>Δεν έχετε ενεργά κώλυματα.</p>';
         }
 
-        // Φόρτωση εγγράφων διαιτητή
         let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]").filter(d => d.referee === loggedRef);
         let docList = document.getElementById('refMyDocumentsList');
         if (docList) {
@@ -256,10 +260,7 @@
         let docType = document.getElementById('refDocType').value;
         let fileInput = document.getElementById('refDocFile');
 
-        if (fileInput.files.length === 0) {
-            alert('Επιλέξτε ή φωτογραφίστε ένα αρχείο/έγγραφο!');
-            return;
-        }
+        if (fileInput.files.length === 0) { alert('Επιλέξτε ή φωτογραφίστε ένα αρχείο/έγγραφο!'); return; }
 
         let file = fileInput.files[0];
         let reader = new FileReader();
