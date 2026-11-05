@@ -103,10 +103,10 @@
         <button class="btn-success" onclick="saveSecurityCodes()">💾 Αποθήκευση Κωδικών Ασφαλείας</button>
     </div>
 
-    <!-- ΙΔΙΟΧΕΙΡΗ ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΔΙΑΙΤΗΤΩΝ (ΜΕΣΗ ΤΗΣ ΧΡΟΝΙΑΣ) -->
+    <!-- ΙΔΙΟΧΕΙΡΗ ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΔΙΑΙΤΗΤΩΝ -->
     <div class="card-box no-print">
         <h3>➕ Ιδιόχειρη Προσθήκη Νέου Διαιτητή</h3>
-        <p style="font-size: 13px; color: #555;">Προσθέστε διαιτητή που ήρθε στη μέση της χρονιάς. Δημιουργείται αυτόματα η καρτέλα του[span_0](start_span)[span_0](end_span):</p>
+        <p style="font-size: 13px; color: #555;">Προσθέστε διαιτητή που ήρθε στη μέση της χρονιάς[span_18](start_span)[span_18](end_span):</p>
         <div class="form-group">
             <label>Ονοματεπώνυμο Νέου Διαιτητή (ΚΕΦΑΛΑΙΑ):</label>
             <input type="text" id="newRefereeInput" placeholder="π.χ. ΠΑΠΑΔΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ">
@@ -159,11 +159,11 @@
 
     <!-- ΔΙΑΧΕΙΡΙΣΗ ΕΠΙΣΗΜΩΝ ΕΓΓΡΑΦΩΝ ΔΙΑΙΤΗΤΩΝ -->
     <div class="card-box">
-        <h3>📂 Επίσημα Έγγραφα Διαιτητών (Χαρτιά Γιατρού, Ποινικά Μητρώα κ.λπ.)</h3>
+        <h3>📂 Επίσημα Έγγραφα Διαιτητών</h3>
         <button class="toggle-btn" onclick="toggleSection('adminDocumentsContent')">👁️ Προβολή Υποβληθέντων Εγγράφων</button>
         <div id="adminDocumentsContent" class="collapsible-content">
             <div id="adminDocumentsContainer"><p>Δεν υπάρχουν υποβληθέντα έγγραφα.</p></div>
-            <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Εγγράφων)</button>
+            <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
         </div>
     </div>
 
@@ -223,7 +223,7 @@
         <button class="btn-success" onclick="autoAssignCupReferees()">🤖 Έξυπνος Αυτόματος Ορισμός Κυπέλλου</button>
         <button class="btn-success" style="background:#0275d8;" onclick="saveCupAssignments()">💾 Αποθήκευση / Ενημέρωση Ορισμών Κυπέλλου</button>
         <button class="btn-warning" onclick="resetCupAssignments()">🔄 Επαναφορά Κυπέλλου προ Ορισμών</button>
-        <button onclick="window.print()">🖨️ Εκτύπωση / PDF (Ορισμών Αγώνων Κυπέλλου)</button>
+        <button onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
     </div>
     <h2>🏆 Πίνακας Αγώνων & Ορισμών Κυπέλλου</h2>
     <div id="cupMatchesContainer"></div>
@@ -261,7 +261,6 @@
 
     <h2>🚫 Εβδομαδιαία Κώλυματα & Άμεση Ενημέρωση Επιτροπής</h2>
     <div class="card-box no-print">
-        <p style="font-size: 13px; color: #555;">Με το που δηλώνει κώλυμα ο διαιτητής, ενημερώνεται άμεσα η Επιτροπή παρακάτω:</p>
         <button class="btn-success" onclick="sendMissingDeclarationsSMS()">📲 Μαζική Ειδοποίηση σε όσους ΔΕΝ δήλωσαν</button>
     </div>
     <button class="toggle-btn" onclick="toggleSection('kolymataContent')">👁️ Προβολή Συγκεντρωτικής Λίστας Κωλυμάτων</button>
@@ -319,9 +318,9 @@
         "A": ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΔΟΞΑ ΒΩΛΑΚΑ"],
         "B1": ["Α.Ε. ΚΥΡΓΙΩΝ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ Β", "ΕΘΝ.ΑΣΤΕΡΑΣ ΚΑΛΛΙΦΥΤΟΥ", "ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ Β", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ", "Α.Σ. ΠΗΓΑΣΟΣ ΔΡΑΜΑΣ", "ΗΡΑΚΛΗΣ ΑΔΡΙΑΝΗΣ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ Β", "Γ.Π.Σ. ΕΛΠΙΣ ΔΡΑΜΑΣ - 1922", "ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "ΠΑΟΚ ΠΡΟΣΤΙΟΥ ΔΡΑΜΑΣ"],
         "B2": ["ΔΟΞΑ ΜΙΚΡΟΠΟΛΗΣ", "ΗΡΑΚΛΗΣ ΜΥΛΟΠΟΤΑΜΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ Β", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΓΡΑΜΜΕΝΗΣ", "ΑΚΡΙΤΑΣ Ν.ΚΡΩΜΝΗΣ", "ΔΟΞΑ Κ.ΒΡΟΝΤΟΥΣ", "ΑΡΗΣ ΦΩΤΟΛΙΒΟΥΣ", "Α.Ε. Κ.ΒΡΥΣΗΣ", "ΑΕΤΟΣ ΒΑΘΥΤΟΠΟΥ", "ΔΟΞΑ ΑΝΤΩΝΙΟΣ ΚΑΣΤΡΙΝΟΣ", "ΔΟΞΑ ΣΙΤΑΓΡΩΝ", "ΑΣΤΕΡΑΣ ΚΟΥΔΟΥΝΙΩΝ"],
-        "K15": ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 2", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 1", "ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ 1", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ"],
-        "K13": ["ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ", "ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΑΜΑ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"],
-        "K11": ["Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ", "ΠΑΜΑ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ"]
+        "K15": ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 2", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 1", "ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ 1", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ 2"],
+        "K13": ["ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ", "ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΑΜΑ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "Π.Σ. ΔΟΞΑ 2016", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ"],
+        "K11": ["Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ", "ΠΑΜΑ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"]
     };
 
     function getTeamsList(cat) {
@@ -499,7 +498,6 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
-    // ΙΔΙΟΧΕΙΡΗ ΠΡΟΣΘΗΚΗ ΔΙΑΙΤΗΤΗ
     function addNewRefereeManual() {
         let name = document.getElementById('newRefereeInput').value.trim().toUpperCase();
         if (!name) { alert('Εισάγετε ονοματεπώνυμο διαιτητή!'); return; }
@@ -507,13 +505,12 @@
         if (getRefereesList().includes(name)) { alert('Ο διαιτητής υπάρχει ήδη!'); return; }
         custom.push(name);
         localStorage.setItem('eps_custom_referees', JSON.stringify(custom));
-        alert(`✅ Ο διαιτητής "${name}" προστέθηκε επιτυχώς και δημιουργήθηκε η καρτέλα του[span_1](start_span)[span_1](end_span)!`);
+        alert(`✅ Ο διαιτητής "${name}" προστέθηκε επιτυχώς και δημιουργήθηκε η καρτέλα του[span_19](start_span)[span_19](end_span)!`);
         document.getElementById('newRefereeInput').value = '';
         loadEvaluatedListBuilder();
         loadAllAdminData();
     }
 
-    // ΑΝΑΛΥΤΙΚΗ ΠΡΟΣΘΗΚΗ ΟΜΑΔΑΣ & ΓΗΠΕΔΟΥ
     function addNewTeamDetailed() {
         let team = document.getElementById('newTeamNameInput').value.trim();
         let cat = document.getElementById('newTeamCatInput').value;
@@ -535,7 +532,6 @@
         loadCupDropdowns();
     }
 
-    // ΦΟΡΤΩΣΗ 4 ΕΠΙΛΟΓΩΝ ΓΙΑ ΑΝΟΔΟ / ΥΠΟΒΙΒΑΣΜΟ
     function loadPromotionRelegationDropdowns() {
         let bTeams = [...getTeamsList('B1'), ...getTeamsList('B2')];
         let aTeams = getTeamsList('A');
@@ -890,7 +886,6 @@
         alert('🔄 Ο πίνακας επαναφέρθηκε προ ορισμών!');
     }
 
-    // --- ΚΥΠΕΛΛΟ ---
     function loadCupDropdowns() {
         let allTeams = getAllTeamsFlat();
         let homeSel = document.getElementById('cupHomeTeam');
