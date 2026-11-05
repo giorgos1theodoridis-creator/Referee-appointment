@@ -43,7 +43,7 @@
             body { background: white; }
             header, .no-print, button, .card-box.no-print, .code-box { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
-            #matchesContainer, #cupMatchesContainer { display: block !important; }
+            #matchesContainer, #cupMatchesContainer, #cupDefinitionsContainer { display: block !important; }
             table { font-size: 13px; width: 100%; border-collapse: collapse; }
             th, td { padding: 8px; border: 1px solid #000 !important; color: #000 !important; }
             th { background-color: #1b365d !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -192,14 +192,22 @@
     <h2>📋 Πίνακας Ορισμών Αγώνων Πρωταθλήματος</h2>
     <div id="matchesContainer"></div>
 
-    <!-- ΠΙΝΑΚΑΣ ΚΥΠΕΛΛΟΥ -->
-    <div class="no-print" style="margin-top: 40px;">
+    <!-- ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ ΜΕ ΚΟΥΜΠΙ "ΟΡΙΣΜΟΙ" & ΔΥΝΑΜΙΚΗ ΠΡΟΣΘΗΚΗ -->
+    <div class="card-box" style="margin-top: 40px;">
         <h2>🏆 Διαχείριση Κυπέλλου</h2>
-        <button class="btn-success" onclick="autoAssignCupReferees()">🤖 Έξυπνος Αυτόματος Ορισμός Κυπέλλου</button>
-        <button class="btn-success" style="background:#0275d8;" onclick="saveCupAssignments()">💾 Αποθήκευση Ορισμών Κυπέλλου</button>
-        <button class="btn-warning" onclick="resetCupAssignments()">🔄 Επαναφορά Κυπέλλου προ Ορισμών</button>
-        <button onclick="window.print()">🖨️ Εκτύπωση / PDF Κυπέλλου</button>
+        <button class="btn-success no-print" onclick="toggleCupDefinitions()" style="font-size: 16px; padding: 12px 24px; margin-bottom: 15px;">📋 Ορισμοί (Άνοιγμα Φόρμας Κυπέλλου)</button>
+        
+        <div id="cupDefinitionsContainer" style="display:none;" class="no-print">
+            <div id="cupRowsContainer"></div>
+            <button class="btn-success" onclick="addCupMatchRow()" style="margin-top: 10px;">➕ Προσθήκη επόμενου αγώνα</button>
+            <hr style="margin: 20px 0;">
+            <button class="btn-success" onclick="autoAssignCupReferees()">🤖 Αυτόματος ορισμός διαιτητών</button>
+            <button class="btn-success" style="background:#0275d8;" onclick="saveCupAssignments()">💾 Αποθήκευση ορισμών</button>
+            <button class="btn-warning" onclick="resetCupAssignments()">🔄 Επαναφορά πίνακα στην αρχική</button>
+            <button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση PDF</button>
+        </div>
     </div>
+
     <h2>🏆 Πίνακας Αγώνων & Ορισμών Κυπέλλου</h2>
     <div id="cupMatchesContainer"></div>
 
@@ -318,6 +326,13 @@
         let base = defaultTeams[cat] || [];
         let added = customTeams[cat] || [];
         return [...base, ...added];
+    }
+
+    function getAllSeniorTeams() {
+        let a = getTeamsList('A');
+        let b1 = getTeamsList('B1');
+        let b2 = getTeamsList('B2');
+        return [...new Set([...a, ...b1, ...b2])];
     }
 
     function getCustomStadiumsList() {
@@ -455,6 +470,7 @@
         }
         loadPromotionRelegationDropdowns();
         renderCustomStadiumsList();
+        renderCupMatches();
     };
 
     function showScreen(screen) {
@@ -928,14 +944,197 @@
         alert('🔄 Ο πίνακας επαναφέρθηκε επιτυχώς!');
     }
 
-    function renderCupMatches() {
-        let container = document.getElementById('cupMatchesContainer');
-        if (container) container.innerHTML = '<p>Δεν υπάρχουν ενεργοί αγώνες κυπέλλου.</p>';
+    /* === ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ (ΜΕ ΚΟΥΜΠΙ ΟΡΙΣΜΩΝ & ΔΥΝΑΜΙΚΗ ΠΡΟΣΘΗΚΗ ΑΓΩΝΩΝ) === */
+    function toggleCupDefinitions() {
+        let box = document.getElementById('cupDefinitionsContainer');
+        if (box.style.display === 'none' || box.style.display === '') {
+            box.style.display = 'block';
+            renderCupRowsBuilder();
+        } else {
+            box.style.display = 'none';
+        }
     }
 
-    function autoAssignCupReferees() { alert('Κύπελλο OK!'); }
-    function saveCupAssignments() { alert('Αποθηκεύτηκαν οι ορισμοί κυπέλλου!'); }
-    function resetCupAssignments() { localStorage.removeItem('eps_cup_assignments'); renderCupMatches(); alert('🔄 Επαναφορά κυπέλλου!'); }
+    function getCupMatchesData() {
+        let saved = localStorage.getItem('eps_cup_matches_builder');
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    function addCupMatchRow() {
+        let cupMatches = getCupMatchesData();
+        cupMatches.push({ home: '', away: '', stadium: '', datetime: '', ref0: '', ref1: '', ref2: '', observer: '', postponed: false });
+        localStorage.setItem('eps_cup_matches_builder', JSON.stringify(cupMatches));
+        renderCupRowsBuilder();
+    }
+
+    function removeCupMatchRow(index) {
+        let cupMatches = getCupMatchesData();
+        cupMatches.splice(index, 1);
+        localStorage.setItem('eps_cup_matches_builder', JSON.stringify(cupMatches));
+        renderCupRowsBuilder();
+    }
+
+    function renderCupRowsBuilder() {
+        let container = document.getElementById('cupRowsContainer');
+        if (!container) return;
+        let cupMatches = getCupMatchesData();
+        let seniorTeams = getAllSeniorTeams();
+        let customStadiums = getCustomStadiumsList();
+
+        if (cupMatches.length === 0) {
+            container.innerHTML = '<p>Δεν έχουν προστεθεί αγώνες Κυπέλλου. Πατήστε "Προσθήκη επόμενου αγώνα".</p>';
+            return;
+        }
+
+        let html = `<table><tr>
+            <th>Γηπεδούχος - Φιλοξενούμενος</th>
+            <th>🏟️ Γήπεδο</th>
+            <th>📅 Ημ/νία & Ώρα</th>
+            <th>Διαιτητής</th>
+            <th>Α' Βοηθός</th>
+            <th>Β' Βοηθός</th>
+            <th>Παρατηρητής</th>
+            <th>Αναβάλλεται</th>
+            <th>Ενέργεια</th>
+        </tr>`;
+
+        cupMatches.forEach((m, index) => {
+            let homeOptions = '<option value="">-- Γηπεδούχος --</option>' + seniorTeams.map(t => `<option value="${t}" ${t===m.home?'selected':''}>${t}</option>`).join('');
+            let awayOptions = '<option value="">-- Φιλοξενούμενος --</option>' + seniorTeams.map(t => `<option value="${t}" ${t===m.away?'selected':''}>${t}</option>`).join('');
+            let stadiumOptions = '<option value="">-- Γήπεδο --</option>' + customStadiums.map(st => `<option value="${st}" ${st===m.stadium?'selected':''}>${st}</option>`).join('');
+            let postCheck = m.postponed ? 'checked' : '';
+
+            html += `<tr>
+                <td>
+                    <select id="cup_home_${index}" style="margin-bottom:5px;">${homeOptions}</select>
+                    <select id="cup_away_${index}">${awayOptions}</select>
+                </td>
+                <td><select id="cup_stadium_${index}">${stadiumOptions}</select></td>
+                <td><input type="datetime-local" id="cup_datetime_${index}" value="${m.datetime}"></td>
+                <td><select id="cup_ref_${index}_0">${getRefereeOptions(m.ref0, false)}</select></td>
+                <td><select id="cup_ref_${index}_1">${getRefereeOptions(m.ref1, false)}</select></td>
+                <td><select id="cup_ref_${index}_2">${getRefereeOptions(m.ref2, false)}</select></td>
+                <td><select id="cup_obs_${index}">${getObserverOptions(m.observer)}</select></td>
+                <td style="text-align:center;"><input type="checkbox" id="cup_postponed_${index}" ${postCheck}></td>
+                <td><button class="btn-danger" style="padding:5px 10px; font-size:12px;" onclick="removeCupMatchRow(${index})">❌</button></td>
+            </tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+    }
+
+    function saveCupAssignments() {
+        let cupMatches = getCupMatchesData();
+        let updatedMatches = [];
+        let cupAssignmentsMap = {};
+
+        cupMatches.forEach((m, index) => {
+            let home = document.getElementById(`cup_home_${index}`).value;
+            let away = document.getElementById(`cup_away_${index}`).value;
+            let stadium = document.getElementById(`cup_stadium_${index}`).value;
+            let datetime = document.getElementById(`cup_datetime_${index}`).value;
+            let postponed = document.getElementById(`cup_postponed_${index}`).checked;
+            let ref0 = postponed ? 'ΑΝΑΒΑΛΛΕΤΑΙ' : document.getElementById(`cup_ref_${index}_0`).value;
+            let ref1 = postponed ? '' : document.getElementById(`cup_ref_${index}_1`).value;
+            let ref2 = postponed ? '' : document.getElementById(`cup_ref_${index}_2`).value;
+            let observer = postponed ? '' : document.getElementById(`cup_obs_${index}`).value;
+
+            let matchObj = { home, away, stadium, datetime, ref0, ref1, ref2, observer, postponed };
+            updatedMatches.push(matchObj);
+
+            cupAssignmentsMap[`cup_${index}`] = {
+                matchday: 'ΚΥΠΕΛΛΟ',
+                match: `${home || '-'} - ${away || '-'}`,
+                datetime,
+                stadium,
+                postponed,
+                ref0, ref1, ref2, observer
+            };
+        });
+
+        localStorage.setItem('eps_cup_matches_builder', JSON.stringify(updatedMatches));
+        localStorage.setItem('eps_cup_assignments', JSON.stringify(cupAssignmentsMap));
+        alert('💾 Οι ορισμοί Κυπέλλου αποθηκεύτηκαν επιτυχώς!');
+        renderCupMatches();
+    }
+
+    function autoAssignCupReferees() {
+        let cupMatches = getCupMatchesData();
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let allRefs = getRefereesList().filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
+        let refIdx = 0, obsIdx = 0;
+
+        cupMatches.forEach((m, index) => {
+            let postCheck = document.getElementById(`cup_postponed_${index}`);
+            if (postCheck && postCheck.checked) return;
+
+            for (let pos = 0; pos < 3; pos++) {
+                let sel = document.getElementById(`cup_ref_${index}_${pos}`);
+                if (sel && allRefs.length > 0) {
+                    sel.value = allRefs[refIdx % allRefs.length];
+                    refIdx++;
+                }
+            }
+            let obsSel = document.getElementById(`cup_obs_${index}`);
+            if (obsSel) {
+                obsSel.value = OBSERVERS[obsIdx % OBSERVERS.length];
+                obsIdx++;
+            }
+        });
+        alert('🤖 Αυτόματος ορισμός Κυπέλλου ολοκληρώθηκε!');
+    }
+
+    function resetCupAssignments() {
+        if (!confirm('🔄 Επαναφορά πίνακα Κυπέλλου στην αρχική?')) return;
+        localStorage.removeItem('eps_cup_matches_builder');
+        localStorage.removeItem('eps_cup_assignments');
+        renderCupRowsBuilder();
+        renderCupMatches();
+        alert('🔄 Ο πίνακας Κυπέλλου επαναφέρθηκε!');
+    }
+
+    function renderCupMatches() {
+        let container = document.getElementById('cupMatchesContainer');
+        if (!container) return;
+        let cupMatches = getCupMatchesData();
+        if (cupMatches.length === 0) {
+            container.innerHTML = '<p>Δεν υπάρχουν καταχωρημένοι αγώνες Κυπέλλου.</p>';
+            return;
+        }
+
+        let html = `<table><tr>
+            <th>Γηπεδούχος - Φιλοξενούμενος</th>
+            <th>🏟️ Γήπεδο</th>
+            <th>📅 Ημ/νία & Ώρα</th>
+            <th>Διαιτητής</th>
+            <th>Α' Βοηθός</th>
+            <th>Β' Βοηθός</th>
+            <th>Παρατηρητής</th>
+        </tr>`;
+
+        cupMatches.forEach(m => {
+            if (m.postponed) {
+                html += `<tr>
+                    <td><strong>${m.home || '-'}</strong> - <strong>${m.away || '-'}</strong></td>
+                    <td>${m.stadium || '-'}</td>
+                    <td>${m.datetime ? m.datetime.replace('T', ' ') : '-'}</td>
+                    <td colspan="4" style="text-align:center; font-weight:bold; color:var(--secondary);">ΑΝΑΒΑΛΛΕΤΑΙ</td>
+                </tr>`;
+            } else {
+                html += `<tr>
+                    <td><strong>${m.home || '-'}</strong> - <strong>${m.away || '-'}</strong></td>
+                    <td>${m.stadium || '-'}</td>
+                    <td>${m.datetime ? m.datetime.replace('T', ' ') : '-'}</td>
+                    <td>${m.ref0 || '-'}</td>
+                    <td>${m.ref1 || '-'}</td>
+                    <td>${m.ref2 || '-'}</td>
+                    <td>${m.observer || '-'}</td>
+                </tr>`;
+            }
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+    }
 
     function loadEvaluatedListBuilder() {
         let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
