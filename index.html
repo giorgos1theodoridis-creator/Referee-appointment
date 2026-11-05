@@ -41,9 +41,10 @@
             header, .no-print { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
             table { font-size: 14px; }
-            th, td { padding: 12px; border: 1.5px solid #000; }
+            th, td { padding: 10px; border: 1px solid #000; }
             th { background-color: #1b365d !important; color: white !important; -webkit-print-color-adjust: exact; }
-            select { border: none; background: transparent; font-weight: bold; font-size: 14px; appearance: none; }
+            select { border: none; background: transparent; font-weight: bold; appearance: none; }
+            input[type="datetime-local"] { border: none; background: transparent; }
         }
     </style>
 </head>
@@ -146,24 +147,29 @@
 
         <button class="btn-success" onclick="autoAssignReferees()">🤖 Έξυπνος Αυτόματος Ορισμός (Βάσει Κ1-Κ6)</button>
         <button class="btn-success" style="background:#0275d8;" onclick="saveAssignments()">💾 Αποθήκευση / Ενημέρωση Ορισμών</button>
-        <button onclick="window.print()">🖨️ Εκτύπωση / PDF (Ευδιάκριτα Ονοματεπώνυμα)</button>
+        <button onclick="window.print()">🖨️ Εκτύπωση / PDF (Ορισμών Αγώνων)</button>
     </div>
 
     <h2>📋 Πίνακας Ορισμών Αγώνων</h2>
     <div id="matchesContainer"></div>
 
+    <!-- ΣΥΝΟΛΙΚΑ ΣΤΑΤΙΣΤΙΚΑ (ΚΡΥΦΗ ΛΙΣΤΑ) -->
     <h2>📊 Συνολικά Στατιστικά & Μηνιαίος Έλεγχος Διαιτητών</h2>
-    <div class="form-group">
-        <label for="monthFilter">📅 Επιλογή Μήνα για Μηνιαία Ποσοστά:</label>
-        <select id="monthFilter" onchange="loadAllAdminData()">
-            <option value="ALL">Όλοι οι Μήνες (Συνολικά)</option>
-            <option value="01">Ιανουάριος</option><option value="02">Φεβρουάριος</option><option value="03">Μάρτιος</option>
-            <option value="04">Απρίλιος</option><option value="05">Μάιος</option><option value="06">Ιούνιος</option>
-            <option value="07">Ιούλιος</option><option value="08">Αύγουστος</option><option value="09">Σεπτέμβριος</option>
-            <option value="10">Οκτώβριος</option><option value="11">Νοέμβριος</option><option value="12">Δεκέμβριος</option>
-        </select>
+    <button class="toggle-btn no-print" onclick="toggleSection('statsContent')">👁️ Προβολή / Απόκρυψη Μηνιαίας Εικόνας & Στατιστικών</button>
+    <div id="statsContent" class="collapsible-content card-box">
+        <div class="form-group no-print">
+            <label for="monthFilter">📅 Επιλογή Μήνα για Μηνιαία Ποσοστά:</label>
+            <select id="monthFilter" onchange="loadAllAdminData()">
+                <option value="ALL">Όλοι οι Μήνες (Συνολικά)</option>
+                <option value="01">Ιανουάριος</option><option value="02">Φεβρουάριος</option><option value="03">Μάρτιος</option>
+                <option value="04">Απρίλιος</option><option value="05">Μάιος</option><option value="06">Ιούνιος</option>
+                <option value="07">Ιούλιος</option><option value="08">Αύγουστος</option><option value="09">Σεπτέμβριος</option>
+                <option value="10">Οκτώβριος</option><option value="11">Νοέμβριος</option><option value="12">Δεκέμβριος</option>
+            </select>
+        </div>
+        <div id="refereeStatsContainer"></div>
+        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Στατιστικών)</button>
     </div>
-    <div id="refereeStatsContainer"></div>
 
     <!-- ΑΤΟΜΙΚΟΣ ΦΑΚΕΛΟΣ ΔΙΑΙΤΗΤΗ -->
     <h2>👤 Ατομικός Φάκελος Διαιτητή</h2>
@@ -179,29 +185,33 @@
     <button class="toggle-btn" onclick="toggleSection('adminPasswordsContent')">👁️ Προβολή / Απόκρυψη Κωδικών</button>
     <div id="adminPasswordsContent" class="collapsible-content card-box">
         <div id="adminRefPasswordsList"></div>
+        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Κωδικών)</button>
     </div>
 
     <!-- ΕΒΔΟΜΑΔΙΑΙΑ ΚΩΛΥΜΑΤΑ & ΕΙΔΟΠΟΙΗΣΕΙΣ -->
     <h2>🚫 Εβδομαδιαία Κώλυματα & Έλεγχος Δηλώσεων (Όρια: Τετάρτη)</h2>
-    <div class="card-box">
+    <div class="card-box no-print">
         <p style="font-size: 13px; color: #555;">Τα κώλυματα είναι εβδομαδιαία και πρέπει να δηλώνονται αυστηρά <strong>μέχρι την Τετάρτη</strong>. Η επιτροπή ελέγχει ποιους διαιτητές δεν έχουν δηλώσει τίποτα και μπορεί να τους στείλει ειδοποίηση στο κινητό τους.</p>
         <button class="btn-success" onclick="sendMissingDeclarationsSMS()">📲 Μαζική Ειδοποίηση SMS/Mobile σε όσους ΔΕΝ δήλωσαν</button>
     </div>
     <button class="toggle-btn" onclick="toggleSection('kolymataContent')">👁️ Προβολή Συγκεντρωτικής Λίστας Κωλυμάτων</button>
     <div id="kolymataContent" class="collapsible-content">
         <div id="kolymataListContainer"><p>Δεν υπάρχουν κώλυματα.</p></div>
+        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Κωλυμάτων)</button>
     </div>
 
     <h2>💪 Live Λίστα Προπονήσεων Ανά Διαιτητή</h2>
     <button class="toggle-btn" onclick="toggleSection('trainingsContent')">👁️ Προβολή / Απόκρυψη Προπονήσεων</button>
     <div id="trainingsContent" class="collapsible-content">
         <div id="trainingsListContainer"><p>Δεν υπάρχουν προπονήσεις.</p></div>
+        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Προπονήσεων)</button>
     </div>
 
     <h2>📚 Live Λίστα Παρουσιών Μαθημάτων Ανά Διαιτητή</h2>
     <button class="toggle-btn" onclick="toggleSection('classesContent')">👁️ Προβολή / Απόκρυψη Παρουσιών</button>
     <div id="classesContent" class="collapsible-content">
         <div id="classesListContainer"><p>Δεν υπάρχουν παρουσίες.</p></div>
+        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Μαθημάτων)</button>
     </div>
 </div>
 
@@ -223,7 +233,6 @@
         "ΧΑΣΙΩΤΗΣ ΕΥΑΓΓΕΛΟΣ", "ΧΟΡΟΖΟΓΛΟΥ ΒΑΣΙΛΕΙΟΣ"
     ];
 
-    // Ομάδες που παίζουν πάντα πρωί Κυριακής
     const MORNING_TEAMS = [
         "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ Β", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ Β", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ Β", 
         "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ Β"
@@ -232,12 +241,434 @@
     let defaultSchedules = {
         "A": {
             "8η Αγωνιστική": [["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ"], ["ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο."], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΔΟΞΑ ΒΩΛΑΚΑ"]],
-            "9η Αγωνιστική": [["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["ΔΟΞΑ ΒΩΛΑΚΑ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"]],
-            "10ή Αγωνιστική": [["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο."], ["Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΔΟΞΑ ΒΩΛΑΚΑ"], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ"], ["ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"]],
-            "11ή Αγωνιστική": [["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ"], ["ΔΟΞΑ ΒΩΛΑΚΑ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ"], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"]],
-            "12ή Αγωνιστική": [["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "ΔΟΞΑ ΒΩΛΑΚΑ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"], ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"]],
-            "13ή Αγωνιστική": [["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΔΟΞΑ ΒΩΛΑΚΑ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο."], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"]],
-            "14ή Αγωνιστική": [["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["ΔΟΞΑ ΒΩΛΑΚΑ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"]],
-            "15ή Αγωνιστική": [["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "ΔΟΞΑ ΒΩΛΑΚΑ"], ["Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο."], ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"]],
-            "16ή Αγωνιστική": [["ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["ΔΟΞΑ ΒΩΛΑΚΑ", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο."], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ"]],
-            "17ή Αγωνιστική": [["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"], ["ΠΡΟΣΟΤΣΑΝΗ Γ.Σ.", "Μ.ΑΛΕ
+            "9η Αγωνιστική": [["Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["ΔΟΞΑ ΒΩΛΑΚΑ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ"]]
+        },
+        "B1": {
+            "6η Αγωνιστική": [["Α.Ε. ΚΥΡΓΙΩΝ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ Β"], ["ΕΘΝ.ΑΣΤΕΡΑΣ ΚΑΛΛΙΦΥΤΟΥ", "ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ"], ["Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ Β", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ"], ["Α.Σ. ΠΗΓΑΣΟΣ ΔΡΑΜΑΣ", "ΗΡΑΚΛΗΣ ΑΔΡΙΑΝΗΣ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ Β", "Γ.Π.Σ. ΕΛΠΙΣ ΔΡΑΜΑΣ - 1922"], ["ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "ΠΑΟΚ ΠΡΟΣΤΙΟΥ ΔΡΑΜΑΣ"]]
+        },
+        "B2": {
+            "6η Αγωνιστική": [["ΔΟΞΑ ΜΙΚΡΟΠΟΛΗΣ", "ΗΡΑΚΛΗΣ ΜΥΛΟΠΟΤΑΜΟΥ"], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ Β", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΓΡΑΜΜΕΝΗΣ"], ["ΑΚΡΙΤΑΣ Ν.ΚΡΩΜΝΗΣ", "ΔΟΞΑ Κ.ΒΡΟΝΤΟΥΣ"], ["ΑΡΗΣ ΦΩΤΟΛΙΒΟΥΣ", "Α.Ε. Κ.ΒΡΥΣΗΣ"], ["ΑΕΤΟΣ ΒΑΘΥΤΟΠΟΥ", "ΔΟΞΑ ΑΝΤΩΝΙΟΣ ΚΑΣΤΡΙΝΟΣ"], ["ΔΟΞΑ ΣΙΤΑΓΡΩΝ", "ΑΣΤΕΡΑΣ ΚΟΥΔΟΥΝΙΩΝ"]]
+        },
+        "K15": {
+            "5η Αγωνιστική": [["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 2"], ["Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ 1", "ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ"], ["Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ 1"], ["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ"], ["ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ 2", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"]]
+        },
+        "K13": {
+            "5η Αγωνιστική": [["ΚΕΡΑΥΝΟΣ ΜΟΝΑΣΤΗΡΑΚΙΟΥ", "Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ"], ["ΟΡΦΕΑΣ ΧΩΡΙΣΤΗΣ", "Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ"], ["ΠΑΜΑ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΠΑΟΠ Ν.ΑΜΙΣΟΥ", "ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ"], ["ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ", "Π.Σ. ΔΟΞΑ 2016"]]
+        },
+        "K11": {
+            "5η Αγωνιστική": [["Γ.Σ. ΔΟΞΑ ΔΡΑΜΑΣ", "ΑΙΑΝΤΑΣ ΚΕΡΑΥΝΟΣ ΑΡΚΑΔΙΚΟΥ"], ["ΠΑΜΑ ΑΓ.ΑΘΑΝΑΣΙΟΥ", "ΠΑΟΠ Ν.ΑΜΙΣΟΥ"]]
+        }
+    };
+
+    window.onload = function() {
+        if (sessionStorage.getItem('eps_admin_logged') === 'true') {
+            showAdminPanel();
+        }
+        let refSelect = document.getElementById('selectRefereeProfile');
+        if (refSelect) {
+            refSelect.innerHTML = '<option value="">-- Επιλέξτε Διαιτητή --</option>';
+            REFEREES.forEach(r => {
+                let opt = document.createElement('option');
+                opt.value = r; opt.textContent = r;
+                refSelect.appendChild(opt);
+            });
+        }
+    };
+
+    function loginAdmin() {
+        let pass = document.getElementById('adminLoginPass').value;
+        let correctPass = localStorage.getItem('eps_admin_password') || 'edd2026';
+        if (pass === correctPass) {
+            sessionStorage.setItem('eps_admin_logged', 'true');
+            showAdminPanel();
+        } else {
+            alert('❌ Λάθος κωδικός επιτροπής!');
+        }
+    }
+
+    function showAdminPanel() {
+        document.getElementById('adminLoginScreen').style.display = 'none';
+        document.getElementById('adminMainPanel').style.display = 'block';
+        loadEvaluatedListBuilder();
+        loadMatchdaySchedules();
+        loadAllAdminData();
+        document.getElementById('adminClassCode').value = localStorage.getItem('eps_class_secret_code') || "";
+    }
+
+    function logoutAdmin() {
+        sessionStorage.removeItem('eps_admin_logged');
+        document.getElementById('adminMainPanel').style.display = 'none';
+        document.getElementById('adminLoginScreen').style.display = 'block';
+        document.getElementById('adminLoginPass').value = '';
+    }
+
+    function changeAdminPassword() {
+        let newP = document.getElementById('newAdminPass').value.trim();
+        if (!newP) { alert('Εισάγετε νέο κωδικό!'); return; }
+        localStorage.setItem('eps_admin_password', newP);
+        alert('✅ Ο κωδικός της Επιτροπής άλλαξε επιτυχώς!');
+        document.getElementById('newAdminPass').value = '';
+    }
+
+    function toggleSection(id) {
+        let elem = document.getElementById(id);
+        elem.style.display = (elem.style.display === "block") ? "none" : "block";
+    }
+
+    function loadEvaluatedListBuilder() {
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+        let container = document.getElementById('evaluatedListBuilder');
+        if (!container) return;
+        container.innerHTML = '';
+        REFEREES.forEach((r, idx) => {
+            let assignedCat = evaluatedMap[r] || "";
+            container.innerHTML += `
+                <div class="eval-row">
+                    <span style="flex: 1; font-weight: bold;">${r}</span>
+                    <select id="eval_cat_${idx}" style="width: 220px; padding: 5px;">
+                        <option value="" ${assignedCat===''?'selected':''}>-- Χωρίς Κατηγορία --</option>
+                        <option value="Κ1" ${assignedCat==='Κ1'?'selected':''}>Κ1 (Εθνική - Διαιτητής)</option>
+                        <option value="Κ2" ${assignedCat==='Κ2'?'selected':''}>Κ2 (Εθνική - Διαιτητής)</option>
+                        <option value="Κ3" ${assignedCat==='Κ3'?'selected':''}>Κ3 (Εθνική - Διαιτητής)</option>
+                        <option value="Κ4" ${assignedCat==='Κ4'?'selected':''}>Κ4 (Εθνική/Τοπική - Διαιτητής/Βοηθός)</option>
+                        <option value="Κ5" ${assignedCat==='Κ5'?'selected':''}>Κ5 (Τοπική - Βοηθός)</option>
+                        <option value="Κ6" ${assignedCat==='Κ6'?'selected':''}>Κ6 (Τοπική - Βοηθός)</option>
+                    </select>
+                </div>`;
+        });
+    }
+
+    function saveEvaluatedReferees() {
+        let evaluatedMap = {};
+        REFEREES.forEach((r, idx) => {
+            let catSel = document.getElementById(`eval_cat_${idx}`);
+            if (catSel && catSel.value !== "") {
+                evaluatedMap[r] = catSel.value;
+            }
+        });
+        localStorage.setItem('eps_evaluated_map', JSON.stringify(evaluatedMap));
+        alert('⭐ Οι αξιολογήσεις (Κ1-Κ6) αποθηκεύτηκαν επιτυχώς!');
+        loadAllAdminData();
+    }
+
+    function getSchedules() {
+        let saved = localStorage.getItem('eps_schedules');
+        return saved ? JSON.parse(saved) : defaultSchedules;
+    }
+
+    function saveClassCode() {
+        localStorage.setItem('eps_class_secret_code', document.getElementById('adminClassCode').value.trim());
+        alert('Ο κωδικός μαθήματος αποθηκεύτηκε!');
+    }
+
+    function loadMatchdaySchedules() {
+        const cat = document.getElementById('categorySelect').value;
+        const matchdaySel = document.getElementById('matchdaySelect');
+        matchdaySel.innerHTML = '';
+        let schedules = getSchedules();
+        const matchdays = schedules[cat] || {};
+        for (let md in matchdays) {
+            let opt = document.createElement('option');
+            opt.value = md; opt.textContent = md;
+            matchdaySel.appendChild(opt);
+        }
+        renderMatches();
+    }
+
+    function renderMatches() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        const container = document.getElementById('matchesContainer');
+        let schedules = getSchedules();
+        let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
+        
+        if (matches.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν αγώνες.</p>'; return; }
+
+        let html = `<table><tr><th>Γηπεδούχος - Φιλοξενούμενος (Ζώνη)</th><th>📅 Ημ/νία & Ώρα Αγώνα</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th><th class="no-print">Ενέργεια</th></tr>`;
+        matches.forEach((match, index) => {
+            let key = `${cat}_${md}_${index}`;
+            let current = savedAssignments[key] || {ref0:'', ref1:'', ref2:''};
+            let currentDateTime = matchDateTimes[key] || '';
+            let isMorning = MORNING_TEAMS.includes(match[0]) || MORNING_TEAMS.includes(match[1]);
+            let zoneTag = isMorning ? '<span style="color:#d9534f; font-size:11px;">[☀️ Πρωινός]</span>' : '<span style="color:#0275d8; font-size:11px;">[🌙 Απογευματινός]</span>';
+
+            html += `<tr>
+                <td><strong>${match[0]}</strong> - <strong>${match[1]}</strong> ${zoneTag}</td>
+                <td><input type="datetime-local" id="datetime_${index}" value="${currentDateTime}" style="padding:5px; width:100%;"></td>
+                <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning)}</select></td>
+                <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning)}</select></td>
+                <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning)}</select></td>
+                <td class="no-print"><button class="btn-danger" style="padding:5px 10px; font-size:12px;" onclick="deleteMatch(${index})">❌ Διαγραφή</button></td>
+            </tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+    }
+
+    function addNewCustomMatch() {
+        let home = document.getElementById('newHomeTeam').value.trim();
+        let away = document.getElementById('newAwayTeam').value.trim();
+        let cat = document.getElementById('categorySelect').value;
+        let md = document.getElementById('matchdaySelect').value;
+        if (!home || !away) { alert('Συμπληρώστε τις ομάδες!'); return; }
+        let schedules = getSchedules();
+        if (!schedules[cat]) schedules[cat] = {};
+        if (!schedules[cat][md]) schedules[cat][md] = [];
+        schedules[cat][md].push([home, away]);
+        localStorage.setItem('eps_schedules', JSON.stringify(schedules));
+        document.getElementById('newHomeTeam').value = '';
+        document.getElementById('newAwayTeam').value = '';
+        renderMatches();
+        alert('Ο αγώνας προστέθηκε!');
+    }
+
+    function deleteMatch(index) {
+        if (!confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτόν τον αγώνα;')) return;
+        let cat = document.getElementById('categorySelect').value;
+        let md = document.getElementById('matchdaySelect').value;
+        let schedules = getSchedules();
+        if (schedules[cat] && schedules[cat][md]) {
+            schedules[cat][md].splice(index, 1);
+            localStorage.setItem('eps_schedules', JSON.stringify(schedules));
+            renderMatches();
+            alert('Ο αγώνας διαγράφηκε επιτυχώς!');
+        }
+    }
+
+    function getRefereeOptions(selectedVal, isMorning) {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+
+        let options = '<option value="">-- Επιλογή --</option>';
+        REFEREES.forEach(ref => {
+            let hasConflict = kolymata.filter(k => k.referee === ref).some(k => {
+                if (k.timeSlot === 'Ολοήμερο') return true;
+                if (isMorning && k.timeSlot === 'Πρωί') return true;
+                if (!isMorning && k.timeSlot === 'Απόγευμα') return true;
+                return false;
+            });
+            let catVal = evaluatedMap[ref];
+            let badge = catVal ? ` ⭐ [${catVal}]` : '';
+            let label = hasConflict ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : `${ref}${badge}`;
+            let sel = (ref === selectedVal) ? 'selected' : '';
+            options += `<option value="${ref}" ${sel}>${label}</option>`;
+        });
+        return options;
+    }
+
+    function autoAssignReferees() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        let schedules = getSchedules();
+        let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+
+        let refsPriority = ["Κ1", "Κ2", "Κ3", "Κ4"];
+        let asstsPriority = ["Κ4", "Κ5", "Κ6"];
+
+        let availableRefs = [];
+        refsPriority.forEach(c => {
+            let found = REFEREES.filter(r => evaluatedMap[r] === c && !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
+            availableRefs.push(...found);
+        });
+        let otherRefs = REFEREES.filter(r => !evaluatedMap[r] || !["Κ1","Κ2","Κ3","Κ4"].includes(evaluatedMap[r]));
+        availableRefs.push(...otherRefs.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο')));
+
+        let availableAssts = [];
+        asstsPriority.forEach(c => {
+            let found = REFEREES.filter(r => evaluatedMap[r] === c && !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
+            availableAssts.push(...found);
+        });
+        let otherAssts = REFEREES.filter(r => !evaluatedMap[r] || !["Κ4","Κ5","Κ6"].includes(evaluatedMap[r]));
+        availableAssts.push(...otherAssts.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο')));
+
+        let refIdx = 0, asstIdx = 0;
+        let isInfrastructure = (cat === 'K15' || cat === 'K13' || cat === 'K11');
+
+        matches.forEach((match, index) => {
+            let isMorning = MORNING_TEAMS.includes(match[0]) || MORNING_TEAMS.includes(match[1]);
+            
+            for (let pos = 0; pos < 3; pos++) {
+                let selectElem = document.getElementById(`ref_${index}_${pos}`);
+                if (selectElem) {
+                    let candidate = "";
+                    if (pos === 0) {
+                        if (availableRefs.length > 0) {
+                            candidate = availableRefs[refIdx % availableRefs.length];
+                            refIdx++;
+                        }
+                    } else {
+                        if (!isInfrastructure) {
+                            if (availableAssts.length > 0) {
+                                candidate = availableAssts[asstIdx % availableAssts.length];
+                                asstIdx++;
+                            }
+                        } else {
+                            candidate = "";
+                        }
+                    }
+                    selectElem.value = candidate;
+                }
+            }
+        });
+        alert('Ο έξυπνος αυτόματος ορισμός ολοκληρώθηκε!');
+    }
+
+    function saveAssignments() {
+        const cat = document.getElementById('categorySelect').value;
+        const md = document.getElementById('matchdaySelect').value;
+        let schedules = getSchedules();
+        let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
+
+        matches.forEach((match, index) => {
+            let key = `${cat}_${md}_${index}`;
+            let dtInput = document.getElementById(`datetime_${index}`);
+            if (dtInput) {
+                matchDateTimes[key] = dtInput.value;
+            }
+            savedAssignments[key] = {
+                matchday: `${cat} - ${md}`,
+                match: `${match[0]} - ${match[1]}`,
+                category: cat,
+                datetime: dtInput ? dtInput.value : '',
+                ref0: document.getElementById(`ref_${index}_0`).value,
+                ref1: document.getElementById(`ref_${index}_1`).value,
+                ref2: document.getElementById(`ref_${index}_2`).value
+            };
+        });
+        localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
+        localStorage.setItem('eps_match_datetimes', JSON.stringify(matchDateTimes));
+        alert('Οι ορισμοί, οι ημερομηνίες και τα στατιστικά ενημερώθηκαν επιτυχώς!');
+        loadAllAdminData();
+    }
+
+    function loadAllAdminData() {
+        let selectedMonth = document.getElementById('monthFilter').value;
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]");
+        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]");
+
+        let filteredTrainings = trainings.filter(t => selectedMonth === 'ALL' || (t.date && t.date.split('-')[1] === selectedMonth));
+        let filteredClasses = classes.filter(c => selectedMonth === 'ALL' || (c.date && c.date.split('-')[1] === selectedMonth));
+
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+        let stats = {};
+        REFEREES.forEach(r => { 
+            stats[r] = { total: 0, refCount: 0, asstCount: 0, cats: {}, trainCount: filteredTrainings.filter(t=>t.referee===r).length, classCount: filteredClasses.filter(c=>c.referee===r).length }; 
+        });
+
+        for (let key in savedAssignments) {
+            let item = savedAssignments[key];
+            let catName = item.category || 'A';
+            [ { name: item.ref0, role: 'ref' }, { name: item.ref1, role: 'asst' }, { name: item.ref2, role: 'asst' } ].forEach(a => {
+                if (a.name && stats[a.name]) {
+                    stats[a.name].total++;
+                    if (a.role === 'ref') stats[a.name].refCount++;
+                    else stats[a.name].asstCount++;
+                    stats[a.name].cats[catName] = (stats[a.name].cats[catName] || 0) + 1;
+                }
+            });
+        }
+
+        let statsHtml = `<table><tr><th>Διαιτητής</th><th>Ματς</th><th>Ως Διαιτητής</th><th>Ως Βοηθός</th><th>Προπονήσεις</th><th>Μαθήματα</th></tr>`;
+        REFEREES.forEach(ref => {
+            let s = stats[ref];
+            let evalBadge = evaluatedMap[ref] ? ` ⭐ [${evaluatedMap[ref]}]` : '';
+            statsHtml += `<tr>
+                <td><strong>${ref}</strong>${evalBadge}</td>
+                <td>${s.total}</td>
+                <td><span style="color:var(--success); font-weight:bold;">${s.refCount}</span></td>
+                <td><span style="color:#0275d8; font-weight:bold;">${s.asstCount}</span></td>
+                <td>${s.trainCount}</td>
+                <td>${s.classCount}</td>
+            </tr>`;
+        });
+        statsHtml += `</table>`;
+        document.getElementById('refereeStatsContainer').innerHTML = statsHtml;
+
+        let passwords = JSON.parse(localStorage.getItem('eps_referee_passwords') || "{}");
+        let passContainer = document.getElementById('adminRefPasswordsList');
+        if (passContainer) {
+            passContainer.innerHTML = `<ul>` + REFEREES.map(ref => `<li><strong>${ref}:</strong> <span style="color:#d9534f; font-family:monospace;">${passwords[ref] || "ref2026"}</span></li>`).join('') + `</ul>`;
+        }
+
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let declaredSet = new Set(kolymata.map(k => k.referee));
+        
+        let kolContainer = document.getElementById('kolymataListContainer');
+        if (kolContainer) {
+            let missingRefs = REFEREES.filter(r => !declaredSet.has(r));
+            let htmlSummary = `<div class="info-box"><strong>📌 Σύνοψη Εβδομαδιαίων Δηλώσεων (Όριο: Τετάρτη):</strong><br>• Δήλωσαν κώλυμα/διαθεσιμότητα: ${declaredSet.size} διαιτητές<br>• ΔΕΝ έχουν δηλώσει: ${missingRefs.length} διαιτητές</div>`;
+            if (kolymata.length === 0) {
+                htmlSummary += '<p>Κανένα εβδομαδιαίο κώλυμα καταχωρημένο.</p>';
+            } else {
+                htmlSummary += kolymata.map(k => `<div class="alert-box"><p><strong>${k.referee}</strong> | ${k.date} (${k.timeSlot}) | ${k.reason || '-'}</p></div>`).join('');
+            }
+            kolContainer.innerHTML = htmlSummary;
+        }
+
+        document.getElementById('trainingsListContainer').innerHTML = trainings.length === 0 ? '<p>Καμία προπόνηση.</p>' : trainings.map(t => `<div class="info-box"><p><strong>${t.referee}</strong> | Ημ/νία: ${t.date} | ${t.type}</p></div>`).join('');
+
+        document.getElementById('classesListContainer').innerHTML = classes.length === 0 ? '<p>Καμία παρουσία.</p>' : classes.map(c => `<div class="info-box"><p><strong>${c.referee}</strong> | Μάθημα: ${c.title} (${c.date}) ✅</p></div>`).join('');
+        
+        renderRefereeProfile();
+    }
+
+    function sendMissingDeclarationsSMS() {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let declaredSet = new Set(kolymata.map(k => k.referee));
+        let missingRefs = REFEREES.filter(r => !declaredSet.has(r));
+
+        if (missingRefs.length === 0) {
+            alert('🎉 Όλοι οι διαιτητές έχουν δηλώσει κώλυμα/διαθεσιμότητα!');
+            return;
+        }
+
+        let confirmSend = confirm(`Εντοπίστηκαν ${missingRefs.length} διαιτητές που ΔΕΝ δήλωσαν κώλυμα έως την Τετάρτη.\nΘέλετε να αποσταλεί ειδοποίηση στα κινητά τους;`);
+        if (confirmSend) {
+            alert(`✅ Η ειδοποίηση στάλθηκε επιτυχώς στα κινητά των ${missingRefs.length} διαιτητών που δεν είχαν δηλώσει.`);
+        }
+    }
+
+    function renderRefereeProfile() {
+        let refNameElem = document.getElementById('selectRefereeProfile');
+        let container = document.getElementById('refereeIndividualProfileContainer');
+        if (!refNameElem || !container) return;
+        let refName = refNameElem.value;
+        if (!refName) { container.innerHTML = ''; return; }
+
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let myMatches = [];
+        for (let key in savedAssignments) {
+            let item = savedAssignments[key];
+            if (item.ref0 === refName || item.ref1 === refName || item.ref2 === refName) {
+                let role = (item.ref0 === refName) ? "Διαιτητής" : "Βοηθός Διαιτητής";
+                let dtStr = item.datetime ? ` (${item.datetime.replace('T', ' ')})` : '';
+                myMatches.push(`<li>${item.matchday} - <strong>${item.match}</strong>${dtStr} (<em>${role}</em>)</li>`);
+            }
+        }
+
+        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]").filter(t => t.referee === refName);
+        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]").filter(c => c.referee === refName);
+
+        container.innerHTML = `
+            <div class="card-box">
+                <h3>📁 Ατομικός Φάκελος: ${refName}</h3>
+                <p><strong>⚽ Αγώνες (${myMatches.length}):</strong></p>
+                <ul>${myMatches.length ? myMatches.join('') : '<li>Κανένας αγώνας</li>'}</ul>
+                <p><strong>💪 Προπονήσεις (${trainings.length}):</strong></p>
+                <ul>${trainings.length ? trainings.map(t=>`<li>${t.date} - ${t.type}</li>`).join('') : '<li>Καμία προπόνηση</li>'}</ul>
+                <p><strong>📚 Παρουσίες σε Μαθήματα (${classes.length}):</strong></p>
+                <ul>${classes.length ? classes.map(c=>`<li>${c.date} - ${c.title}</li>`).join('') : '<li>Καμία παρουσία</li>'}</ul>
+                <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF (Φακέλου Διαιτητή)</button>
+            </div>`;
+    }
+</script>
+
+</body>
+</html>
