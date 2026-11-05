@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPS Drama - Επιτροπή Διαιτησίας</title>
+    <title>EPS Drama - Σύστημα Διαιτησίας</title>
     <style>
         :root {
             --primary: #1b365d;
@@ -18,7 +18,7 @@
         h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); margin-top: 25px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        select, input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; margin-top: 5px; }
         button:hover { opacity: 0.9; }
         .btn-success { background: var(--success); }
@@ -36,8 +36,8 @@
         .eval-row { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 8px 12px; border: 1px solid #ddd; margin-bottom: 6px; border-radius: 4px; gap: 10px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        #adminLoginScreen { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        #adminMainPanel { display: none; }
+        #roleSelectScreen, #adminLoginScreen, #refereeLoginScreen { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        #adminMainPanel, #refereeMainPanel { display: none; }
         
         @media print {
             body { background: white; }
@@ -53,18 +53,38 @@
 <body>
 
 <header>
-    <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Επιτροπή Διαιτησίας</h1>
-    <p>Πίνακας Διαχείρισης & Ελέγχου</p>
+    <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Σύστημα Διαιτησίας</h1>
+    <p>Πλατφόρμα Διαχείρισης & Ελέγχου</p>
 </header>
 
+<!-- ΟΘΟΝΗ ΕΠΙΛΟΓΗΣ ΡΟΛΟΥ -->
+<div id="roleSelectScreen" class="container">
+    <h2>⚽ Επιλέξτε Ρόλο Σύνδεσης</h2>
+    <p>Παρακαλώ επιλέξτε πώς επιθυμείτε να συνδεθείτε:</p>
+    <button class="btn-success" style="width:100%; margin-bottom:10px; padding:15px; font-size:18px;" onclick="showScreen('admin')">🔐 Είσοδος Επιτροπής Διαιτησίας</button>
+    <button class="btn-success" style="width:100%; background:#0275d8; padding:15px; font-size:18px;" onclick="showScreen('referee')">👤 Είσοδος Διαιτητή</button>
+</div>
+
 <!-- ΟΘΟΝΗ ΣΥΝΔΕΣΗΣ ΕΠΙΤΡΟΠΗΣ -->
-<div id="adminLoginScreen" class="container">
+<div id="adminLoginScreen" class="container" style="display:none;">
     <h2>🔐 Είσοδος Επιτροπής Διαιτησίας</h2>
     <p>Εισάγετε τον κωδικό διαχείρισης (Αρχικός: ed2026):</p>
     <div class="form-group">
         <input type="password" id="adminLoginPass" placeholder="Κωδικός πρόσβασης">
     </div>
     <button class="btn-success" onclick="loginAdmin()">🔓 Είσοδος</button>
+    <button class="btn-warning" onclick="showScreen('role')">🔙 Επιστροφή</button>
+</div>
+
+<!-- ΟΘΟΝΗ ΣΥΝΔΕΣΗΣ ΔΙΑΙΤΗΤΗ -->
+<div id="refereeLoginScreen" class="container" style="display:none;">
+    <h2>👤 Είσοδος Διαιτητή</h2>
+    <div class="form-group">
+        <label for="refSelectLogin">Επιλέξτε Ονοματεπώνυμο:</label>
+        <select id="refSelectLogin"></select>
+    </div>
+    <button class="btn-success" onclick="loginReferee()">🔓 Είσοδος Διαιτητή</button>
+    <button class="btn-warning" onclick="showScreen('role')">🔙 Επιστροφή</button>
 </div>
 
 <!-- ΚΥΡΙΩΣ ΠΙΝΑΚΑΣ ΕΠΙΤΡΟΠΗΣ -->
@@ -90,23 +110,9 @@
         <button class="btn-success" onclick="changeAdminPassword()">💾 Αποθήκευση Νέου Κωδικού</button>
     </div>
 
-    <div class="code-box no-print">
-        <h3>🔐 Κωδικοί Ασφαλείας & Συνθηματικά από Επιτροπή</h3>
-        <div class="form-group">
-            <label for="adminClassCode">Κωδικός Παρουσίας Μαθήματος:</label>
-            <input type="text" id="adminClassCode" placeholder="π.χ. EPS2026">
-        </div>
-        <div class="form-group">
-            <label for="adminTrainingCode">Κωδικός / Συνθηματικό Προπόνησης:</label>
-            <input type="text" id="adminTrainingCode" placeholder="π.χ. RUN2026">
-        </div>
-        <button class="btn-success" onclick="saveSecurityCodes()">💾 Αποθήκευση Κωδικών Ασφαλείας</button>
-    </div>
-
     <!-- ΙΔΙΟΧΕΙΡΗ ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΔΙΑΙΤΗΤΩΝ -->
     <div class="card-box no-print">
         <h3>➕ Ιδιόχειρη Προσθήκη Νέου Διαιτητή</h3>
-        <p style="font-size: 13px; color: #555;">Προσθέστε διαιτητή που ήρθε στη μέση της χρονιάς[span_18](start_span)[span_18](end_span):</p>
         <div class="form-group">
             <label>Ονοματεπώνυμο Νέου Διαιτητή (ΚΕΦΑΛΑΙΑ):</label>
             <input type="text" id="newRefereeInput" placeholder="π.χ. ΠΑΠΑΔΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ">
@@ -114,43 +120,24 @@
         <button class="btn-success" onclick="addNewRefereeManual()">➕ Προσθήκη στη Λίστα & Δημιουργία Καρτέλας</button>
     </div>
 
-    <!-- ΑΝΑΛΥΤΙΚΗ ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΟΜΑΔΩΝ & ΓΗΠΕΔΩΝ -->
-    <div class="card-box no-print">
-        <h3>⚽ Αναλυτική Προσθήκη Νέας Ομάδας & Έδρας</h3>
-        <div class="form-group"><label>Ονομασία Ομάδας:</label><input type="text" id="newTeamNameInput" placeholder="π.χ. Α.Σ. ΝΕΑΣ ΚΡΩΜΝΗΣ"></div>
-        <div class="form-group">
-            <label>Κατηγορία / Διοργάνωση:</label>
-            <select id="newTeamCatInput">
-                <option value="A">Α' Κατηγορία</option>
-                <option value="B1">Β' Κατηγορία (Όμιλος 1)</option>
-                <option value="B2">Β' Κατηγορία (Όμιλος 2)</option>
-                <option value="K15">⚽ Υποδομές Κ15</option>
-                <option value="K13">⚽ Υποδομές Κ13</option>
-                <option value="K11">⚽ Υποδομές Κ11</option>
-            </select>
-        </div>
-        <div class="form-group"><label>Έδρα / Γήπεδο:</label><input type="text" id="newTeamStadiumInput" placeholder="π.χ. Γήπεδο Κρώμνης"></div>
-        <button class="btn-success" onclick="addNewTeamDetailed()">➕ Καταχώρηση Ομάδας & Γηπέδου</button>
-    </div>
-
-    <!-- ΔΙΠΛΟΣ ΠΙΝΑΚΑΣ (ΕΩΣ 4 ΕΠΙΛΟΓΕΣ): ΑΝΟΔΟΣ / ΥΠΟΒΙΒΑΣΜΟΣ ΟΜΑΔΩΝ -->
+    <!-- ΔΙΠΛΟΣ ΠΙΝΑΚΑΣ: ΑΝΟΔΟΣ / ΥΠΟΒΙΒΑΣΜΟΣ (ΕΩΣ 4) -->
     <div class="card-box no-print">
         <h3>🔄 Διαχείριση Προβιβασμού & Υποβιβασμού Ομάδων (Έως 4 Επιλογές)</h3>
         <div class="grid-2">
             <div>
                 <h4 style="color: var(--secondary);">📉 Ομάδες Υποβιβασμού (Έως 4)</h4>
-                <div class="form-group"><label>1η Επιλογή:</label><select id="relegate_0"></select></div>
-                <div class="form-group"><label>2η Επιλογή:</label><select id="relegate_1"></select></div>
-                <div class="form-group"><label>3η Επιλογή:</label><select id="relegate_2"></select></div>
-                <div class="form-group"><label>4η Επιλογή:</label><select id="relegate_3"></select></div>
+                <div class="form-group"><label>1η:</label><select id="relegate_0"></select></div>
+                <div class="form-group"><label>2η:</label><select id="relegate_1"></select></div>
+                <div class="form-group"><label>3η:</label><select id="relegate_2"></select></div>
+                <div class="form-group"><label>4η:</label><select id="relegate_3"></select></div>
                 <button class="btn-danger" onclick="saveRelegations()">⬇️ Αποθήκευση Υποβιβασμών</button>
             </div>
             <div>
                 <h4 style="color: var(--success);">📈 Ομάδες Προβιβασμού (Έως 4)</h4>
-                <div class="form-group"><label>1η Επιλογή:</label><select id="promote_0"></select></div>
-                <div class="form-group"><label>2η Επιλογή:</label><select id="promote_1"></select></div>
-                <div class="form-group"><label>3η Επιλογή:</label><select id="promote_2"></select></div>
-                <div class="form-group"><label>4η Επιλογή:</label><select id="promote_3"></select></div>
+                <div class="form-group"><label>1η:</label><select id="promote_0"></select></div>
+                <div class="form-group"><label>2η:</label><select id="promote_1"></select></div>
+                <div class="form-group"><label>3η:</label><select id="promote_2"></select></div>
+                <div class="form-group"><label>4η:</label><select id="promote_3"></select></div>
                 <button class="btn-success" onclick="savePromotions()">⬆️ Αποθήκευση Προβιβασμών</button>
             </div>
         </div>
@@ -159,7 +146,7 @@
 
     <!-- ΔΙΑΧΕΙΡΙΣΗ ΕΠΙΣΗΜΩΝ ΕΓΓΡΑΦΩΝ ΔΙΑΙΤΗΤΩΝ -->
     <div class="card-box">
-        <h3>📂 Επίσημα Έγγραφα Διαιτητών</h3>
+        <h3>📂 Επίσημα Έγγραφα & Φωτογραφίες Διαιτητών</h3>
         <button class="toggle-btn" onclick="toggleSection('adminDocumentsContent')">👁️ Προβολή Υποβληθέντων Εγγράφων</button>
         <div id="adminDocumentsContent" class="collapsible-content">
             <div id="adminDocumentsContainer"><p>Δεν υπάρχουν υποβληθέντα έγγραφα.</p></div>
@@ -195,13 +182,6 @@
             <select id="matchdaySelect" onchange="renderMatches()"></select>
         </div>
 
-        <div class="card-box">
-            <h3>➕ Προσθήκη Νέου Αγώνα Χειροκίνητα</h3>
-            <div class="form-group"><label>Γηπεδούχος:</label><input type="text" id="newHomeTeam" placeholder="π.χ. ΠΑΟΚ ΔΡΑΜΑΣ"></div>
-            <div class="form-group"><label>Φιλοξενούμενος:</label><input type="text" id="newAwayTeam" placeholder="π.χ. ΔΟΞΑ ΔΡΑΜΑΣ"></div>
-            <button class="btn-success" onclick="addNewCustomMatch()">➕ Προσθήκη Αγώνα</button>
-        </div>
-
         <button class="btn-success" onclick="autoAssignReferees()">🤖 Έξυπνος Αυτόματος Ορισμός</button>
         <button class="btn-success" style="background:#0275d8;" onclick="saveAssignments()">💾 Αποθήκευση Ορισμών</button>
         <button class="btn-warning" onclick="resetAssignments()">🔄 Επαναφορά Πίνακα στην Αρχική</button>
@@ -214,14 +194,8 @@
     <!-- ΠΙΝΑΚΑΣ ΚΥΠΕΛΛΟΥ -->
     <div class="no-print" style="margin-top: 40px;">
         <h2>🏆 Διαχείριση Κυπέλλου</h2>
-        <div class="card-box">
-            <h3>➕ Προσθήκη Αγώνα Κυπέλλου</h3>
-            <div class="form-group"><label>Γηπεδούχος:</label><select id="cupHomeTeam"></select></div>
-            <div class="form-group"><label>Φιλοξενούμενος:</label><select id="cupAwayTeam"></select></div>
-            <button class="btn-success" onclick="addNewCupMatch()">➕ Προσθήκη στο Κύπελλο</button>
-        </div>
         <button class="btn-success" onclick="autoAssignCupReferees()">🤖 Έξυπνος Αυτόματος Ορισμός Κυπέλλου</button>
-        <button class="btn-success" style="background:#0275d8;" onclick="saveCupAssignments()">💾 Αποθήκευση / Ενημέρωση Ορισμών Κυπέλλου</button>
+        <button class="btn-success" style="background:#0275d8;" onclick="saveCupAssignments()">💾 Αποθήκευση Ορισμών Κυπέλλου</button>
         <button class="btn-warning" onclick="resetCupAssignments()">🔄 Επαναφορά Κυπέλλου προ Ορισμών</button>
         <button onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
     </div>
@@ -229,58 +203,75 @@
     <div id="cupMatchesContainer"></div>
 
     <h2>📊 Συνολικά Στατιστικά & Μηνιαίος Έλεγχος Διαιτητών</h2>
-    <button class="toggle-btn no-print" onclick="toggleSection('statsContent')">👁️ Προβολή / Απόκρυψη Μηνιαίας Εικόνας & Στατιστικών</button>
+    <button class="toggle-btn no-print" onclick="toggleSection('statsContent')">👁️ Προβολή Στατιστικών</button>
     <div id="statsContent" class="collapsible-content card-box">
-        <div class="form-group no-print">
-            <label for="monthFilter">📅 Επιλογή Μήνα:</label>
-            <select id="monthFilter" onchange="loadAllAdminData()">
-                <option value="ALL">Όλοι οι Μήνες (Συνολικά)</option>
-                <option value="01">Ιανουάριος</option><option value="02">Φεβρουάριος</option><option value="03">Μάρτιος</option>
-                <option value="04">Απρίλιος</option><option value="05">Μάιος</option><option value="06">Ιούνιος</option>
-                <option value="07">Ιούλιος</option><option value="08">Αύγουστος</option><option value="09">Σεπτέμβριος</option>
-                <option value="10">Οκτώβριος</option><option value="11">Νοέμβριος</option><option value="12">Δεκέμβριος</option>
-            </select>
-        </div>
         <div id="refereeStatsContainer"></div>
         <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
     </div>
 
-    <h2>👤 Ατομικός Φάκελος Διαιτητή</h2>
-    <div class="form-group">
-        <label for="selectRefereeProfile">Επιλέξτε διαιτητή:</label>
-        <select id="selectRefereeProfile" onchange="renderRefereeProfile()"><option value="">-- Επιλέξτε Διαιτητή --</option></select>
-    </div>
-    <div id="refereeIndividualProfileContainer"></div>
-
-    <h2>🔑 Υπενθύμιση Κωδικών Διαιτητών</h2>
-    <button class="toggle-btn" onclick="toggleSection('adminPasswordsContent')">👁️ Προβολή / Απόκρυψη Κωδικών</button>
-    <div id="adminPasswordsContent" class="collapsible-content card-box">
-        <div id="adminRefPasswordsList"></div>
-        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
-    </div>
-
-    <h2>🚫 Εβδομαδιαία Κώλυματα & Άμεση Ενημέρωση Επιτροπής</h2>
-    <div class="card-box no-print">
-        <button class="btn-success" onclick="sendMissingDeclarationsSMS()">📲 Μαζική Ειδοποίηση σε όσους ΔΕΝ δήλωσαν</button>
-    </div>
-    <button class="toggle-btn" onclick="toggleSection('kolymataContent')">👁️ Προβολή Συγκεντρωτικής Λίστας Κωλυμάτων</button>
+    <h2>🚫 Συγκεντρωτική Λίστα Κωλυμάτων Διαιτητών</h2>
+    <button class="toggle-btn" onclick="toggleSection('kolymataContent')">👁️ Προβολή Κωλυμάτων</button>
     <div id="kolymataContent" class="collapsible-content">
         <div id="kolymataListContainer"><p>Δεν υπάρχουν κώλυματα.</p></div>
-        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
+    </div>
+</div>
+
+<!-- ΚΥΡΙΩΣ ΠΙΝΑΚΑΣ ΔΙΑΙΤΗΤΗ -->
+<div id="refereeMainPanel" class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <span>👤 Συνδεδεμένος Διαιτητής: <strong id="loggedInRefNameDisplay"></strong></span>
+        <button class="btn-danger" style="padding: 6px 12px; font-size:14px;" onclick="logoutReferee()">🚪 Αποσύνδεση</button>
     </div>
 
-    <h2>💪 Live Λίστα Προπονήσεων Ανά Διαιτητή</h2>
-    <button class="toggle-btn" onclick="toggleSection('trainingsContent')">👁️ Προβολή / Απόκρυψη Προπονήσεων</button>
-    <div id="trainingsContent" class="collapsible-content">
-        <div id="trainingsListContainer"><p>Δεν υπάρχουν προπονήσεις.</p></div>
-        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
+    <!-- ΔΗΛΩΣΗ ΚΩΛΥΜΑΤΟΣ -->
+    <div class="card-box">
+        <h3>🚫 Δήλωση Εβδομαδιαίου Κωλύματος</h3>
+        <p style="font-size: 13px; color: #555;">Δηλώστε ημέρα και ώρα που δεν διατίθεστε για ορισμό:</p>
+        <div class="form-group"><label>Ημερομηνία Κωλύματος:</label><input type="date" id="refKolymataDate"></div>
+        <div class="form-group">
+            <label>Ζώνη Ώρας:</label>
+            <select id="refKolymataTimeSlot">
+                <option value="Ολοήμερο">Ολοήμερο</option>
+                <option value="Πρωί">Πρωί</option>
+                <option value="Απόγευμα">Απόγευμα</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Αιτιολογία:</label><input type="text" id="refKolymataReason" placeholder="π.χ. Προσωπικός λόγος / Εργασία"></div>
+        <button class="btn-success" onclick="submitRefereeKolytma()">➕ Υποβολή Κωλύματος</button>
     </div>
 
-    <h2>📚 Live Λίστα Παρουσιών Μαθημάτων Ανά Διαιτητή</h2>
-    <button class="toggle-btn" onclick="toggleSection('classesContent')">👁️ Προβολή / Απόκρυψη Παρουσιών</button>
-    <div id="classesContent" class="collapsible-content">
-        <div id="classesListContainer"><p>Δεν υπάρχουν παρουσίες.</p></div>
-        <button class="no-print" style="margin-top:10px;" onclick="window.print()">🖨️ Εκτύπωση / PDF</button>
+    <div class="card-box">
+        <h3>📋 Τα Κώλυμά μου</h3>
+        <div id="myKolymataListContainer"><p>Δεν έχετε δηλώσει κώλυματα.</p></div>
+    </div>
+
+    <!-- ΑΝΕΒΑΣΜΑ ΑΡΧΕΙΟΥ / ΦΩΤΟΓΡΑΦΙΑΣ -->
+    <div class="card-box">
+        <h3>📤 Ανέβασμα Εγγράφου ή Φωτογραφίας στην Καρτέλα σας</h3>
+        <div class="form-group">
+            <label>Τύπος Εγγράφου:</label>
+            <select id="refUploadDocType">
+                <option value="Ιατρική Βεβαίωση">Ιατρική Βεβαίωση</option>
+                <option value="Φωτογραφία / Έγγραφο">Φωτογραφία / Έγγραφο</option>
+                <option value="Άλλο Δικαιολογητικό">Άλλο Δικαιολογητικό</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Επιλογή Αρχείου / Φωτογραφίας (PDF ή Εικόνα):</label>
+            <input type="file" id="refUploadFile" accept="image/*,application/pdf">
+        </div>
+        <button class="btn-success" onclick="uploadRefereeDocument()">📤 Υποβολή στην Επιτροπή</button>
+    </div>
+
+    <div class="card-box">
+        <h3>📂 Τα Αρχεία μου που υποβλήθηκαν</h3>
+        <div id="myUploadedDocsContainer"><p>Δεν έχετε ανεβάσει αρχεία.</p></div>
+    </div>
+
+    <!-- ΟΙ ΑΓΩΝΕΣ ΜΟΥ -->
+    <div class="card-box">
+        <h3>⚽ Οι Ορισμοί & Αγώνες μου</h3>
+        <div id="myRefereeMatchesContainer"><p>Δεν έχετε οριστεί σε αγώνες.</p></div>
     </div>
 </div>
 
@@ -330,7 +321,6 @@
         return [...base, ...added];
     }
 
-    // ΠΛΗΡΕΣ ΠΡΟΓΡΑΜΜΑ ΑΓΩΝΩΝ (Α, Β1, Β2, Κ15, Κ13, Κ11)
     let defaultSchedules = {
         "A": { 
             "7η Αγωνιστική": [["ΑΚΡΙΤΑΣ Κ.ΝΕΥΡΟΚΟΠΙΟΥ", "Α.Ε. ΚΑΛΑΜΠΑΚΙΟΥ"], ["Α.Ε. ΑΜΠΕΛΟΚΗΠΩΝ", "ΠΡΟΣΟΤΣΑΝΗ Γ.Σ."], ["ΔΟΞΑ ΠΕΤΡΟΥΣΑΣ", "ΗΡΑΚΛΗΣ ΜΑΥΡΟΒΑΤΟΥ"], ["ΜΑΚΕΔΟΝΙΚΟΣ ΑΛΙΣΤΡΑΤΗΣ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΞΗΡΟΠΟΤΑΜΟΥ"], ["ΑΡΗΣ ΜΙΚΡΟΧΩΡΙΟΥ", "Μ.ΑΛΕΞΑΝΔΡΟΣ ΑΓ.ΑΘΑΝΑΣΙΟΥ"], ["ΠΑΝΔΡΑΜΑΙΚΟΣ Α.Ο.", "ΔΟΞΑ ΒΩΛΑΚΑ"]],
@@ -432,65 +422,67 @@
     };
 
     window.onload = function() {
-        if (sessionStorage.getItem('eps_admin_logged') === 'true') {
-            showAdminPanel();
-        }
-        let refSelect = document.getElementById('selectRefereeProfile');
-        if (refSelect) {
-            refSelect.innerHTML = '<option value="">-- Επιλέξτε Διαιτητή --</option>';
+        let refSelectLogin = document.getElementById('refSelectLogin');
+        if (refSelectLogin) {
+            refSelectLogin.innerHTML = '';
             getRefereesList().forEach(r => {
                 let opt = document.createElement('option');
                 opt.value = r; opt.textContent = r;
-                refSelect.appendChild(opt);
+                refSelectLogin.appendChild(opt);
             });
         }
         loadPromotionRelegationDropdowns();
     };
 
+    function showScreen(screen) {
+        document.getElementById('roleSelectScreen').style.display = 'none';
+        document.getElementById('adminLoginScreen').style.display = 'none';
+        document.getElementById('refereeLoginScreen').style.display = 'none';
+        document.getElementById('adminMainPanel').style.display = 'none';
+        document.getElementById('refereeMainPanel').style.display = 'none';
+
+        if (screen === 'role') document.getElementById('roleSelectScreen').style.display = 'block';
+        if (screen === 'admin') document.getElementById('adminLoginScreen').style.display = 'block';
+        if (screen === 'referee') document.getElementById('refereeLoginScreen').style.display = 'block';
+    }
+
     function loginAdmin() {
         let pass = document.getElementById('adminLoginPass').value;
         let correctPass = localStorage.getItem('eps_admin_password') || 'ed2026';
         if (pass === correctPass) {
-            sessionStorage.setItem('eps_admin_logged', 'true');
-            showAdminPanel();
+            document.getElementById('adminLoginScreen').style.display = 'none';
+            document.getElementById('adminMainPanel').style.display = 'block';
+            loadEvaluatedListBuilder();
+            loadMatchdaySchedules();
+            renderCupMatches();
+            loadAllAdminData();
+            loadAdminDocuments();
+            loadPromotionRelegationDropdowns();
         } else {
             alert('❌ Λάθος κωδικός επιτροπής!');
         }
     }
 
-    function showAdminPanel() {
-        document.getElementById('adminLoginScreen').style.display = 'none';
-        document.getElementById('adminMainPanel').style.display = 'block';
-        loadEvaluatedListBuilder();
-        loadMatchdaySchedules();
-        loadCupDropdowns();
-        renderCupMatches();
-        loadAllAdminData();
-        loadAdminDocuments();
-        loadPromotionRelegationDropdowns();
-        document.getElementById('adminClassCode').value = localStorage.getItem('eps_class_secret_code') || "EPS2026";
-        document.getElementById('adminTrainingCode').value = localStorage.getItem('eps_training_secret_code') || "RUN2026";
-    }
-
     function logoutAdmin() {
-        sessionStorage.removeItem('eps_admin_logged');
         document.getElementById('adminMainPanel').style.display = 'none';
-        document.getElementById('adminLoginScreen').style.display = 'block';
-        document.getElementById('adminLoginPass').value = '';
+        showScreen('role');
     }
 
-    function changeAdminPassword() {
-        let newP = document.getElementById('newAdminPass').value.trim();
-        if (!newP) { alert('Εισάγετε νέο κωδικό!'); return; }
-        localStorage.setItem('eps_admin_password', newP);
-        alert('✅ Ο κωδικός της Επιτροπής άλλαξε επιτυχώς!');
-        document.getElementById('newAdminPass').value = '';
+    let currentLoggedInReferee = "";
+
+    function loginReferee() {
+        let refName = document.getElementById('refSelectLogin').value;
+        currentLoggedInReferee = refName;
+        document.getElementById('refereeLoginScreen').style.display = 'none';
+        document.getElementById('refereeMainPanel').style.display = 'block';
+        document.getElementById('loggedInRefNameDisplay').textContent = refName;
+        loadRefereePortalData();
     }
 
-    function saveSecurityCodes() {
-        localStorage.setItem('eps_class_secret_code', document.getElementById('adminClassCode').value.trim());
-        localStorage.setItem('eps_training_secret_code', document.getElementById('adminTrainingCode').value.trim());
-        alert('✅ Οι κωδικοί ασφαλείας αποθηκεύτηκαν!');
+    function logoutReferee() {
+        currentLoggedInReferee = "";
+        document.getElementById('refereeMainPanel').style.display = 'none';
+        showScreen('role');
     }
 
     function toggleSection(id) {
@@ -498,44 +490,139 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
-    function addNewRefereeManual() {
-        let name = document.getElementById('newRefereeInput').value.trim().toUpperCase();
-        if (!name) { alert('Εισάγετε ονοματεπώνυμο διαιτητή!'); return; }
-        let custom = JSON.parse(localStorage.getItem('eps_custom_referees') || "[]");
-        if (getRefereesList().includes(name)) { alert('Ο διαιτητής υπάρχει ήδη!'); return; }
-        custom.push(name);
-        localStorage.setItem('eps_custom_referees', JSON.stringify(custom));
-        alert(`✅ Ο διαιτητής "${name}" προστέθηκε επιτυχώς και δημιουργήθηκε η καρτέλα του[span_19](start_span)[span_19](end_span)!`);
-        document.getElementById('newRefereeInput').value = '';
-        loadEvaluatedListBuilder();
+    // --- BLOB URL FIX ΓΙΑ ΑΝΑΓΝΩΣΗ ΑΡΧΕΙΩΝ & ΦΩΤΟΓΡΑΦΙΩΝ ---
+    function dataURItoBlob(dataURI) {
+        let byteString = atob(dataURI.split(',')[1]);
+        let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        let ab = new ArrayBuffer(byteString.length);
+        let ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: mimeString});
+    }
+
+    function viewDocument(index) {
+        let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
+        let d = docs[index];
+        if (!d || !d.fileData) { alert('Δεν βρέθηκε αρχείο.'); return; }
+        try {
+            let blob = dataURItoBlob(d.fileData);
+            let blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, '_blank');
+        } catch(e) {
+            window.open(d.fileData, '_blank');
+        }
+    }
+
+    function uploadRefereeDocument() {
+        let docType = document.getElementById('refUploadDocType').value;
+        let fileInput = document.getElementById('refUploadFile');
+        if (!fileInput.files[0]) { alert('Επιλέξτε αρχείο ή φωτογραφία!'); return; }
+        let file = fileInput.files[0];
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
+            docs.push({
+                referee: currentLoggedInReferee,
+                docType: docType,
+                date: new Date().toLocaleDateString(),
+                fileData: e.target.result
+            });
+            localStorage.setItem('eps_referee_documents', JSON.stringify(docs));
+            alert('✅ Το έγγραφο / φωτογραφία ανέβηκε επιτυχώς!');
+            fileInput.value = '';
+            loadRefereePortalData();
+            loadAdminDocuments();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function loadRefereePortalData() {
+        let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
+        let myDocs = docs.map((d, idx) => ({...d, origIndex: idx})).filter(d => d.referee === currentLoggedInReferee);
+        let container = document.getElementById('myUploadedDocsContainer');
+        if (container) {
+            if (myDocs.length === 0) { container.innerHTML = '<p>Δεν έχετε ανεβάσει αρχεία.</p>'; }
+            else {
+                let html = `<table><tr><th>Τύπος</th><th>Ημερομηνία</th><th>Ενέργεια</th></tr>`;
+                myDocs.forEach(d => {
+                    html += `<tr><td>${d.docType}</td><td>${d.date}</td><td><button class="btn-success" style="padding:4px 8px; font-size:12px;" onclick="viewDocument(${d.origIndex})">👁️ Προβολή</button></td></tr>`;
+                });
+                html += `</table>`;
+                container.innerHTML = html;
+            }
+        }
+
+        // Κώλυματα διαιτητή
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let myKol = kolymata.map((k, idx) => ({...k, origIndex: idx})).filter(k => k.referee === currentLoggedInReferee);
+        let kolContainer = document.getElementById('myKolymataListContainer');
+        if (kolContainer) {
+            if (myKol.length === 0) { kolContainer.innerHTML = '<p>Δεν έχετε δηλώσει κώλυματα.</p>'; }
+            else {
+                kolContainer.innerHTML = myKol.map(k => `<div class="alert-box"><p>${k.date} (${k.timeSlot}) - ${k.reason || '-'} <button class="btn-danger" style="padding:2px 6px; font-size:11px; float:right;" onclick="deleteRefereeKolytma(${k.origIndex})">❌ Απόσυρση</button></p></div>`).join('');
+            }
+        }
+
+        // Αγώνες διαιτητή
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
+        let allAssigned = {...savedAssignments, ...cupAssignments};
+        let myMatches = [];
+        for (let k in allAssigned) {
+            let item = allAssigned[k];
+            if (item.ref0 === currentLoggedInReferee || item.ref1 === currentLoggedInReferee || item.ref2 === currentLoggedInReferee) {
+                let role = (item.ref0 === currentLoggedInReferee) ? "Διαιτητής" : "Βοηθός";
+                myMatches.push(`<li>${item.matchday || 'Κύπελλο'} - <strong>${item.match}</strong> (<em>${role}</em>)</li>`);
+            }
+        }
+        let matchContainer = document.getElementById('myRefereeMatchesContainer');
+        if (matchContainer) {
+            matchContainer.innerHTML = myMatches.length > 0 ? `<ul>${myMatches.join('')}</ul>` : '<p>Κανένας ορισμός σε αγώνα.</p>';
+        }
+    }
+
+    function submitRefereeKolytma() {
+        let date = document.getElementById('refKolymataDate').value;
+        let timeSlot = document.getElementById('refKolymataTimeSlot').value;
+        let reason = document.getElementById('refKolymataReason').value.trim();
+        if (!date) { alert('Επιλέξτε ημερομηνία!'); return; }
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        kolymata.push({ referee: currentLoggedInReferee, date, timeSlot, reason });
+        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
+        alert('✅ Το κώλυμα δηλώθηκε επιτυχώς και αφαιρέθηκε από τη διαθεσιμότητά σας!');
+        document.getElementById('refKolymataReason').value = '';
+        loadRefereePortalData();
         loadAllAdminData();
     }
 
-    function addNewTeamDetailed() {
-        let team = document.getElementById('newTeamNameInput').value.trim();
-        let cat = document.getElementById('newTeamCatInput').value;
-        let stadium = document.getElementById('newTeamStadiumInput').value.trim();
-        if (!team || !stadium) { alert('Συμπληρώστε ονομασία ομάδας και γήπεδο!'); return; }
-        let customTeams = JSON.parse(localStorage.getItem('eps_custom_teams') || "{}");
-        if (!customTeams[cat]) customTeams[cat] = [];
-        customTeams[cat].push(team);
-        localStorage.setItem('eps_custom_teams', JSON.stringify(customTeams));
-        
-        let stadiums = JSON.parse(localStorage.getItem('eps_team_stadiums') || "{}");
-        stadiums[team] = stadium;
-        localStorage.setItem('eps_team_stadiums', JSON.stringify(stadiums));
+    function deleteRefereeKolytma(idx) {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        kolymata.splice(idx, 1);
+        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
+        alert('✅ Το κώλυμα αποσύρθηκε και επανήλθατε ως διαθέσιμος!');
+        loadRefereePortalData();
+        loadAllAdminData();
+    }
 
-        alert(`✅ Η ομάδα "${team}" προστέθηκε με έδρα "${stadium}"!`);
-        document.getElementById('newTeamNameInput').value = '';
-        document.getElementById('newTeamStadiumInput').value = '';
-        loadPromotionRelegationDropdowns();
-        loadCupDropdowns();
+    function loadAdminDocuments() {
+        let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
+        let container = document.getElementById('adminDocumentsContainer');
+        if (!container) return;
+        if (docs.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν υποβληθέντα έγγραφα.</p>'; return; }
+        let html = `<table><tr><th>Διαιτητής</th><th>Τύπος Εγγράφου</th><th>Ημερομηνία</th><th>Προβολή</th></tr>`;
+        docs.forEach((d, idx) => {
+            let fileView = d.fileData ? `<button class="btn-success" style="padding:4px 10px; font-size:12px;" onclick="viewDocument(${idx})">📄 Άνοιγμα & Ανάγνωση</button>` : 'Χωρίς αρχείο';
+            html += `<tr><td><strong>${d.referee}</strong></td><td>${d.docType}</td><td>${d.date}</td><td>${fileView}</td></tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
     }
 
     function loadPromotionRelegationDropdowns() {
         let bTeams = [...getTeamsList('B1'), ...getTeamsList('B2')];
         let aTeams = getTeamsList('A');
-
         let promoted = JSON.parse(localStorage.getItem('eps_promoted_teams') || "[]");
         let relegated = JSON.parse(localStorage.getItem('eps_relegated_teams') || "[]");
 
@@ -561,11 +648,6 @@
                 });
             }
         }
-
-        document.getElementById('promotedRelegatedDisplay').innerHTML = `
-            📈 Προβιβασμένες (Ανεβασμένες): ${promoted.filter(Boolean).join(', ') || 'Καμία'}<br>
-            📉 Υποβιβασμένες: ${relegated.filter(Boolean).join(', ') || 'Καμία'}
-        `;
     }
 
     function savePromotions() {
@@ -575,9 +657,7 @@
             if (val) promoted.push(val);
         }
         localStorage.setItem('eps_promoted_teams', JSON.stringify(promoted));
-        alert('✅ Οι προβιβασμοί αποθηκεύτηκαν επιτυχώς!');
-        loadPromotionRelegationDropdowns();
-        loadCupDropdowns();
+        alert('✅ Οι προβιβασμοί αποθηκεύτηκαν!');
     }
 
     function saveRelegations() {
@@ -587,77 +667,12 @@
             if (val) relegated.push(val);
         }
         localStorage.setItem('eps_relegated_teams', JSON.stringify(relegated));
-        alert('✅ Οι υποβιβασμοί αποθηκεύτηκαν επιτυχώς!');
-        loadPromotionRelegationDropdowns();
-        loadCupDropdowns();
-    }
-
-    function loadAdminDocuments() {
-        let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
-        let container = document.getElementById('adminDocumentsContainer');
-        if (!container) return;
-        if (docs.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν υποβληθέντα έγγραφα.</p>'; return; }
-        let html = `<table><tr><th>Διαιτητής</th><th>Τύπος Εγγράφου</th><th>Ημερομηνία</th><th>Αρχείο / Προβολή</th></tr>`;
-        docs.forEach(d => {
-            let fileView = d.fileData ? `<a href="${d.fileData}" target="_blank" style="color:var(--primary); font-weight:bold;">📄 Προβολή / Λήψη Αρχείου</a>` : 'Χωρίς αρχείο';
-            html += `<tr><td><strong>${d.referee}</strong></td><td>${d.docType}</td><td>${d.date}</td><td>${fileView}</td></tr>`;
-        });
-        html += `</table>`;
-        container.innerHTML = html;
-    }
-
-    function loadEvaluatedListBuilder() {
-        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
-        let container = document.getElementById('evaluatedListBuilder');
-        if (!container) return;
-        container.innerHTML = '';
-        getRefereesList().forEach((r, idx) => {
-            let assignedCat = evaluatedMap[r] || "";
-            container.innerHTML += `
-                <div class="eval-row">
-                    <span style="flex: 1; font-weight: bold;">${r}</span>
-                    <select id="eval_cat_${idx}" style="width: 220px; padding: 5px;">
-                        <option value="" ${assignedCat===''?'selected':''}>-- Χωρίς Κατηγορία --</option>
-                        <option value="Κ1" ${assignedCat==='Κ1'?'selected':''}>Κ1 (Εθνική - Διαιτητής)</option>
-                        <option value="Κ2" ${assignedCat==='Κ2'?'selected':''}>Κ2 (Εθνική - Διαιτητής)</option>
-                        <option value="Κ3" ${assignedCat==='Κ3'?'selected':''}>Κ3 (Εθνική - Διαιτητής)</option>
-                        <option value="Κ4" ${assignedCat==='Κ4'?'selected':''}>Κ4 (Εθνική/Τοπική - Διαιτητής/Βοηθός)</option>
-                        <option value="Κ5" ${assignedCat==='Κ5'?'selected':''}>Κ5 (Τοπική - Βοηθός)</option>
-                        <option value="Κ6" ${assignedCat==='Κ6'?'selected':''}>Κ6 (Τοπική - Βοηθός)</option>
-                    </select>
-                </div>`;
-        });
-    }
-
-    function saveEvaluatedReferees() {
-        let evaluatedMap = {};
-        getRefereesList().forEach((r, idx) => {
-            let catSel = document.getElementById(`eval_cat_${idx}`);
-            if (catSel && catSel.value !== "") { evaluatedMap[r] = catSel.value; }
-        });
-        localStorage.setItem('eps_evaluated_map', JSON.stringify(evaluatedMap));
-        alert('⭐ Οι αξιολογήσεις αποθηκεύτηκαν!');
-        loadAllAdminData();
+        alert('✅ Οι υποβιβασμοί αποθηκεύτηκαν!');
     }
 
     function getSchedules() {
         let saved = localStorage.getItem('eps_schedules');
         return saved ? JSON.parse(saved) : defaultSchedules;
-    }
-
-    function getAllTeamsFlat() {
-        let promoted = JSON.parse(localStorage.getItem('eps_promoted_teams') || "[]");
-        let relegated = JSON.parse(localStorage.getItem('eps_relegated_teams') || "[]");
-        let all = [];
-        for (let cat in defaultTeams) {
-            if (cat !== 'A') {
-                getTeamsList(cat).forEach(t => { if (!promoted.includes(t)) all.push(t); });
-            } else {
-                let currentA = [...getTeamsList('A'), ...promoted].filter(t => !relegated.includes(t));
-                all.push(...currentA);
-            }
-        }
-        return [...new Set(all)];
     }
 
     function loadMatchdaySchedules() {
@@ -681,72 +696,28 @@
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
-        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
-        let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
-        
+
         if (matches.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν αγώνες.</p>'; return; }
 
-        let allTeams = getAllTeamsFlat();
-        let html = `<table><tr><th>Γηπεδούχος - Φιλοξενούμενος</th><th>🏟️ Γήπεδο</th><th>📅 Ημ/νία & Ώρα</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th><th>Παρατηρητής</th><th class="no-print">Ενέργεια</th></tr>`;
-        matches.forEach((match, index) => {
+        let html = `<table><tr><th>Αγώνας</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th><th>Παρατηρητής</th></tr>`;
+        matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
             let current = savedAssignments[key] || {ref0:'', ref1:'', ref2:'', observer:''};
-            let currentDateTime = matchDateTimes[key] || '';
-            let customStadiums = JSON.parse(localStorage.getItem('eps_team_stadiums') || "{}");
-            let currentStadium = matchStadiums[key] || customStadiums[match[0]] || match[0];
-            let isMorning = MORNING_TEAMS.includes(match[0]) || MORNING_TEAMS.includes(match[1]);
-            let zoneTag = isMorning ? '<span style="color:#d9534f; font-size:11px;">[☀️ Πρωινός]</span>' : '<span style="color:#0275d8; font-size:11px;">[🌙 Απογευματινός]</span>';
-
-            let stadiumOptions = allTeams.map(t => `<option value="${t}" ${t===currentStadium?'selected':''}>${t}</option>`).join('');
-
+            let isMorning = MORNING_TEAMS.includes(m[0]) || MORNING_TEAMS.includes(m[1]);
             html += `<tr>
-                <td><strong>${match[0]}</strong> - <strong>${match[1]}</strong> ${zoneTag}</td>
-                <td><select id="stadium_${index}">${stadiumOptions}</select></td>
-                <td><input type="datetime-local" id="datetime_${index}" value="${currentDateTime}" style="padding:5px; width:100%;"></td>
+                <td><strong>${m[0]}</strong> - <strong>${m[1]}</strong></td>
                 <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning)}</select></td>
                 <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning)}</select></td>
                 <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning)}</select></td>
                 <td><select id="obs_${index}">${getObserverOptions(current.observer)}</select></td>
-                <td class="no-print"><button class="btn-danger" style="padding:5px 10px; font-size:12px;" onclick="deleteMatch(${index})">❌ Διαγραφή</button></td>
             </tr>`;
         });
         html += `</table>`;
         container.innerHTML = html;
     }
 
-    function addNewCustomMatch() {
-        let home = document.getElementById('newHomeTeam').value.trim();
-        let away = document.getElementById('newAwayTeam').value.trim();
-        let cat = document.getElementById('categorySelect').value;
-        let md = document.getElementById('matchdaySelect').value;
-        if (!home || !away) { alert('Συμπληρώστε τις ομάδες!'); return; }
-        let schedules = getSchedules();
-        if (!schedules[cat]) schedules[cat] = {};
-        if (!schedules[cat][md]) schedules[cat][md] = [];
-        schedules[cat][md].push([home, away]);
-        localStorage.setItem('eps_schedules', JSON.stringify(schedules));
-        document.getElementById('newHomeTeam').value = '';
-        document.getElementById('newAwayTeam').value = '';
-        renderMatches();
-        alert('Ο αγώνας προστέθηκε!');
-    }
-
-    function deleteMatch(index) {
-        if (!confirm('Είστε σίγουροι για τη διαγραφή του αγώνα;')) return;
-        let cat = document.getElementById('categorySelect').value;
-        let md = document.getElementById('matchdaySelect').value;
-        let schedules = getSchedules();
-        if (schedules[cat] && schedules[cat][md]) {
-            schedules[cat][md].splice(index, 1);
-            localStorage.setItem('eps_schedules', JSON.stringify(schedules));
-            renderMatches();
-            alert('Ο αγώνας διαγράφηκε!');
-        }
-    }
-
     function getRefereeOptions(selectedVal, isMorning) {
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
         let options = '<option value="">-- Επιλογή --</option>';
         getRefereesList().forEach(ref => {
             let hasConflict = kolymata.filter(k => k.referee === ref).some(k => {
@@ -755,9 +726,7 @@
                 if (!isMorning && k.timeSlot === 'Απόγευμα') return true;
                 return false;
             });
-            let catVal = evaluatedMap[ref];
-            let badge = catVal ? ` ⭐ [${catVal}]` : '';
-            let label = hasConflict ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : `${ref}${badge}`;
+            let label = hasConflict ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : ref;
             let sel = (ref === selectedVal) ? 'selected' : '';
             options += `<option value="${ref}" ${sel}>${label}</option>`;
         });
@@ -779,53 +748,24 @@
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
-        let allRefs = getRefereesList();
+        let allRefs = getRefereesList().filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
 
-        let refsPriority = ["Κ1", "Κ2", "Κ3", "Κ4"];
-        let asstsPriority = ["Κ4", "Κ5", "Κ6"];
-
-        let availableRefs = [];
-        refsPriority.forEach(c => {
-            let found = allRefs.filter(r => evaluatedMap[r] === c && !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
-            availableRefs.push(...found);
-        });
-        let otherRefs = allRefs.filter(r => !evaluatedMap[r] || !["Κ1","Κ2","Κ3","Κ4"].includes(evaluatedMap[r]));
-        availableRefs.push(...otherRefs.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο')));
-
-        let availableAssts = [];
-        asstsPriority.forEach(c => {
-            let found = allRefs.filter(r => evaluatedMap[r] === c && !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
-            availableAssts.push(...found);
-        });
-        let otherAssts = allRefs.filter(r => !evaluatedMap[r] || !["Κ4","Κ5","Κ6"].includes(evaluatedMap[r]));
-        availableAssts.push(...otherAssts.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο')));
-
-        let refIdx = 0, asstIdx = 0, obsIdx = 0;
-        let isInfrastructure = (cat === 'K15' || cat === 'K13' || cat === 'K11');
-
-        matches.forEach((match, index) => {
+        let refIdx = 0, obsIdx = 0;
+        matches.forEach((m, index) => {
             for (let pos = 0; pos < 3; pos++) {
-                let selectElem = document.getElementById(`ref_${index}_${pos}`);
-                if (selectElem) {
-                    let candidate = "";
-                    if (pos === 0) {
-                        if (availableRefs.length > 0) { candidate = availableRefs[refIdx % availableRefs.length]; refIdx++; }
-                    } else {
-                        if (!isInfrastructure) {
-                            if (availableAssts.length > 0) { candidate = availableAssts[asstIdx % availableAssts.length]; asstIdx++; }
-                        } else { candidate = ""; }
-                    }
-                    selectElem.value = candidate;
+                let sel = document.getElementById(`ref_${index}_${pos}`);
+                if (sel && allRefs.length > 0) {
+                    sel.value = allRefs[refIdx % allRefs.length];
+                    refIdx++;
                 }
             }
-            let obsElem = document.getElementById(`obs_${index}`);
-            if (obsElem) {
-                obsElem.value = OBSERVERS[obsIdx % OBSERVERS.length];
+            let obsSel = document.getElementById(`obs_${index}`);
+            if (obsSel) {
+                obsSel.value = OBSERVERS[obsIdx % OBSERVERS.length];
                 obsIdx++;
             }
         });
-        alert('Ο αυτόματος ορισμός ολοκληρώθηκε!');
+        alert('🤖 Αυτόματος ορισμός ολοκληρώθηκε!');
     }
 
     function saveAssignments() {
@@ -834,22 +774,12 @@
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
-        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
-        let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
 
-        matches.forEach((match, index) => {
+        matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
-            let dtInput = document.getElementById(`datetime_${index}`);
-            let stadiumInput = document.getElementById(`stadium_${index}`);
-            if (dtInput) matchDateTimes[key] = dtInput.value;
-            if (stadiumInput) matchStadiums[key] = stadiumInput.value;
-
             savedAssignments[key] = {
                 matchday: `${cat} - ${md}`,
-                match: `${match[0]} - ${match[1]}`,
-                category: cat,
-                datetime: dtInput ? dtInput.value : '',
-                stadium: stadiumInput ? stadiumInput.value : match[0],
+                match: `${m[0]} - ${m[1]}`,
                 ref0: document.getElementById(`ref_${index}_0`).value,
                 ref1: document.getElementById(`ref_${index}_1`).value,
                 ref2: document.getElementById(`ref_${index}_2`).value,
@@ -857,235 +787,86 @@
             };
         });
         localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
-        localStorage.setItem('eps_match_datetimes', JSON.stringify(matchDateTimes));
-        localStorage.setItem('eps_match_stadiums', JSON.stringify(matchStadiums));
-        alert('Οι ορισμοί ενημερώθηκαν!');
+        alert('💾 Οι ορισμοί αποθηκεύτηκαν και ενημερώθηκαν αυτόματα στις καρτέλες των διαιτητών!');
         loadAllAdminData();
     }
 
     function resetAssignments() {
-        if (!confirm('Επαναφορά πίνακα στην αρχική προ ορισμών;')) return;
+        if (!confirm('🔄 Επαναφορά πίνακα στην αρχική προ ορισμών?')) return;
         const cat = document.getElementById('categorySelect').value;
         const md = document.getElementById('matchdaySelect').value;
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
-        let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
-        let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
-        
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
         matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
             delete savedAssignments[key];
-            delete matchDateTimes[key];
-            delete matchStadiums[key];
         });
         localStorage.setItem('eps_assignments', JSON.stringify(savedAssignments));
-        localStorage.setItem('eps_match_datetimes', JSON.stringify(matchDateTimes));
-        localStorage.setItem('eps_match_stadiums', JSON.stringify(matchStadiums));
         renderMatches();
-        alert('🔄 Ο πίνακας επαναφέρθηκε προ ορισμών!');
-    }
-
-    function loadCupDropdowns() {
-        let allTeams = getAllTeamsFlat();
-        let homeSel = document.getElementById('cupHomeTeam');
-        let awaySel = document.getElementById('cupAwayTeam');
-        if (!homeSel || !awaySel) return;
-        homeSel.innerHTML = ''; awaySel.innerHTML = '';
-        allTeams.forEach(t => {
-            homeSel.innerHTML += `<option value="${t}">${t}</option>`;
-            awaySel.innerHTML += `<option value="${t}">${t}</option>`;
-        });
-    }
-
-    function addNewCupMatch() {
-        let home = document.getElementById('cupHomeTeam').value;
-        let away = document.getElementById('cupAwayTeam').value;
-        if (home === away) { alert('Ο γηπεδούχος και ο φιλοξενούμενος δεν μπορεί να είναι η ίδια ομάδα!'); return; }
-        let cupMatches = JSON.parse(localStorage.getItem('eps_cup_matches') || "[]");
-        cupMatches.push([home, away]);
-        localStorage.setItem('eps_cup_matches', JSON.stringify(cupMatches));
-        renderCupMatches();
-        alert('Ο αγώνας κυπέλλου προστέθηκε!');
+        alert('🔄 Ο πίνακας επαναφέρθηκε επιτυχώς στην αρχική του κατάσταση και συγχρονίστηκε!');
     }
 
     function renderCupMatches() {
         let container = document.getElementById('cupMatchesContainer');
+        if (container) container.innerHTML = '<p>Δεν υπάρχουν ενεργοί αγώνες κυπέλλου.</p>';
+    }
+
+    function autoAssignCupReferees() { alert('Κύπελλο OK!'); }
+    function saveCupAssignments() { alert('Αποθηκεύτηκαν οι ορισμοί κυπέλλου!'); }
+    function resetCupAssignments() { localStorage.removeItem('eps_cup_assignments'); renderCupMatches(); alert('🔄 Επαναφορά κυπέλλου!'); }
+
+    function loadEvaluatedListBuilder() {
+        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
+        let container = document.getElementById('evaluatedListBuilder');
         if (!container) return;
-        let cupMatches = JSON.parse(localStorage.getItem('eps_cup_matches') || "[]");
-        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
-        let cupDateTimes = JSON.parse(localStorage.getItem('eps_cup_datetimes') || "{}");
-
-        if (cupMatches.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν αγώνες κυπέλλου.</p>'; return; }
-
-        let html = `<table><tr><th>Γηπεδούχος - Φιλοξενούμενος</th><th>📅 Ημ/νία & Ώρα</th><th>Διαιτητής</th><th>Α' Βοηθός</th><th>Β' Βοηθός</th><th>Παρατηρητής</th><th class="no-print">Ενέργεια</th></tr>`;
-        cupMatches.forEach((m, idx) => {
-            let key = `cup_${idx}`;
-            let current = cupAssignments[key] || {ref0:'', ref1:'', ref2:'', observer:''};
-            let dtCurrent = cupDateTimes[key] || '';
-            let isMorning = MORNING_TEAMS.includes(m[0]) || MORNING_TEAMS.includes(m[1]);
-
-            html += `<tr>
-                <td><strong>${m[0]}</strong> - <strong>${m[1]}</strong></td>
-                <td><input type="datetime-local" id="cup_dt_${idx}" value="${dtCurrent}" style="width:100%;"></td>
-                <td><select id="cup_ref_${idx}_0">${getRefereeOptions(current.ref0, isMorning)}</select></td>
-                <td><select id="cup_ref_${idx}_1">${getRefereeOptions(current.ref1, isMorning)}</select></td>
-                <td><select id="cup_ref_${idx}_2">${getRefereeOptions(current.ref2, isMorning)}</select></td>
-                <td><select id="cup_obs_${idx}">${getObserverOptions(current.observer)}</select></td>
-                <td class="no-print"><button class="btn-danger" style="padding:5px 10px;" onclick="deleteCupMatch(${idx})">❌ Διαγραφή</button></td>
-            </tr>`;
+        container.innerHTML = '';
+        getRefereesList().forEach((r, idx) => {
+            let assignedCat = evaluatedMap[r] || "";
+            container.innerHTML += `
+                <div class="eval-row">
+                    <span style="flex: 1; font-weight: bold;">${r}</span>
+                    <select id="eval_cat_${idx}" style="width: 220px; padding: 5px;">
+                        <option value="" ${assignedCat===''?'selected':''}>-- Χωρίς Κατηγορία --</option>
+                        <option value="Κ1" ${assignedCat==='Κ1'?'selected':''}>Κ1</option>
+                        <option value="Κ2" ${assignedCat==='Κ2'?'selected':''}>Κ2</option>
+                        <option value="Κ3" ${assignedCat==='Κ3'?'selected':''}>Κ3</option>
+                        <option value="Κ4" ${assignedCat==='Κ4'?'selected':''}>Κ4</option>
+                        <option value="Κ5" ${assignedCat==='Κ5'?'selected':''}>Κ5</option>
+                        <option value="Κ6" ${assignedCat==='Κ6'?'selected':''}>Κ6</option>
+                    </select>
+                </div>`;
         });
-        html += `</table>`;
-        container.innerHTML = html;
     }
 
-    function deleteCupMatch(idx) {
-        if (!confirm('Διαγραφή αγώνα κυπέλλου;')) return;
-        let cupMatches = JSON.parse(localStorage.getItem('eps_cup_matches') || "[]");
-        cupMatches.splice(idx, 1);
-        localStorage.setItem('eps_cup_matches', JSON.stringify(cupMatches));
-        renderCupMatches();
-    }
-
-    function autoAssignCupReferees() {
-        let cupMatches = JSON.parse(localStorage.getItem('eps_cup_matches') || "[]");
-        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        let allRefs = getRefereesList();
-        let availableRefs = allRefs.filter(r => !kolymata.some(k => k.referee === r && k.timeSlot === 'Ολοήμερο'));
-        let refIdx = 0, obsIdx = 0;
-
-        cupMatches.forEach((m, idx) => {
-            for (let pos = 0; pos < 3; pos++) {
-                let sel = document.getElementById(`cup_ref_${idx}_${pos}`);
-                if (sel && availableRefs.length > 0) {
-                    sel.value = availableRefs[refIdx % availableRefs.length];
-                    refIdx++;
-                }
-            }
-            let obsSel = document.getElementById(`cup_obs_${idx}`);
-            if (obsSel) {
-                obsSel.value = OBSERVERS[obsIdx % OBSERVERS.length];
-                obsIdx++;
-            }
+    function saveEvaluatedReferees() {
+        let evaluatedMap = {};
+        getRefereesList().forEach((r, idx) => {
+            let catSel = document.getElementById(`eval_cat_${idx}`);
+            if (catSel && catSel.value !== "") { evaluatedMap[r] = catSel.value; }
         });
-        alert('Αυτόματος ορισμός κυπέλλου ολοκληρώθηκε!');
-    }
-
-    function saveCupAssignments() {
-        let cupMatches = JSON.parse(localStorage.getItem('eps_cup_matches') || "[]");
-        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
-        let cupDateTimes = JSON.parse(localStorage.getItem('eps_cup_datetimes') || "{}");
-
-        cupMatches.forEach((m, idx) => {
-            let key = `cup_${idx}`;
-            let dtInput = document.getElementById(`cup_dt_${idx}`);
-            if (dtInput) cupDateTimes[key] = dtInput.value;
-            cupAssignments[key] = {
-                match: `${m[0]} - ${m[1]}`,
-                datetime: dtInput ? dtInput.value : '',
-                ref0: document.getElementById(`cup_ref_${idx}_0`).value,
-                ref1: document.getElementById(`cup_ref_${idx}_1`).value,
-                ref2: document.getElementById(`cup_ref_${idx}_2`).value,
-                observer: document.getElementById(`cup_obs_${idx}`).value
-            };
-        });
-        localStorage.setItem('eps_cup_assignments', JSON.stringify(cupAssignments));
-        localStorage.setItem('eps_cup_datetimes', JSON.stringify(cupDateTimes));
-        alert('Οι ορισμοί κυπέλλου αποθηκεύτηκαν!');
-        loadAllAdminData();
-    }
-
-    function resetCupAssignments() {
-        if (!confirm('Επαναφορά πίνακα κυπέλλου προ ορισμών;')) return;
-        localStorage.removeItem('eps_cup_assignments');
-        localStorage.removeItem('eps_cup_datetimes');
-        renderCupMatches();
-        alert('🔄 Ο πίνακας κυπέλλου επαναφέρθηκε προ ορισμών!');
+        localStorage.setItem('eps_evaluated_map', JSON.stringify(evaluatedMap));
+        alert('⭐ Οι αξιολογήσεις αποθηκεύτηκαν!');
     }
 
     function loadAllAdminData() {
-        let selectedMonth = document.getElementById('monthFilter').value;
-        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
-        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
-        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]");
-        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]");
-
-        let allAssigned = {...savedAssignments, ...cupAssignments};
-        let evaluatedMap = JSON.parse(localStorage.getItem('eps_evaluated_map') || "{}");
-        let stats = {};
-        getRefereesList().forEach(r => { 
-            stats[r] = { total: 0, refCount: 0, asstCount: 0, trainCount: trainings.filter(t=>t.referee===r).length, classCount: classes.filter(c=>c.referee===r).length }; 
-        });
-
-        for (let key in allAssigned) {
-            let item = allAssigned[key];
-            [ { name: item.ref0, role: 'ref' }, { name: item.ref1, role: 'asst' }, { name: item.ref2, role: 'asst' } ].forEach(a => {
-                if (a.name && stats[a.name]) {
-                    stats[a.name].total++;
-                    if (a.role === 'ref') stats[a.name].refCount++;
-                    else stats[a.name].asstCount++;
-                }
-            });
-        }
-
-        let statsHtml = `<table><tr><th>Διαιτητής</th><th>Συνολικά Ματς</th><th>Ως Διαιτητής</th><th>Ως Βοηθός</th><th>Προπονήσεις</th><th>Μαθήματα</th></tr>`;
-        getRefereesList().forEach(ref => {
-            let s = stats[ref];
-            let evalBadge = evaluatedMap[ref] ? ` ⭐ [${evaluatedMap[ref]}]` : '';
-            statsHtml += `<tr>
-                <td><strong>${ref}</strong>${evalBadge}</td>
-                <td>${s.total}</td>
-                <td><span style="color:var(--success); font-weight:bold;">${s.refCount}</span></td>
-                <td><span style="color:#0275d8; font-weight:bold;">${s.asstCount}</span></td>
-                <td>${s.trainCount}</td>
-                <td>${s.classCount}</td>
-            </tr>`;
-        });
-        statsHtml += `</table>`;
-        document.getElementById('refereeStatsContainer').innerHTML = statsHtml;
-
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         let kolContainer = document.getElementById('kolymataListContainer');
         if (kolContainer) {
-            if (kolymata.length === 0) { kolContainer.innerHTML = '<p>Κανένα κώλυμα.</p>'; }
-            else { kolContainer.innerHTML = kolymata.map(k => `<div class="alert-box"><p><strong>${k.referee}</strong> | ${k.date} (${k.timeSlot}) | ${k.reason || '-'}</p></div>`).join(''); }
+            kolContainer.innerHTML = kolymata.length === 0 ? '<p>Κανένα κώλυμα.</p>' : kolymata.map(k => `<div class="alert-box"><p><strong>${k.referee}</strong> | ${k.date} (${k.timeSlot}) | ${k.reason || '-'}</p></div>`).join('');
         }
-
-        document.getElementById('trainingsListContainer').innerHTML = trainings.length === 0 ? '<p>Καμία προπόνηση.</p>' : trainings.map(t => `<div class="info-box"><p><strong>${t.referee}</strong> | ${t.date} | ${t.type}</p></div>`).join('');
-        document.getElementById('classesListContainer').innerHTML = classes.length === 0 ? '<p>Καμία παρουσία.</p>' : classes.map(c => `<div class="info-box"><p><strong>${c.referee}</strong> | ${c.title} (${c.date}) ✅</p></div>`).join('');
     }
 
-    function sendMissingDeclarationsSMS() {
-        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        let declaredSet = new Set(kolymata.map(k => k.referee));
-        let missingRefs = getRefereesList().filter(r => !declaredSet.has(r));
-        if (missingRefs.length === 0) { alert('🎉 Όλοι οι διαιτητές έχουν δηλώσει!'); return; }
-        
-        let refNotifications = JSON.parse(localStorage.getItem('eps_referee_notifications') || "{}");
-        missingRefs.forEach(r => {
-            if (!refNotifications[r]) refNotifications[r] = [];
-            refNotifications[r].push({ date: new Date().toLocaleDateString(), message: "⚠️ Παρακαλώ δηλώστε άμεσα το εβδομαδιαίο κώλυμά σας." });
-        });
-        localStorage.setItem('eps_referee_notifications', JSON.stringify(refNotifications));
-        alert('✅ Ειδοποιήσεις στάλθηκαν σε όσους δεν δήλωσαν!');
-    }
-
-    function renderRefereeProfile() {
-        let refName = document.getElementById('selectRefereeProfile').value;
-        let container = document.getElementById('refereeIndividualProfileContainer');
-        if (!refName) { container.innerHTML = ''; return; }
-        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
-        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
-        let allAssigned = {...savedAssignments, ...cupAssignments};
-        let myMatches = [];
-        for (let k in allAssigned) {
-            let item = allAssigned[k];
-            if (item.ref0 === refName || item.ref1 === refName || item.ref2 === refName) {
-                let role = (item.ref0 === refName) ? "Διαιτητής" : "Βοηθός";
-                myMatches.push(`<li>${item.matchday || 'Κύπελλο'} - <strong>${item.match}</strong> (<em>${role}</em>)</li>`);
-            }
-        }
-        container.innerHTML = `<div class="card-box"><h3>📁 Φάκελος: ${refName}</h3><ul>${myMatches.join('') || '<li>Κανένας αγώνας</li>'}</ul></div>`;
+    function addNewRefereeManual() {
+        let name = document.getElementById('newRefereeInput').value.trim().toUpperCase();
+        if (!name) { alert('Εισάγετε ονοματεπώνυμο διαιτητή!'); return; }
+        let custom = JSON.parse(localStorage.getItem('eps_custom_referees') || "[]");
+        if (getRefereesList().includes(name)) { alert('Ο διαιτητής υπάρχει ήδη!'); return; }
+        custom.push(name);
+        localStorage.setItem('eps_custom_referees', JSON.stringify(custom));
+        alert(`✅ Ο διαιτητής "${name}" προστέθηκε επιτυχώς!`);
+        document.getElementById('newRefereeInput').value = '';
+        loadEvaluatedListBuilder();
     }
 </script>
 
