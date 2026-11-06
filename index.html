@@ -575,12 +575,12 @@
         loadEvaluatedListBuilder();
         loadAdminDocuments();
 
-        // 🔄 Αυτόματος έλεγχος ειδοποιήσεων κάθε 3 δευτερόλεπτα για τον συνδεδεμένο διαιτητή
+        // 🔄 Συνεχής έλεγχος ειδοποιήσεων κάθε 2 δευτερόλεπτα
         setInterval(() => {
             if (currentLoggedInReferee && document.getElementById('refereeMainPanel').style.display === 'block') {
                 loadRefereePortalData();
             }
-        }, 3000);
+        }, 2000);
     };
 
     function showScreen(screen) {
@@ -653,12 +653,12 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
-    // --- ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ ΠΡΟΣ ΔΙΑΙΤΗΤΕΣ ---
+    // --- ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ ---
     function sendKolymataNotification() {
-        let timestamp = new Date().getTime(); // Προσθήκη timestamp ώστε να ανιχνεύεται σαν νέα αλλαγή
-        localStorage.setItem('eps_kolymata_notification_time', timestamp);
-        localStorage.setItem('eps_kolymata_notification', '⚠️ ΥΠΕΝΘΥΜΙΣΗ: Παρακαλείσθε να δηλώσετε εγκαίρως τα τυχόν κώλυμά σας για τους προσεχείς αγώνες!');
-        alert('📢 Η ειδοποίηση δήλωσης κωλυμάτων εστάλη επιτυχώς σε όλους τους διαιτητές και εμφανίστηκε ζωντανά στις καρτέλες τους!');
+        let msg = "⚠️ ΥΠΕΝΘΥΜΙΣΗ: Παρακαλείσθε να δηλώσετε εγκαίρως τα κώλυματά σας για τους προσεχείς αγώνες!";
+        localStorage.setItem('eps_kolymata_notification', msg);
+        localStorage.setItem('eps_kolymata_notification_time', new Date().getTime());
+        alert('📢 Η ειδοποίηση δήλωσης κωλυμάτων στάλθηκε επιτυχώς σε όλους τους διαιτητές!');
     }
 
     function printKolymataReport() {
@@ -799,11 +799,11 @@
     }
 
     function loadRefereePortalData() {
-        // Εμφάνιση ειδοποίησης κωλυμάτων από την επιτροπή
+        // Εμφάνιση ειδοποίησης κωλυμάτων στην καρτέλα του διαιτητή
         let notifMsg = localStorage.getItem('eps_kolymata_notification');
         let notifContainer = document.getElementById('refereeNotificationsContainer');
         if(notifContainer && notifMsg) {
-            notifContainer.innerHTML = `<div class="alert-box" style="background:#d1ecf1; border-left:4px solid #17a2b8; margin-bottom:15px;"><p>${notifMsg}</p></div>`;
+            notifContainer.innerHTML = `<div class="alert-box" style="background:#d1ecf1; border-left:4px solid #17a2b8; margin-bottom:15px; font-size:15px;"><p><strong>📢 ΕΙΔΟΠΟΙΗΣΗ ΕΠΙΤΡΟΠΗΣ:</strong><br>${notifMsg}</p></div>`;
         }
 
         let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
