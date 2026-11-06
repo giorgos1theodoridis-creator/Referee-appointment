@@ -84,6 +84,10 @@
         <label for="refSelectLogin">Επιλέξτε Ονοματεπώνυμο:</label>
         <select id="refSelectLogin"></select>
     </div>
+    <div class="form-group">
+        <label for="refPasswordLogin">Κωδικός Σύνδεσης (Αρχικός: ref2026):</label>
+        <input type="password" id="refPasswordLogin" placeholder="Εισάγετε τον κωδικό σας">
+    </div>
     <button class="btn-success" onclick="loginReferee()">🔓 Είσοδος Διαιτητή</button>
     <button class="btn-warning" onclick="showScreen('role')">🔙 Επιστροφή</button>
 </div>
@@ -95,120 +99,9 @@
         <button class="btn-danger" style="padding: 6px 12px; font-size:14px;" onclick="logoutAdmin()">🚪 Αποσύνδεση</button>
     </div>
 
-    <div class="code-box no-print">
-        <h3>🔗 Χρήσιμοι Σύνδεσμοι Επιτροπής</h3>
-        <p>• Επίσημοι Κανονισμοί & Αλλαγές Παιχνιδιού (IFAB): <br>
-           <a href="https://www.theifab.com/law-changes/latest" target="_blank" style="color:var(--primary); font-weight:bold;">www.theifab.com/law-changes/latest</a>
-        </p>
-    </div>
-
-    <!-- ΔΙΑΧΕΙΡΙΣΗ ΚΩΛΥΜΑΤΩΝ ΔΙΑΙΤΗΤΩΝ & ΕΙΔΟΠΟΙΗΣΗ -->
+    <!-- 1. ΕΠΙΛΟΓΗ ΚΑΤΗΓΟΡΙΩΝ & ΑΓΩΝΩΝ ΠΡΩΤΑΘΛΗΜΑΤΩΝ -->
     <div class="card-box no-print">
-        <h3>🚫 Κώλυματα Διαιτητών & Ειδοποιήσεις</h3>
-        <p style="font-size: 13px; color: #555;">Αποστολή άμεσης ειδοποίησης σε όλους τους διαιτητές για δήλωση κωλυμάτων:</p>
-        <button class="btn-success" style="background:#0275d8; font-size:16px; padding:12px 20px; margin-bottom:15px;" onclick="sendKolymataNotification()">📢 Αποστολή δήλωσης κωλυμάτων σε όλους</button>
-        
-        <h4>Live Παρακολούθηση Κωλυμάτων Διαιτητών</h4>
-        <div id="kolymataListContainer" style="max-height: 250px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
-            <p>Κανένα κώλυμα.</p>
-        </div>
-        <button onclick="printKolymataReport()">🖨️ Εκτύπωση / Αποθήκευση PDF Κωλυμάτων</button>
-    </div>
-
-    <!-- ΡΥΘΜΙΣΗ ΚΩΔΙΚΩΝ ΑΣΦΑΛΕΙΑΣ ΓΙΑ ΜΑΘΗΜΑΤΑ & ΠΡΟΠΟΝΗΣΕΙΣ -->
-    <div class="card-box no-print">
-        <h3>🔑 Ρύθμιση Κωδικών Ασφαλείας Παρουσιών</h3>
-        <div class="grid-2">
-            <div>
-                <div class="form-group">
-                    <label>Κωδικός Μαθήματος:</label>
-                    <input type="text" id="adminLessonCodeInput" placeholder="π.χ. MATH2026">
-                </div>
-                <button class="btn-success" onclick="saveAdminLessonCode()">💾 Αποθήκευση Κωδικού Μαθήματος</button>
-            </div>
-            <div>
-                <div class="form-group">
-                    <label>Κωδικός Προπόνησης:</label>
-                    <input type="text" id="adminTrainingCodeInput" placeholder="π.χ. PROP2026">
-                </div>
-                <button class="btn-success" onclick="saveAdminTrainingCode()">💾 Αποθήκευση Κωδικού Προπόνησης</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ΠΡΟΒΟΛΗ ΥΠΟΒΛΗΘΕΝΤΩΝ ΠΑΡΟΥΣΙΩΝ -->
-    <div class="card-box no-print">
-        <h3>📋 Συγκεντρωτικές Παρουσίες Διαιτητών</h3>
-        <button class="toggle-btn" onclick="toggleSection('adminAttendancesContent')">👁️ Προβολή Παρουσίων</button>
-        <div id="adminAttendancesContent" class="collapsible-content">
-            <div id="adminAttendancesContainer"><p>Δεν υπάρχουν καταχωρημένες παρουσίες.</p></div>
-        </div>
-    </div>
-
-    <!-- ΧΕΙΡΟΚΙΝΗΤΗ ΚΑΤΑΧΩΡΙΣΗ ΓΗΠΕΔΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ -->
-    <div class="card-box no-print">
-        <h3>🏟️ Χειροκίνητη Προσθήκη Γηπέδων (Α', Β'1, Β'2 & Κύπελλο)</h3>
-        <div class="form-group">
-            <label>Όνομα Γηπέδου:</label>
-            <input type="text" id="newStadiumInput" placeholder="π.χ. ΔΗΜΟΤΙΚΟ ΣΤΑΔΙΟ ΔΡΑΜΑΣ">
-        </div>
-        <button class="btn-success" onclick="addCustomStadium()">➕ Προσθήκη Γηπέδου στη Λίστα</button>
-        <div id="customStadiumsList" style="margin-top: 10px; font-size: 13px; color: #555;"></div>
-    </div>
-
-    <!-- ΙΔΙΟΧΕΙΡΗ ΠΡΟΣΘΗΚΗ ΝΕΩΝ ΔΙΑΙΤΗΤΩΝ -->
-    <div class="card-box no-print">
-        <h3>➕ Ιδιόχειρη Προσθήκη Νέου Διαιτητή</h3>
-        <div class="form-group">
-            <label>Ονοματεπώνυμο Νέου Διαιτητή (ΚΕΦΑΛΑΙΑ):</label>
-            <input type="text" id="newRefereeInput" placeholder="π.χ. ΠΑΠΑΔΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ">
-        </div>
-        <button class="btn-success" onclick="addNewRefereeManual()">➕ Προσθήκη στη Λίστα & Δημιουργία Καρτέλας</button>
-    </div>
-
-    <!-- ΔΙΠΛΟΣ ΠΙΝΑΚΑΣ: ΑΝΟΔΟΣ / ΥΠΟΒΙΒΑΣΜΟΣ (ΕΩΣ 4) -->
-    <div class="card-box no-print">
-        <h3>🔄 Διαχείριση Προβιβασμού & Υποβιβασμού Ομάδων (Έως 4 Επιλογές)</h3>
-        <div class="grid-2">
-            <div>
-                <h4 style="color: var(--secondary);">📉 Ομάδες Υποβιβασμού (Έως 4)</h4>
-                <div class="form-group"><label>1η:</label><select id="relegate_0"></select></div>
-                <div class="form-group"><label>2η:</label><select id="relegate_1"></select></div>
-                <div class="form-group"><label>3η:</label><select id="relegate_2"></select></div>
-                <div class="form-group"><label>4η:</label><select id="relegate_3"></select></div>
-                <button class="btn-danger" onclick="saveRelegations()">⬇️ Αποθήκευση Υποβιβασμών</button>
-            </div>
-            <div>
-                <h4 style="color: var(--success);">📈 Ομάδες Προβιβασμού (Έως 4)</h4>
-                <div class="form-group"><label>1η:</label><select id="promote_0"></select></div>
-                <div class="form-group"><label>2η:</label><select id="promote_1"></select></div>
-                <div class="form-group"><label>3η:</label><select id="promote_2"></select></div>
-                <div class="form-group"><label>4η:</label><select id="promote_3"></select></div>
-                <button class="btn-success" onclick="savePromotions()">⬆️ Αποθήκευση Προβιβασμών</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ΔΙΑΧΕΙΡΙΣΗ ΕΠΙΣΗΜΩΝ ΕΓΓΡΑΦΩΝ ΔΙΑΙΤΗΤΩΝ -->
-    <div class="card-box no-print">
-        <h3>📂 Επίσημα Έγγραφα & Φωτογραφίες Διαιτητών</h3>
-        <button class="toggle-btn" onclick="toggleSection('adminDocumentsContent')">👁️ Προβολή Υποβληθέντων Εγγράφων</button>
-        <div id="adminDocumentsContent" class="collapsible-content">
-            <div id="adminDocumentsContainer"><p>Δεν υπάρχουν υποβληθέντα έγγραφα.</p></div>
-        </div>
-    </div>
-
-    <div class="card-box no-print">
-        <h3>⭐ Αξιολόγηση Διαιτητών & Παρατηρητών</h3>
-        <button class="toggle-btn" onclick="toggleSection('evaluatedContent')">👁️ Ορισμός Κατηγοριών Διαιτητών (Κ1 έως Κ6)</button>
-        <div id="evaluatedContent" class="collapsible-content">
-            <div id="evaluatedListBuilder" style="max-height: 350px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></div>
-            <button class="btn-success" onclick="saveEvaluatedReferees()">💾 Αποθήκευση Αξιολογήσεων</button>
-        </div>
-    </div>
-
-    <div class="no-print">
-        <h2>🗓️ Επιλογή Κατηγορίας & Αγώνων Πρωταθλήματος</h2>
+        <h2>🗓️ 1. Επιλογή Κατηγορίας & Αγώνων Πρωταθλήματος</h2>
         <div class="form-group">
             <label for="categorySelect">Κατηγορία / Διοργάνωση:</label>
             <select id="categorySelect" onchange="loadMatchdaySchedules()">
@@ -232,12 +125,13 @@
         <button onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση PDF Ορισμών</button>
     </div>
 
-    <h2>📋 Πίνακας Ορισμών Αγώνων Πρωταθλήματος</h2>
+    <!-- 2. ΠΙΝΑΚΑΣ ΟΡΙΣΜΩΝ ΑΓΩΝΩΝ ΠΡΩΤΑΘΛΗΜΑΤΟΣ -->
+    <h2>📋 2. Πίνακας Ορισμών Αγώνων Πρωταθλήματος</h2>
     <div id="matchesContainer"></div>
 
-    <!-- ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ ΜΕ ΚΟΥΜΠΙ "ΟΡΙΣΜΟΙ" & ΔΥΝΑΜΙΚΗ ΠΡΟΣΘΗΚΗ -->
+    <!-- 3. ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ -->
     <div class="card-box" style="margin-top: 40px;">
-        <h2>🏆 Διαχείριση Κυπέλλου</h2>
+        <h2>🏆 3. Διαχείριση Κυπέλλου</h2>
         <button class="btn-success no-print" onclick="toggleCupDefinitions()" style="font-size: 16px; padding: 12px 24px; margin-bottom: 15px;">📋 Ορισμοί (Άνοιγμα Φόρμας Κυπέλλου)</button>
         
         <div id="cupDefinitionsContainer" style="display:none;" class="no-print">
@@ -251,8 +145,133 @@
         </div>
     </div>
 
-    <h2>🏆 Πίνακας Αγώνων & Ορισμών Κυπέλλου</h2>
+    <!-- 4. ΠΙΝΑΚΑΣ ΑΓΩΝΩΝ & ΟΡΙΣΜΩΝ ΚΥΠΕΛΛΟΥ -->
+    <h2>🏆 4. Πίνακας Αγώνων & Ορισμών Κυπέλλου</h2>
     <div id="cupMatchesContainer"></div>
+
+    <!-- 5. ΔΙΑΧΕΙΡΙΣΗ ΠΡΟΒΙΒΑΣΜΟΥ & ΥΠΟΒΙΒΑΣΜΟΥ -->
+    <div class="card-box no-print">
+        <h3>🔄 5. Διαχείριση Προβιβασμού & Υποβιβασμού Ομάδων (Έως 4 Επιλογές)</h3>
+        <div class="grid-2">
+            <div>
+                <h4 style="color: var(--secondary);">📉 Ομάδες Υποβιβασμού (Έως 4)</h4>
+                <div class="form-group"><label>1η:</label><select id="relegate_0"></select></div>
+                <div class="form-group"><label>2η:</label><select id="relegate_1"></select></div>
+                <div class="form-group"><label>3η:</label><select id="relegate_2"></select></div>
+                <div class="form-group"><label>4η:</label><select id="relegate_3"></select></div>
+                <button class="btn-danger" onclick="saveRelegations()">⬇️ Αποθήκευση Υποβιβασμών</button>
+            </div>
+            <div>
+                <h4 style="color: var(--success);">📈 Ομάδες Προβιβασμού (Έως 4)</h4>
+                <div class="form-group"><label>1η:</label><select id="promote_0"></select></div>
+                <div class="form-group"><label>2η:</label><select id="promote_1"></select></div>
+                <div class="form-group"><label>3η:</label><select id="promote_2"></select></div>
+                <div class="form-group"><label>4η:</label><select id="promote_3"></select></div>
+                <button class="btn-success" onclick="savePromotions()">⬆️ Αποθήκευση Προβιβασμών</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. ΧΕΙΡΟΚΙΝΗΤΗ ΠΡΟΣΘΗΚΗ ΓΗΠΕΔΩΝ -->
+    <div class="card-box no-print">
+        <h3>🏟️ 6. Χειροκίνητη Προσθήκη Γηπέδων (Α', Β'1, Β'2, Κ15, Κ13, Κ11)</h3>
+        <div class="form-group">
+            <label>Όνομα Γηπέδου:</label>
+            <input type="text" id="newStadiumInput" placeholder="π.χ. ΔΗΜΟΤΙΚΟ ΣΤΑΔΙΟ ΔΡΑΜΑΣ">
+        </div>
+        <button class="btn-success" onclick="addCustomStadium()">➕ Προσθήκη Γηπέδου στη Λίστα</button>
+        <div id="customStadiumsList" style="margin-top: 10px; font-size: 13px; color: #555;"></div>
+    </div>
+
+    <!-- 7. ΣΥΓΚΕΝΤΡΩΤΙΚΗ ΠΑΡΟΥΣΙΑ ΔΙΑΙΤΗΤΩΝ -->
+    <div class="card-box no-print">
+        <h3>📋 7. Συγκεντρωτική Παρουσία Διαιτητών</h3>
+        <button class="toggle-btn" onclick="toggleSection('adminAttendancesContent')">👁️ Προβολή Παρουσίων</button>
+        <div id="adminAttendancesContent" class="collapsible-content">
+            <div id="adminAttendancesContainer"><p>Δεν υπάρχουν καταχωρημένες παρουσίες.</p></div>
+        </div>
+    </div>
+
+    <!-- 8. ΚΩΛΥΜΑΤΑ ΔΙΑΙΤΗΤΩΝ & ΕΙΔΟΠΟΙΗΣΕΙΣ -->
+    <div class="card-box no-print">
+        <h3>🚫 8. Κώλυματα Διαιτητών & Ειδοποιήσεις</h3>
+        <p style="font-size: 13px; color: #555;">Αποστολή άμεσης ειδοποίησης σε όλους τους διαιτητές για δήλωση κωλυμάτων:</p>
+        <button class="btn-success" style="background:#0275d8; font-size:16px; padding:12px 20px; margin-bottom:15px;" onclick="sendKolymataNotification()">📢 Αποστολή δήλωσης κωλυμάτων σε όλους</button>
+    </div>
+
+    <!-- 9. LIVE ΠΑΡΑΚΟΛΟΥΘΗΣΗ ΚΩΛΥΜΑΤΩΝ ΚΑΙ PDF -->
+    <div class="card-box no-print">
+        <h3>📊 9. Live Παρακολούθηση Κωλυμάτων & Εκτύπωση/PDF</h3>
+        <div id="kolymataListContainer" style="max-height: 250px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
+            <p>Κανένα κώλυμα.</p>
+        </div>
+        <button onclick="printKolymataReport()">🖨️ Εκτύπωση / Αποθήκευση PDF Κωλυμάτων</button>
+    </div>
+
+    <!-- 10. ΡΥΘΜΙΣΗ ΚΩΔΙΚΩΝ ΑΣΦΑΛΕΙΑΣ ΠΑΡΟΥΣΙΩΝ -->
+    <div class="card-box no-print">
+        <h3>🔑 10. Ρύθμιση Κωδικών Ασφαλείας Παρουσιών (Μάθημα & Προπόνηση)</h3>
+        <div class="grid-2">
+            <div>
+                <div class="form-group">
+                    <label>Κωδικός Μαθήματος:</label>
+                    <input type="text" id="adminLessonCodeInput" placeholder="π.χ. MATH2026">
+                </div>
+                <button class="btn-success" onclick="saveAdminLessonCode()">💾 Αποθήκευση Κωδικού Μαθήματος</button>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label>Κωδικός Προπόνησης:</label>
+                    <input type="text" id="adminTrainingCodeInput" placeholder="π.χ. PROP2026">
+                </div>
+                <button class="btn-success" onclick="saveAdminTrainingCode()">💾 Αποθήκευση Κωδικού Προπόνησης</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. ΠΙΝΑΚΑΣ ΚΩΔΙΚΩΝ ΤΩΝ ΔΙΑΙΤΗΤΩΝ -->
+    <div class="card-box no-print">
+        <h3>🔐 11. Πίνακας Κωδικών των Διαιτητών</h3>
+        <p style="font-size: 13px; color: #555;">Διαχειριστείτε τους κωδικούς σύνδεσης των διαιτητών σε περίπτωση που κάποιος τον ξεχάσει:</p>
+        <div id="adminRefereePasswordsContainer" style="max-height: 300px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></div>
+    </div>
+
+    <!-- 12. ΙΔΙΟΧΕΙΡΗ ΠΡΟΣΘΗΚΗ ΝΕΟΥ ΔΙΑΙΤΗΤΗ -->
+    <div class="card-box no-print">
+        <h3>➕ 12. Ιδιόχειρη Προσθήκη Νέου Διαιτητή</h3>
+        <div class="form-group">
+            <label>Ονοματεπώνυμο Νέου Διαιτητή (ΚΕΦΑΛΑΙΑ):</label>
+            <input type="text" id="newRefereeInput" placeholder="π.χ. ΠΑΠΑΔΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ">
+        </div>
+        <button class="btn-success" onclick="addNewRefereeManual()">➕ Προσθήκη στη Λίστα & Δημιουργία Καρτέλας</button>
+    </div>
+
+    <!-- 13. ΧΡΗΣΙΜΟΙ ΣΥΝΔΕΣΜΟΙ ΕΠΙΤΡΟΠΗΣ -->
+    <div class="code-box no-print">
+        <h3>🔗 13. Χρήσιμοι Σύνδεσμοι Επιτροπής</h3>
+        <p>• Επίσημοι Κανονισμοί & Αλλαγές Παιχνιδιού (IFAB): <br>
+           <a href="https://www.theifab.com/law-changes/latest" target="_blank" style="color:var(--primary); font-weight:bold;">www.theifab.com/law-changes/latest</a>
+        </p>
+    </div>
+
+    <!-- 14. ΕΠΙΣΗΜΑ ΕΓΓΡΑΦΑ & ΦΩΤΟΓΡΑΦΙΕΣ ΔΙΑΙΤΗΤΩΝ -->
+    <div class="card-box no-print">
+        <h3>📂 14. Επίσημα Έγγραφα & Φωτογραφίες Διαιτητών</h3>
+        <button class="toggle-btn" onclick="toggleSection('adminDocumentsContent')">👁️ Προβολή Υποβληθέντων Εγγράφων</button>
+        <div id="adminDocumentsContent" class="collapsible-content">
+            <div id="adminDocumentsContainer"><p>Δεν υπάρχουν υποβληθέντα έγγραφα.</p></div>
+        </div>
+    </div>
+
+    <!-- 15. ΑΞΙΟΛΟΓΗΣΗ ΔΙΑΙΤΗΤΩΝ & ΠΑΡΑΤΗΡΗΤΩΝ -->
+    <div class="card-box no-print">
+        <h3>⭐ 15. Αξιολόγηση Διαιτητών & Παρατηρητών</h3>
+        <button class="toggle-btn" onclick="toggleSection('evaluatedContent')">👁️ Ορισμός Κατηγοριών Διαιτητών (Κ1 έως Κ6)</button>
+        <div id="evaluatedContent" class="collapsible-content">
+            <div id="evaluatedListBuilder" style="max-height: 350px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></div>
+            <button class="btn-success" onclick="saveEvaluatedReferees()">💾 Αποθήκευση Αξιολογήσεων</button>
+        </div>
+    </div>
 </div>
 
 <!-- ΚΥΡΙΩΣ ΠΙΝΑΚΑΣ ΔΙΑΙΤΗΤΗ -->
@@ -347,6 +366,41 @@
     function getRefereesList() {
         let custom = JSON.parse(localStorage.getItem('eps_custom_referees') || "[]");
         return [...DEFAULT_REFEREES, ...custom];
+    }
+
+    function getRefereePassword(refName) {
+        let passwords = JSON.parse(localStorage.getItem('eps_referee_passwords') || "{}");
+        return passwords[refName] || "ref2026";
+    }
+
+    function setRefereePassword(refName, newPass) {
+        let passwords = JSON.parse(localStorage.getItem('eps_referee_passwords') || "{}");
+        passwords[refName] = newPass;
+        localStorage.setItem('eps_referee_passwords', JSON.stringify(passwords));
+    }
+
+    function renderAdminRefereePasswordsTable() {
+        let container = document.getElementById('adminRefereePasswordsContainer');
+        if (!container) return;
+        let refs = getRefereesList();
+        let html = `<table><tr><th>Διαιτητής</th><th>Τρέχων Κωδικός</th><th>Ενέργεια Αλλαγής</th></tr>`;
+        refs.forEach((r, idx) => {
+            let pass = getRefereePassword(r);
+            html += `<tr>
+                <td><strong>${r}</strong></td>
+                <td><input type="text" id="admin_pass_${idx}" value="${pass}" style="padding:5px;"></td>
+                <td><button class="btn-success" style="padding:4px 10px; font-size:12px;" onclick="updateRefereePasswordByAdmin('${r}', ${idx})">💾 Αποθήκευση</button></td>
+            </tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+    }
+
+    function updateRefereePasswordByAdmin(refName, idx) {
+        let inputVal = document.getElementById(`admin_pass_${idx}`).value.trim();
+        if (!inputVal) { alert('Ο κωδικός δεν μπορεί να είναι κενός!'); return; }
+        setRefereePassword(refName, inputVal);
+        alert(`✅ Ο κωδικός για τον/την διαιτητή ${refName} ενημερώθηκε επιτυχώς!`);
     }
 
     const OBSERVERS = [
@@ -517,6 +571,9 @@
         renderCupMatches();
         loadAdminAttendanceCodesUI();
         loadAllAdminData();
+        renderAdminRefereePasswordsTable();
+        loadEvaluatedListBuilder();
+        loadAdminDocuments();
     };
 
     function showScreen(screen) {
@@ -546,6 +603,7 @@
             renderCustomStadiumsList();
             loadAdminAttendanceCodesUI();
             loadAdminAttendancesList();
+            renderAdminRefereePasswordsTable();
         } else {
             alert('❌ Λάθος κωδικός επιτροπής!');
         }
@@ -560,10 +618,19 @@
 
     function loginReferee() {
         let refName = document.getElementById('refSelectLogin').value;
+        let inputPass = document.getElementById('refPasswordLogin').value.trim();
+        let correctPass = getRefereePassword(refName);
+
+        if (inputPass !== correctPass) {
+            alert('❌ Λάθος κωδικός σύνδεσης διαιτητή! (Αρχικός κωδικός: ref2026)');
+            return;
+        }
+
         currentLoggedInReferee = refName;
         document.getElementById('refereeLoginScreen').style.display = 'none';
         document.getElementById('refereeMainPanel').style.display = 'block';
         document.getElementById('loggedInRefNameDisplay').textContent = refName;
+        document.getElementById('refPasswordLogin').value = '';
         loadRefereePortalData();
     }
 
@@ -578,13 +645,11 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
-    // Αποστολή ειδοποίησης κωλυμάτων από επιτροπή
     function sendKolymataNotification() {
         localStorage.setItem('eps_kolymata_notification', '⚠️ ΥΠΕΝΘΥΜΙΣΗ: Παρακαλείσθε να δηλώσετε εγκαίρως τα τυχόν κώλυμά σας για τους προσεχείς αγώνες!');
         alert('📢 Η ειδοποίηση δήλωσης κωλυμάτων εστάλη επιτυχώς σε όλους τους διαιτητές!');
     }
 
-    // Εκτύπωση / PDF Κωλυμάτων
     function printKolymataReport() {
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         let printWindow = window.open('', '_blank');
@@ -607,7 +672,6 @@
         setTimeout(() => { printWindow.print(); }, 500);
     }
 
-    // Διαχείριση Κωδικών Παρουσίων από Επιτροπή
     function saveAdminLessonCode() {
         let code = document.getElementById('adminLessonCodeInput').value.trim();
         if(!code) { alert('Εισάγετε κωδικό μαθήματος!'); return; }
@@ -722,7 +786,6 @@
     }
 
     function loadRefereePortalData() {
-        // Ειδοποιήσεις
         let notifMsg = localStorage.getItem('eps_kolymata_notification');
         let notifContainer = document.getElementById('refereeNotificationsContainer');
         if(notifContainer && notifMsg) {
@@ -967,21 +1030,18 @@
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         let options = '<option value="">-- Επιλογή --</option>';
         getRefereesList().forEach(ref => {
-            // Έλεγχος αν ο διαιτητής έχει κώλυμα την ημέρα του αγώνα
             let hasConflict = kolymata.filter(k => k.referee === ref).some(k => {
                 if (matchDateStr && k.date === matchDateStr) {
                     if (k.timeSlot === 'Ολοήμερο') return true;
                     if (isMorning && k.timeSlot === 'Πρωί') return true;
                     if (!isMorning && k.timeSlot === 'Απόγευμα') return true;
                 }
-                // Αν δεν έχει οριστεί ημερομηνία αγώνα ακόμα, ελέγχουμε γενικό κώλυμα ημέρας
                 if (!matchDateStr && k.timeSlot === 'Ολοήμερο') return true;
                 return false;
             });
 
-            // Αν έχει κώλυμα, αποκλείεται από τη λίστα ορισμού εκτός αν είναι ο ήδη επιλεγμένος
             if (hasConflict && ref !== selectedVal) {
-                return; // Παράλειψη διαιτητή λόγω κωλύματος
+                return;
             }
 
             let label = hasConflict ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : ref;
@@ -1016,7 +1076,6 @@
             let matchDateStr = dtInput && dtInput.value ? dtInput.value.split('T')[0] : '';
             let isMorning = MORNING_TEAMS.includes(m[0]) || MORNING_TEAMS.includes(m[1]);
 
-            // Φιλτράρισμα διαθέσιμων διαιτητών χωρίς κώλυμα
             let availableRefs = getRefereesList().filter(ref => {
                 let hasConflict = kolymata.filter(k => k.referee === ref).some(k => {
                     if (matchDateStr && k.date === matchDateStr) {
@@ -1123,7 +1182,6 @@
         alert('🔄 Ο πίνακας επαναφέρθηκε επιτυχώς!');
     }
 
-    /* === ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ === */
     function toggleCupDefinitions() {
         let box = document.getElementById('cupDefinitionsContainer');
         if (box.style.display === 'none' || box.style.display === '') {
@@ -1380,9 +1438,11 @@
         if (getRefereesList().includes(name)) { alert('Ο διαιτητής υπάρχει ήδη!'); return; }
         custom.push(name);
         localStorage.setItem('eps_custom_referees', JSON.stringify(custom));
-        alert(`✅ Ο διαιτητής "${name}" προστέθηκε επιτυχώς!`);
+        setRefereePassword(name, "ref2026");
+        alert(`✅ Ο διαιτητής "${name}" προστέθηκε επιτυχώς με αρχικό κωδικό "ref2026"!`);
         document.getElementById('newRefereeInput').value = '';
         loadEvaluatedListBuilder();
+        renderAdminRefereePasswordsTable();
     }
 </script>
 
