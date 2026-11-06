@@ -379,6 +379,30 @@
         localStorage.setItem('eps_referee_passwords', JSON.stringify(passwords));
     }
 
+    // --- ΔΙΚΛΕΙΔΑ ΑΣΦΑΛΕΙΑΣ: ΕΛΕΓΧΟΣ ΑΝ Ο ΔΙΑΙΤΗΤΗΣ ΕΧΕΙ ΞΑΝΑΠΑΙΞΕΙ ΤΗΝ ΟΜΑΔΑ ---
+    function hasRefereePlayedTeam(refName, teamA, teamB) {
+        if (!refName || !teamA || !teamB) return false;
+        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
+        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
+        let allAssigned = {...savedAssignments, ...cupAssignments};
+
+        for (let k in allAssigned) {
+            let item = allAssigned[k];
+            if (!item.match) continue;
+            let parts = item.match.split(' - ');
+            if (parts.length === 2) {
+                let t1 = parts[0].trim();
+                let t2 = parts[1].trim();
+                if (t1 === teamA || t2 === teamA || t1 === teamB || t2 === teamB) {
+                    if (item.ref0 === refName || item.ref1 === refName || item.ref2 === refName) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     function renderAdminRefereePasswordsTable() {
         let container = document.getElementById('adminRefereePasswordsContainer');
         if (!container) return;
@@ -575,7 +599,6 @@
         loadEvaluatedListBuilder();
         loadAdminDocuments();
 
-        // 🔄 Συνεχής έλεγχος ειδοποιήσεων κάθε 2 δευτερόλεπτα
         setInterval(() => {
             if (currentLoggedInReferee && document.getElementById('refereeMainPanel').style.display === 'block') {
                 loadRefereePortalData();
@@ -653,7 +676,6 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
-    // --- ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ ---
     function sendKolymataNotification() {
         let msg = "⚠️ ΥΠΕΝΘΥΜΙΣΗ: Παρακαλείσθε να δηλώσετε εγκαίρως τα κώλυματά σας για τους προσεχείς αγώνες!";
         localStorage.setItem('eps_kolymata_notification', msg);
@@ -799,7 +821,6 @@
     }
 
     function loadRefereePortalData() {
-        // Εμφάνιση ειδοποίησης κωλυμάτων στην καρτέλα του διαιτητή
         let notifMsg = localStorage.getItem('eps_kolymata_notification');
         let notifContainer = document.getElementById('refereeNotificationsContainer');
         if(notifContainer && notifMsg) {
@@ -1010,16 +1031,16 @@
                     html += `<td colspan="4" style="text-align:center; font-weight:bold; color:var(--secondary);">ΑΝΑΒΑΛΛΕΤΑΙ</td>`;
                 } else {
                     html += `
-                        <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning, matchDateStr)}</select></td>
-                        <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning, matchDateStr)}</select></td>
-                        <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning, matchDateStr)}</select></td>
+                        <td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning, matchDateStr, m[0], m[1])}</select></td>
+                        <td><select id="ref_${index}_1">${getRefereeOptions(current.ref1, isMorning, matchDateStr, m[0], m[1])}</select></td>
+                        <td><select id="ref_${index}_2">${getRefereeOptions(current.ref2, isMorning, matchDateStr, m[0], m[1])}</select></td>
                         <td><select id="obs_${index}">${getObserverOptions(current.observer)}</select></td>`;
                 }
             } else {
                 if (isPostponed) {
                     html += `<td style="text-align:center; font-weight:bold; color:var(--secondary);">ΑΝΑΒΑΛΛΕΤΑΙ</td>`;
                 } else {
-                    html += `<td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning, matchDateStr)}</select></td>`;
+                    html += `<td><select id="ref_${index}_0">${getRefereeOptions(current.ref0, isMorning, matchDateStr, m[0], m[1])}</select></td>`;
                 }
             }
 
@@ -1040,7 +1061,8 @@
         renderMatches();
     }
 
-    function getRefereeOptions(selectedVal, isMorning, matchDateStr) {
+    // --- ΔΙΚΛΕΙΔΑ ΑΣΦΑΛΕΙΑΣ: ΕΜΦΑΝΙΣΗ ΜΕ ΣΗΜΑΝΣΗ ΣΤΑ DROPDOWNS ---
+    function getRefereeOptions(selectedVal, isMorning, matchDateStr, homeTeam, awayTeam) {
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         let options = '<option value="">-- Επιλογή --</option>';
         getRefereesList().forEach(ref => {
@@ -1054,11 +1076,15 @@
                 return false;
             });
 
-            if (hasConflict && ref !== selectedVal) {
-                return;
+            let hasPlayed = homeTeam && awayTeam ? hasRefereePlayedTeam(ref, homeTeam, awayTeam) : false;
+
+            let label = ref;
+            if (hasConflict) {
+                label = `⚠️ ${ref} [ΚΩΛΥΜΑ]`;
+            } else if (hasPlayed) {
+                label = `⚠️ ${ref} [ΕΧΕΙ ΞΑΝΑΠΑΙΞΕΙ ΟΜΑΔΑ]`;
             }
 
-            let label = hasConflict ? `⚠️ ${ref} [ΚΩΛΥΜΑ]` : ref;
             let sel = (ref === selectedVal) ? 'selected' : '';
             options += `<option value="${ref}" ${sel}>${label}</option>`;
         });
@@ -1100,7 +1126,8 @@
                     if (!matchDateStr && k.timeSlot === 'Ολοήμερο') return true;
                     return false;
                 });
-                return !hasConflict;
+                let hasPlayed = hasRefereePlayedTeam(ref, m[0], m[1]);
+                return !hasConflict && !hasPlayed;
             });
 
             let limit = isYouth ? 1 : 3;
@@ -1126,11 +1153,50 @@
         const md = document.getElementById('matchdaySelect').value;
         let schedules = getSchedules();
         let matches = (schedules[cat] && schedules[cat][md]) ? schedules[cat][md] : [];
+        let isYouth = (cat === 'K15' || cat === 'K13' || cat === 'K11');
+
+        // --- ΕΛΕΓΧΟΣ ΑΣΦΑΛΕΙΑΣ ΚΑΤΑ ΤΗΝ ΑΠΟΘΗΚΕΥΣΗ ---
+        let hasAnyWarning = false;
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        matches.forEach((m, index) => {
+            let isPostponed = document.getElementById(`postponed_${index}`)?.checked;
+            if (isPostponed) return;
+
+            let dtInput = document.getElementById(`datetime_${index}`);
+            let matchDateStr = dtInput && dtInput.value ? dtInput.value.split('T')[0] : '';
+            let isMorning = MORNING_TEAMS.includes(m[0]) || MORNING_TEAMS.includes(m[1]);
+
+            let r0 = document.getElementById(`ref_${index}_0`)?.value;
+            let r1 = !isYouth ? document.getElementById(`ref_${index}_1`)?.value : '';
+            let r2 = !isYouth ? document.getElementById(`ref_${index}_2`)?.value : '';
+
+            [r0, r1, r2].forEach(r => {
+                if (!r) return;
+                let conflict = kolymata.filter(k => k.referee === r).some(k => {
+                    if (matchDateStr && k.date === matchDateStr) {
+                        if (k.timeSlot === 'Ολοήμερο') return true;
+                        if (isMorning && k.timeSlot === 'Πρωί') return true;
+                        if (!isMorning && k.timeSlot === 'Απόγευμα') return true;
+                    }
+                    if (!matchDateStr && k.timeSlot === 'Ολοήμερο') return true;
+                    return false;
+                });
+                let played = hasRefereePlayedTeam(r, m[0], m[1]);
+                if (conflict || played) hasAnyWarning = true;
+            });
+        });
+
+        if (hasAnyWarning) {
+            if (!confirm('⚠️ ΠΡΟΣΟΧΗ: Έχετε επιλέξει διαιτητή/ές που έχουν δηλωμένο κώλυμα ή έχουν ξαναπαίξει κάποια από τις εμπλεκόμενες ομάδες!\n\nΘέλετε σίγουρα να προχωρήσετε στην αποθήκευση των ορισμών;')) {
+                return;
+            }
+        }
+        // ---------------------------------------------
+
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
         let matchDateTimes = JSON.parse(localStorage.getItem('eps_match_datetimes') || "{}");
         let matchStadiums = JSON.parse(localStorage.getItem('eps_match_stadiums') || "{}");
         let matchPostponed = JSON.parse(localStorage.getItem('eps_match_postponed') || "{}");
-        let isYouth = (cat === 'K15' || cat === 'K13' || cat === 'K11');
 
         matches.forEach((m, index) => {
             let key = `${cat}_${md}_${index}`;
@@ -1268,9 +1334,9 @@
                     <input type="text" id="cup_stadium_${index}" value="${m.stadium}" placeholder="ή πληκτρολογήστε χειρόγραφα...">
                 </td>
                 <td><input type="datetime-local" id="cup_datetime_${index}" value="${m.datetime}"></td>
-                <td><select id="cup_ref_${index}_0">${getRefereeOptions(m.ref0, false, cupDateStr)}</select></td>
-                <td><select id="cup_ref_${index}_1">${getRefereeOptions(m.ref1, false, cupDateStr)}</select></td>
-                <td><select id="cup_ref_${index}_2">${getRefereeOptions(m.ref2, false, cupDateStr)}</select></td>
+                <td><select id="cup_ref_${index}_0">${getRefereeOptions(m.ref0, false, cupDateStr, m.home, m.away)}</select></td>
+                <td><select id="cup_ref_${index}_1">${getRefereeOptions(m.ref1, false, cupDateStr, m.home, m.away)}</select></td>
+                <td><select id="cup_ref_${index}_2">${getRefereeOptions(m.ref2, false, cupDateStr, m.home, m.away)}</select></td>
                 <td><select id="cup_obs_${index}">${getObserverOptions(m.observer)}</select></td>
                 <td style="text-align:center;"><input type="checkbox" id="cup_postponed_${index}" ${postCheck}></td>
                 <td><button class="btn-danger" style="padding:5px 10px; font-size:12px;" onclick="removeCupMatchRow(${index})">❌</button></td>
@@ -1334,7 +1400,8 @@
                     if (!matchDateStr && k.timeSlot === 'Ολοήμερο') return true;
                     return false;
                 });
-                return !hasConflict;
+                let hasPlayed = hasRefereePlayedTeam(ref, m.home, m.away);
+                return !hasConflict && !hasPlayed;
             });
 
             for (let pos = 0; pos < 3; pos++) {
