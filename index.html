@@ -631,6 +631,8 @@
         document.getElementById('refereeMainPanel').style.display = 'block';
         document.getElementById('loggedInRefNameDisplay').textContent = refName;
         document.getElementById('refPasswordLogin').value = '';
+        
+        // 🔄 ΕΝΣΩΜΑΤΩΜΕΝΗ ΔΙΟΡΘΩΣΗ: Φόρτωση δεδομένων και ειδοποιήσεων αμέσως στη σύνδεση του διαιτητή
         loadRefereePortalData();
     }
 
@@ -719,7 +721,6 @@
         let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
         let today = new Date().toLocaleString();
         
-        // Αποφυγή διπλής εγγραφής την ίδια ημέρα από τον ίδιο διαιτητή
         attendances.push({ referee: currentLoggedInReferee, type: 'Μάθημα', date: today });
         localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
         alert('✅ Η παρουσία σας στο μάθημα δηλώθηκε επιτυχώς και καταχωρήθηκε στην Επιτροπή!');
