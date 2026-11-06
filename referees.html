@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPS Drama - Προσωπική Καρτέλα Διαιτητή</title>
+    <title>EPS Drama - Πύλη Διαιτητή</title>
     <style>
         :root {
             --primary: #1b365d;
@@ -11,130 +11,185 @@
             --light: #f4f6f9;
             --dark: #333;
             --success: #28a745;
+            --info: #17a2b8;
         }
         body { font-family: Arial, sans-serif; background: var(--light); color: var(--dark); margin: 0; padding: 0; }
         header { background: var(--primary); color: white; padding: 15px; text-align: center; }
-        .container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); margin-top: 25px; }
+        .container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2, h3 { border-bottom: 2px solid var(--primary); padding-bottom: 5px; color: var(--primary); margin-top: 25px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        select, input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; margin-top: 5px; }
         button:hover { opacity: 0.9; }
         .btn-success { background: var(--success); }
         .btn-danger { background: var(--secondary); }
-        .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
-        .info-box { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
-        .card-box { background: #fafbfc; border: 1px solid #ccc; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-        
-        #refereeLoginScreen { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        #refereeMainPanel { display: none; }
+        .btn-warning { background: #f0ad4e; color: #fff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: var(--primary); color: white; }
+        .alert-box { background: #d1ecf1; border-left: 4px solid var(--info); padding: 12px; margin-bottom: 15px; border-radius: 4px; }
+        .card-box { background: #fafbfc; border: 1px solid #ccc; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; background: #fff; padding: 12px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px; }
+        .checkbox-grid label { font-weight: normal; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
+        .stat-card { background: #eef2f7; padding: 15px; border-radius: 6px; text-align: center; border-left: 4px solid var(--primary); }
+        .stat-card h4 { margin: 0 0 5px 0; color: var(--primary); font-size: 14px; }
+        .stat-card p { margin: 0; font-size: 20px; font-weight: bold; }
+        #refLoginScreen { max-width: 450px; margin: 80px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        #refMainPanel { display: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Προσωπική Καρτέλα Διαιτητή</h1>
-    <p>Σύστημα Διαχείρισης Κωλυμάτων & Εγγράφων</p>
+    <h1>Ε.Π.Σ. ΔΡΑΜΑΣ - Πύλη Διαιτητή</h1>
+    <p>Σύστημα Διαχείρισης & Live Επικοινωνίας</p>
 </header>
 
 <!-- ΟΘΟΝΗ ΣΥΝΔΕΣΗΣ ΔΙΑΙΤΗΤΗ -->
-<div id="refereeLoginScreen" class="container">
-    <h2>🔐 Είσοδος Διαιτητή</h2>
-    <div class="form-group">
-        <label for="refLoginName">Ονοματεπώνυμο Διαιτητή:</label>
-        <select id="refLoginName"></select>
+<div id="refLoginScreen" class="container">
+    <h2>👤 Είσοδος Διαιτητή</h2>
+    <div class="form-group" style="text-align: left;">
+        <label for="refSelectLogin">Επιλέξτε Ονοματεπώνυμο:</label>
+        <select id="refSelectLogin"></select>
     </div>
-    <div class="form-group">
-        <label for="refLoginPass">Κωδικός Πρόσβασης (Αρχικός: ref2026):</label>
-        <input type="password" id="refLoginPass" placeholder="Κωδικός διαιτητή">
+    <div class="form-group" style="text-align: left;">
+        <label for="refPasswordLogin">Κωδικός Σύνδεσης (Αρχικός: ref2026):</label>
+        <input type="password" id="refPasswordLogin" placeholder="Εισάγετε τον κωδικό σας">
     </div>
-    <button class="btn-success" onclick="loginReferee()">🔓 Είσοδος στο Πάνελ μου</button>
+    <button class="btn-success" style="width: 100%; padding: 12px;" onclick="loginReferee()">🔓 Είσοδος στην Πύλη</button>
 </div>
 
-<!-- ΚΥΡΙΩΣ ΠΑΝΕΛ ΔΙΑΙΤΗΤΗ -->
-<div id="refereeMainPanel" class="container">
+<!-- ΚΥΡΙΩΣ ΠΙΝΑΚΑΣ ΔΙΑΙΤΗΤΗ -->
+<div id="refMainPanel" class="container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <span>🏃‍♂️ Συνδεδεμένος Διαιτητής: <strong id="currentRefereeNameDisplay"></strong></span>
+        <span>👤 Συνδεδεμένος Διαιτητής: <strong id="loggedInRefNameDisplay"></strong></span>
         <button class="btn-danger" style="padding: 6px 12px; font-size:14px;" onclick="logoutReferee()">🚪 Αποσύνδεση</button>
     </div>
 
-    <div id="refereeNotificationsArea"></div>
+    <!-- LIVE ΕΙΔΟΠΟΙΗΣΕΙΣ ΑΠΟ ΕΠΙΤΡΟΠΗ -->
+    <div id="refereeNotificationsContainer"></div>
 
-    <!-- ΑΝΕΒΑΣΜΑ & ΦΩΤΟΓΡΑΦΗΣΗ ΕΓΓΡΑΦΩΝ -->
+    <!-- 1. ΣΤΑΤΙΣΤΙΚΑ & ΣΥΓΚΕΝΤΡΩΤΙΚΗ ΕΙΚΟΝΑ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ -->
     <div class="card-box">
-        <h3>📂 Ανέβασμα / Φωτογράφηση Επίσημων Εγγράφων</h3>
-        <p style="font-size: 13px; color: #555;">Ανεβάστε ή φωτογραφίστε τα έγγραφα που ζητά η Επιτροπή (Χαρτί γιατρού, Ποινικό μητρώο κ.λπ.):</p>
+        <h3>📊 Συγκεντρωτική Εικόνα & Στατιστικά Δραστηριότητας</h3>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>📅 Εβδομαδιαία (Μαθ / Προπ)</h4>
+                <p id="statWeekly">0 / 0</p>
+            </div>
+            <div class="stat-card">
+                <h4>🗓️ Μηνιαία (Μαθ / Προπ)</h4>
+                <p id="statMonthly">0 / 0</p>
+            </div>
+            <div class="stat-card">
+                <h4>📊 Ετήσια (Μαθ / Προπ)</h4>
+                <p id="statYearly">0 / 0</p>
+            </div>
+        </div>
+
+        <h4>📋 Πίνακας Συνολικών Στατιστικών</h4>
+        <table>
+            <tr>
+                <th>Συνολικοί Αγώνες</th>
+                <th>Ως Διαιτητής</th>
+                <th>Ως Βοηθός</th>
+                <th>Προπονήσεις</th>
+                <th>Μαθήματα</th>
+            </tr>
+            <tr>
+                <td><strong id="tblTotalMatches">0</strong></td>
+                <td><strong id="tblRefMatches">0</strong></td>
+                <td><strong id="tblAsstMatches">0</strong></td>
+                <td><strong id="tblTrainings">0</strong></td>
+                <td><strong id="tblLessons">0</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 2. ΔΗΛΩΣΗ ΠΑΡΟΥΣΙΩΝ (ΜΑΘΗΜΑ & ΠΡΟΠΟΝΗΣΗ) -->
+    <div class="card-box">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h3>📚 Δήλωση Παρουσίας σε Μάθημα</h3>
+                <div class="form-group"><label>Κωδικός Ασφαλείας Μαθήματος:</label><input type="text" id="refLessonCodeInput" placeholder="Εισάγετε κωδικό"></div>
+                <button class="btn-success" onclick="submitLessonAttendance()">✅ Υποβολή Παρουσίας Μαθήματος</button>
+            </div>
+            <div>
+                <h3>🏃 Δήλωση Παρουσίας σε Προπόνηση</h3>
+                <div class="form-group"><label>Κωδικός Ασφαλείας Προπόνησης:</label><input type="text" id="refTrainingCodeInput" placeholder="Εισάγετε κωδικό"></div>
+                <button class="btn-success" onclick="submitTrainingAttendance()">✅ Υποβολή Παρουσίας Προπόνησης</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. ΕΠΙΛΟΓΗ ΚΩΛΥΜΑΤΩΝ ΑΝΑ ΚΑΤΗΓΟΡΙΑ -->
+    <div class="card-box">
+        <h3>🚫 Δήλωση Εβδομαδιαίου Κωλύματος ανά Κατηγορία</h3>
+        <p style="font-size: 13px; color: #555;">Επιλέξτε την ημερομηνία, τη ζώνη ώρας και τις κατηγορίες στις οποίες έχετε κώλυμα:</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group"><label>Ημερομηνία Κωλύματος:</label><input type="date" id="refKolymataDate"></div>
+            <div class="form-group">
+                <label>Ζώνη Ώρας:</label>
+                <select id="refKolymataTimeSlot">
+                    <option value="Ολοήμερο">Ολοήμερο</option>
+                    <option value="Πρωί">Πρωί</option>
+                    <option value="Απόγευμα">Απόγευμα</option>
+                </select>
+            </div>
+        </div>
+
+        <label style="margin-bottom: 5px; font-weight: bold;">Επιλογή Κατηγοριών Κωλύματος:</label>
+        <div class="checkbox-grid" id="kolymataCategoriesGrid">
+            <label><input type="checkbox" value="Α' Κατηγορία"> Α' Κατηγορία</label>
+            <label><input type="checkbox" value="Β'1 Κατηγορία"> Β'1 Κατηγορία</label>
+            <label><input type="checkbox" value="Β'2 Κατηγορία"> Β'2 Κατηγορία</label>
+            <label><input type="checkbox" value="Κύπελλο"> Κύπελλο</label>
+            <label><input type="checkbox" value="Κ15"> Κ15</label>
+            <label><input type="checkbox" value="Κ13"> Κ13</label>
+            <label><input type="checkbox" value="Κ11"> Κ11</label>
+        </div>
+
+        <div class="form-group"><label>Αιτιολογία (Προαιρετικά):</label><input type="text" id="refKolymataReason" placeholder="π.χ. Προσωπικός λόγος / Εργασία"></div>
+        <button class="btn-success" onclick="submitRefereeKolytma()">➕ Υποβολή Κωλύματος στην Επιτροπή</button>
+    </div>
+
+    <div class="card-box">
+        <h3>📋 Τα Ενεργά Κώλυμά μου</h3>
+        <div id="myKolymataListContainer"><p>Δεν έχετε δηλώσει κώλυματα.</p></div>
+    </div>
+
+    <!-- 4. ΑΝΕΒΑΣΜΑ ΕΓΓΡΑΦΩΝ -->
+    <div class="card-box">
+        <h3>📤 Ανέβασμα Εγγράφου ή Φωτογραφίας</h3>
         <div class="form-group">
             <label>Τύπος Εγγράφου:</label>
-            <select id="refDocType">
-                <option value="Χαρτί Γιατρού (Ιατρική Βεβαίωση)">🩺 Χαρτί Γιατρού (Ιατρική Βεβαίωση)</option>
-                <option value="Ποινικό Μητρώο">📜 Ποινικό Μητρώο</option>
-                <option value="Άλλη Αίτηση / Έγγραφο">📝 Άλλη Αίτηση / Έγγραφο</option>
+            <select id="refUploadDocType">
+                <option value="Ιατρική Βεβαίωση">Ιατρική Βεβαίωση</option>
+                <option value="Φωτογραφία / Έγγραφο">Φωτογραφία / Έγγραφο</option>
+                <option value="Άλλο Δικαιολογητικό">Άλλο Δικαιολογητικό</option>
             </select>
         </div>
         <div class="form-group">
-            <label>Επιλογή Φωτογραφίας / Αρχείου (ή λήψη με κάμερα κινητού):</label>
-            <input type="file" id="refDocFile" accept="image/*,application/pdf" capture="environment">
+            <label>Επιλογή Αρχείου / Φωτογραφίας (PDF ή Εικόνα):</label>
+            <input type="file" id="refUploadFile" accept="image/*,application/pdf">
         </div>
-        <button class="btn-success" onclick="submitRefereeDocument()">📤 Αποστολή Εγγράφου στην Επιτροπή</button>
-        
-        <h4 style="margin-top: 20px;">Τα έγγραφά μου που έχουν υποβληθεί:</h4>
-        <div id="refMyDocumentsList"></div>
-    </div>
-
-    <!-- ΣΥΓΚΕΝΤΡΩΤΙΚΟΣ ΠΙΝΑΚΑΣ ΕΤΗΣΙΩΝ / ΜΗΝΑΙΑΣ ΠΑΡΑΚΟΛΟΥΘΗΣΗΣ -->
-    <div class="card-box">
-        <h3>📈 Συγκεντρωτική Εικόνα Αγώνων & Δραστηριότητας</h3>
-        <div class="form-group">
-            <label for="refStatsMonthFilter">📅 Επιλογή Μήνα για Μηνιαία Παρακολούθηση:</label>
-            <select id="refStatsMonthFilter" onchange="renderRefereePersonalStats()">
-                <option value="ALL">Όλοι οι Μήνες (Ετήσιο Σύνολο)</option>
-                <option value="01">Ιανουάριος</option><option value="02">Φεβρουάριος</option><option value="03">Μάρτιος</option>
-                <option value="04">Απρίλιος</option><option value="05">Μάιος</option><option value="06">Ιούνιος</option>
-                <option value="07">Ιούλιος</option><option value="08">Αύγουστος</option><option value="09">Σεπτέμβριος</option>
-                <option value="10">Οκτώβριος</option><option value="11">Νοέμβριος</option><option value="12">Δεκέμβριος</option>
-            </select>
-        </div>
-        <div id="refPersonalStatsSummary"></div>
+        <button class="btn-success" onclick="uploadRefereeDocument()">📤 Υποβολή στην Επιτροπή</button>
     </div>
 
     <div class="card-box">
-        <h3>🚫 Δήλωση & Διαχείριση Εβδομαδιαίου Κωλύματος</h3>
-        <p style="font-size: 13px; color: #555;">Αν έχετε δηλώσει κώλυμα και επιθυμείτε να το αναιρέσετε, μπορείτε να το διαγράψετε παρακάτω:</p>
-        <div class="form-group"><label>Ημερομηνία Κωλύματος:</label><input type="date" id="refKolymataDate"></div>
-        <div class="form-group">
-            <label>Ζώνη / Ώρα:</label>
-            <select id="refKolymataSlot">
-                <option value="Ολοήμερο">Ολοήμερο (Όλη μέρα)</option>
-                <option value="Πρωί">Πρωί</option>
-                <option value="Απόγευμα">Απόγευμα</option>
-            </select>
-        </div>
-        <div class="form-group"><label>Αιτιολογία:</label><input type="text" id="refKolymataReason" placeholder="π.χ. Προσωπικός λόγος"></div>
-        <button class="btn-success" onclick="submitRefereeKolytma()">💾 Υποβολή Κωλύματος</button>
-        
-        <h4 style="margin-top: 20px;">Τα ενεργά μου κώλυματα:</h4>
-        <div id="refMyActiveKolymataList"></div>
+        <h3>📂 Τα Αρχεία μου που υποβλήθηκαν</h3>
+        <div id="myUploadedDocsContainer"><p>Δεν έχετε ανεβάσει αρχεία.</p></div>
     </div>
 
+    <!-- 5. LIVE ΟΡΙΣΜΟΙ ΑΓΩΝΩΝ -->
     <div class="card-box">
-        <h3>📚 Καταχώρηση Παρουσίας σε Μάθημα (Με Συνθηματικό)</h3>
-        <div class="form-group"><label>Τίτλος Μαθήματος:</label><input type="text" id="refClassTitle" placeholder="π.χ. Κανονισμοί"></div>
-        <div class="form-group"><label>Συνθηματικό Αίθουσας:</label><input type="text" id="refClassSecretInput" placeholder="Δίνεται από την Επιτροπή"></div>
-        <button class="btn-success" onclick="submitRefereeClass()">✅ Καταχώρηση Παρουσίας</button>
+        <h3>⚽ Live Ορισμοί & Αγώνες μου</h3>
+        <div id="myRefereeMatchesContainer"><p>Δεν έχετε οριστεί σε αγώνες ακόμη.</p></div>
     </div>
-
-    <div class="card-box">
-        <h3>💪 Καταχώρηση Προπόνησης (Με Συνθηματικό)</h3>
-        <div class="form-group"><label>Ημερομηνία:</label><input type="date" id="refTrainingDate"></div>
-        <div class="form-group"><label>Τύπος:</label><input type="text" id="refTrainingType" placeholder="π.χ. Τρέξιμο"></div>
-        <div class="form-group"><label>Συνθηματικό Προπόνησης:</label><input type="text" id="refTrainingSecretInput" placeholder="Δίνεται από την Επιτροπή"></div>
-        <button class="btn-success" onclick="submitRefereeTraining()">💾 Καταχώρηση Προπόνησης</button>
-    </div>
-
-    <h2>📋 Οι Δικοί μου Ορισμοί Αγώνων</h2>
-    <div id="refereeMyAssignmentsContainer"></div>
 </div>
 
 <script>
@@ -160,246 +215,298 @@
         return [...DEFAULT_REFEREES, ...custom];
     }
 
+    function getRefereePassword(refName) {
+        let passwords = JSON.parse(localStorage.getItem('eps_referee_passwords') || "{}");
+        return passwords[refName] || "ref2026";
+    }
+
+    let currentLoggedInReferee = "";
+
     window.onload = function() {
-        let refSel = document.getElementById('refLoginName');
-        if (refSel) {
-            refSel.innerHTML = '';
+        let refSelectLogin = document.getElementById('refSelectLogin');
+        if (refSelectLogin) {
+            refSelectLogin.innerHTML = '';
             getRefereesList().forEach(r => {
                 let opt = document.createElement('option');
                 opt.value = r; opt.textContent = r;
-                refSel.appendChild(opt);
+                refSelectLogin.appendChild(opt);
             });
         }
 
-        if (sessionStorage.getItem('eps_referee_logged')) {
-            let loggedRef = sessionStorage.getItem('eps_referee_logged');
-            document.getElementById('currentRefereeNameDisplay').textContent = loggedRef;
-            document.getElementById('refereeLoginScreen').style.display = 'none';
-            document.getElementById('refereeMainPanel').style.display = 'block';
-            loadRefereePanelData();
-        }
+        // Αυτόματος έλεγχος live δεδομένων κάθε 2 δευτερόλεπτα
+        setInterval(() => {
+            if (currentLoggedInReferee && document.getElementById('refMainPanel').style.display === 'block') {
+                loadRefereePortalData();
+            }
+        }, 2000);
     };
 
     function loginReferee() {
-        let refName = document.getElementById('refLoginName').value;
-        let pass = document.getElementById('refLoginPass').value;
-        let passwords = JSON.parse(localStorage.getItem('eps_referee_passwords') || "{}");
-        let correctPass = passwords[refName] || 'ref2026';
+        let refName = document.getElementById('refSelectLogin').value;
+        let inputPass = document.getElementById('refPasswordLogin').value.trim();
+        let correctPass = getRefereePassword(refName);
 
-        if (pass === correctPass) {
-            sessionStorage.setItem('eps_referee_logged', refName);
-            document.getElementById('currentRefereeNameDisplay').textContent = refName;
-            document.getElementById('refereeLoginScreen').style.display = 'none';
-            document.getElementById('refereeMainPanel').style.display = 'block';
-            loadRefereePanelData();
-        } else {
-            alert('❌ Λάθος κωδικός πρόσβασης διαιτητή!');
+        if (inputPass !== correctPass) {
+            alert('❌ Λάθος κωδικός σύνδεσης διαιτητή! (Αρχικός κωδικός: ref2026)');
+            return;
         }
+
+        currentLoggedInReferee = refName;
+        document.getElementById('refLoginScreen').style.display = 'none';
+        document.getElementById('refMainPanel').style.display = 'block';
+        document.getElementById('loggedInRefNameDisplay').textContent = refName;
+        document.getElementById('refPasswordLogin').value = '';
+        
+        loadRefereePortalData();
     }
 
     function logoutReferee() {
-        sessionStorage.removeItem('eps_referee_logged');
-        document.getElementById('refereeMainPanel').style.display = 'none';
-        document.getElementById('refereeLoginScreen').style.display = 'block';
-        document.getElementById('refLoginPass').value = '';
+        currentLoggedInReferee = "";
+        document.getElementById('refMainPanel').style.display = 'none';
+        document.getElementById('refLoginScreen').style.display = 'block';
     }
 
-    function loadRefereePanelData() {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        if (!loggedRef) return;
-        renderRefereePersonalStats();
+    function submitLessonAttendance() {
+        let inputCode = document.getElementById('refLessonCodeInput').value.trim();
+        let correctCode = localStorage.getItem('eps_lesson_code');
+        if(!correctCode) { alert('Η επιτροπή δεν έχει ορίσει κωδικό μαθήματος ακόμη.'); return; }
+        if(inputCode !== correctCode) { alert('❌ Λάθος κωδικός ασφαλείας μαθήματος!'); return; }
 
-        let refNotifications = JSON.parse(localStorage.getItem('eps_referee_notifications') || "{}");
-        let myNotes = refNotifications[loggedRef] || [];
-        let notifContainer = document.getElementById('refereeNotificationsArea');
-        if (myNotes.length > 0) {
-            notifContainer.innerHTML = myNotes.map(n => `<div class="alert-box"><p><strong>📅 ${n.date}:</strong> ${n.message}</p></div>`).join('');
-        } else {
-            notifContainer.innerHTML = `<div class="info-box"><p>✅ Δεν έχετε καμία εκκρεμότητα ή ειδοποίηση από την Επιτροπή.</p></div>`;
-        }
-
-        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]").filter(k => k.referee === loggedRef);
-        let kList = document.getElementById('refMyActiveKolymataList');
-        if (kList) {
-            kList.innerHTML = kolymata.length ? kolymata.map((k, idx) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:8px; border:1px solid #ddd; margin-bottom:5px;">
-                    <span>📅 ${k.date} (${k.timeSlot}) - ${k.reason || ''}</span>
-                    <button class="btn-danger" style="padding:4px 8px; font-size:12px;" onclick="deleteRefereeKolytma(${idx})">🗑️ Διαγραφή</button>
-                </div>
-            `).join('') : '<p>Δεν έχετε ενεργά κώλυματα.</p>';
-        }
-
-        let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]").filter(d => d.referee === loggedRef);
-        let docList = document.getElementById('refMyDocumentsList');
-        if (docList) {
-            docList.innerHTML = docs.length ? docs.map((d, idx) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:8px; border:1px solid #ddd; margin-bottom:5px;">
-                    <span>📄 ${d.docType} (${d.date})</span>
-                    <button class="btn-danger" style="padding:4px 8px; font-size:12px;" onclick="deleteRefereeDocument(${idx})">🗑️ Διαγραφή</button>
-                </div>
-            `).join('') : '<p>Δεν έχετε ανεβάσει έγγραφα.</p>';
-        }
-
-        let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
-        let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
-        let allAssigned = {...savedAssignments, ...cupAssignments};
-        let myMatches = [];
-        for (let key in allAssigned) {
-            let item = allAssigned[key];
-            if (item.ref0 === loggedRef || item.ref1 === loggedRef || item.ref2 === loggedRef) {
-                let role = (item.ref0 === loggedRef) ? "Διαιτητής" : "Βοηθός";
-                let dtStr = item.datetime ? ` (${item.datetime.replace('T', ' ')})` : '';
-                myMatches.push(`<li>${item.matchday || 'Κύπελλο'} - <strong>${item.match}</strong>${dtStr} (<em>${role}</em>)</li>`);
-            }
-        }
-        document.getElementById('refereeMyAssignmentsContainer').innerHTML = `<ul>` + (myMatches.length ? myMatches.join('') : '<li>Δεν έχετε οριστεί σε αγώνα ακόμη.</li>') + `</ul>`;
+        let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
+        let now = new Date();
+        
+        attendances.push({ 
+            referee: currentLoggedInReferee, 
+            type: 'Μάθημα', 
+            date: now.toLocaleString(),
+            timestamp: now.getTime()
+        });
+        localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
+        alert('✅ Η παρουσία σας στο μάθημα καταχωρήθηκε επιτυχώς στην Επιτροπή!');
+        document.getElementById('refLessonCodeInput').value = '';
+        loadRefereePortalData();
     }
 
-    function submitRefereeDocument() {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        let docType = document.getElementById('refDocType').value;
-        let fileInput = document.getElementById('refDocFile');
+    function submitTrainingAttendance() {
+        let inputCode = document.getElementById('refTrainingCodeInput').value.trim();
+        let correctCode = localStorage.getItem('eps_training_code');
+        if(!correctCode) { alert('Η επιτροπή δεν έχει ορίσει κωδικό προπόνησης ακόμη.'); return; }
+        if(inputCode !== correctCode) { alert('❌ Λάθος κωδικός ασφαλείας προπόνησης!'); return; }
 
-        if (fileInput.files.length === 0) { alert('Επιλέξτε ή φωτογραφίστε ένα αρχείο/έγγραφο!'); return; }
+        let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
+        let now = new Date();
+        
+        attendances.push({ 
+            referee: currentLoggedInReferee, 
+            type: 'Προπόνηση', 
+            date: now.toLocaleString(),
+            timestamp: now.getTime()
+        });
+        localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
+        alert('✅ Η παρουσία σας στην προπόνηση καταχωρήθηκε επιτυχώς στην Επιτροπή!');
+        document.getElementById('refTrainingCodeInput').value = '';
+        loadRefereePortalData();
+    }
 
+    function submitRefereeKolytma() {
+        let date = document.getElementById('refKolymataDate').value;
+        let timeSlot = document.getElementById('refKolymataTimeSlot').value;
+        let reason = document.getElementById('refKolymataReason').value.trim();
+        
+        let selectedCategories = [];
+        let checkboxes = document.querySelectorAll('#kolymataCategoriesGrid input[type="checkbox"]:checked');
+        checkboxes.forEach(cb => selectedCategories.push(cb.value));
+
+        if (!date) { alert('Επιλέξτε ημερομηνία κωλύματος!'); return; }
+        if (selectedCategories.length === 0) { alert('Επιλέξτε τουλάχιστον μία κατηγορία για το κώλυμα!'); return; }
+
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        kolymata.push({ 
+            referee: currentLoggedInReferee, 
+            date, 
+            timeSlot, 
+            categories: selectedCategories, 
+            reason 
+        });
+        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
+        
+        alert('✅ Το κώλυμα δηλώθηκε επιτυχώς και καταχωρήθηκε στην Επιτροπή!');
+        document.getElementById('refKolymataReason').value = '';
+        checkboxes.forEach(cb => cb.checked = false);
+        loadRefereePortalData();
+    }
+
+    function deleteRefereeKolytma(idx) {
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        kolymata.splice(idx, 1);
+        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
+        alert('✅ Το κώλυμα αποσύρθηκε.');
+        loadRefereePortalData();
+    }
+
+    function dataURItoBlob(dataURI) {
+        let byteString = atob(dataURI.split(',')[1]);
+        let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        let ab = new ArrayBuffer(byteString.length);
+        let ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: mimeString});
+    }
+
+    function viewDocument(index) {
+        let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
+        let d = docs[index];
+        if (!d || !d.fileData) { alert('Δεν βρέθηκε αρχείο.'); return; }
+        try {
+            let blob = dataURItoBlob(d.fileData);
+            let blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, '_blank');
+        } catch(e) {
+            window.open(d.fileData, '_blank');
+        }
+    }
+
+    function uploadRefereeDocument() {
+        let docType = document.getElementById('refUploadDocType').value;
+        let fileInput = document.getElementById('refUploadFile');
+        if (!fileInput.files[0]) { alert('Επιλέξτε αρχείο ή φωτογραφία!'); return; }
         let file = fileInput.files[0];
         let reader = new FileReader();
         reader.onload = function(e) {
-            let fileData = e.target.result;
             let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
-            docs.push({ referee: loggedRef, docType, fileData, date: new Date().toLocaleDateString() });
+            docs.push({
+                referee: currentLoggedInReferee,
+                docType: docType,
+                date: new Date().toLocaleDateString(),
+                fileData: e.target.result
+            });
             localStorage.setItem('eps_referee_documents', JSON.stringify(docs));
-            alert('✅ Το έγγραφό σας ανέβηκε και αποστάλθηκε επιτυχώς στην Επιτροπή!');
+            alert('✅ Το έγγραφο ανέβηκε επιτυχώς και είναι ορατό από την Επιτροπή!');
             fileInput.value = '';
-            loadRefereePanelData();
+            loadRefereePortalData();
         };
         reader.readAsDataURL(file);
     }
 
-    function deleteRefereeDocument(index) {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
+    function loadRefereePortalData() {
+        // 1. Ειδοποιήσεις Επιτροπής
+        let notifMsg = localStorage.getItem('eps_kolymata_notification');
+        let notifContainer = document.getElementById('refereeNotificationsContainer');
+        if(notifContainer && notifMsg) {
+            notifContainer.innerHTML = `<div class="alert-box"><p><strong>📢 ΕΙΔΟΠΟΙΗΣΗ ΕΠΙΤΡΟΠΗΣ:</strong><br>${notifMsg}</p></div>`;
+        }
+
+        // 2. Υποβληθέντα Έγγραφα Διαιτητή
         let docs = JSON.parse(localStorage.getItem('eps_referee_documents') || "[]");
-        let myDocs = docs.filter(d => d.referee === loggedRef);
-        let target = myDocs[index];
+        let myDocs = docs.map((d, idx) => ({...d, origIndex: idx})).filter(d => d.referee === currentLoggedInReferee);
+        let docsContainer = document.getElementById('myUploadedDocsContainer');
+        if (docsContainer) {
+            if (myDocs.length === 0) { docsContainer.innerHTML = '<p>Δεν έχετε ανεβάσει αρχεία.</p>'; }
+            else {
+                let html = `<table><tr><th>Τύπος</th><th>Ημερομηνία</th><th>Ενέργεια</th></tr>`;
+                myDocs.forEach(d => {
+                    html += `<tr><td>${d.docType}</td><td>${d.date}</td><td><button class="btn-success" style="padding:4px 8px; font-size:12px;" onclick="viewDocument(${d.origIndex})">👁️ Προβολή</button></td></tr>`;
+                });
+                html += `</table>`;
+                docsContainer.innerHTML = html;
+            }
+        }
 
-        let updated = docs.filter(d => !(d.referee === loggedRef && d.docType === target.docType && d.date === target.date));
-        localStorage.setItem('eps_referee_documents', JSON.stringify(updated));
-        alert('🗑️ Το έγγραφο διαγράφηκε επιτυχώς!');
-        loadRefereePanelData();
-    }
+        // 3. Κώλυματα Διαιτητή
+        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
+        let myKol = kolymata.map((k, idx) => ({...k, origIndex: idx})).filter(k => k.referee === currentLoggedInReferee);
+        let kolContainer = document.getElementById('myKolymataListContainer');
+        if (kolContainer) {
+            if (myKol.length === 0) { kolContainer.innerHTML = '<p>Δεν έχετε δηλώσει κώλυματα.</p>'; }
+            else {
+                kolContainer.innerHTML = myKol.map(k => `<div class="alert-box" style="background:#fff3cd; border-left:4px solid #ffc107;"><p><strong>${k.date} (${k.timeSlot})</strong><br>Κατηγορίες: <em>${k.categories.join(', ')}</em><br>Αιτιολογία: ${k.reason || '-'}<button class="btn-danger" style="padding:2px 6px; font-size:11px; float:right;" onclick="deleteRefereeKolytma(${k.origIndex})">❌ Απόσυρση</button></p></div>`).join('');
+            }
+        }
 
-    function renderRefereePersonalStats() {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        let selectedMonth = document.getElementById('refStatsMonthFilter').value;
+        // 4. Live Ορισμοί & Υπολογισμός Ρόλων
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
         let cupAssignments = JSON.parse(localStorage.getItem('eps_cup_assignments') || "{}");
         let allAssigned = {...savedAssignments, ...cupAssignments};
-
-        let total = 0, asRef = 0, asAsst = 0;
-        let catsBreakdown = {};
+        
+        let myMatchesList = [];
+        let totalMatches = 0;
+        let refMatches = 0;
+        let asstMatches = 0;
 
         for (let k in allAssigned) {
             let item = allAssigned[k];
-            let dt = item.datetime || '';
-            let monthMatch = (selectedMonth === 'ALL' || (dt && dt.split('-')[1] === selectedMonth));
-            if (!monthMatch) continue;
+            let isRef = (item.ref0 === currentLoggedInReferee);
+            let isAsst1 = (item.ref1 === currentLoggedInReferee);
+            let isAsst2 = (item.ref2 === currentLoggedInReferee);
 
-            if (item.ref0 === loggedRef) {
-                total++; asRef++;
-                let cat = item.category || 'Κύπελλο';
-                catsBreakdown[cat] = (catsBreakdown[cat] || 0) + 1;
-            }
-            if (item.ref1 === loggedRef || item.ref2 === loggedRef) {
-                total++; asAsst++;
-                let cat = item.category || 'Κύπελλο';
-                catsBreakdown[cat] = (catsBreakdown[cat] || 0) + 1;
+            if (isRef || isAsst1 || isAsst2) {
+                totalMatches++;
+                if (isRef) refMatches++;
+                if (isAsst1 || isAsst2) asstMatches++;
+
+                let role = isRef ? "Διαιτητής" : "Βοηθός";
+                myMatchesList.push(`<li>${item.matchday || 'Αγώνας'} - <strong>${item.match}</strong> | 🏟️ ${item.stadium || '-'} | 📅 ${item.datetime ? item.datetime.replace('T', ' ') : '-'} (<em>${role}</em>)</li>`);
             }
         }
 
-        let catsStr = Object.keys(catsBreakdown).map(c => `${c}: ${catsBreakdown[c]} αγώνες`).join(', ');
-
-        document.getElementById('refPersonalStatsSummary').innerHTML = `
-            <div class="info-box">
-                <p><strong>📊 Στατιστικά Περιόδου (${selectedMonth === 'ALL' ? 'Ετήσιο Σύνολο' : 'Μήνας: ' + selectedMonth}):</strong></p>
-                <ul>
-                    <li>Συνολικοί Αγώνες: <strong>${total}</strong></li>
-                    <li>Ως Διαιτητής: <strong style="color:var(--success);">${asRef}</strong></li>
-                    <li>Ως Βοηθός: <strong style="color:#0275d8;">${asAsst}</strong></li>
-                    <li>Ανά Κατηγορία: ${catsStr || 'Κανένας αγώνας'}</li>
-                </ul>
-            </div>
-        `;
-    }
-
-    function submitRefereeKolytma() {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        let date = document.getElementById('refKolymataDate').value;
-        let timeSlot = document.getElementById('refKolymataSlot').value;
-        let reason = document.getElementById('refKolymataReason').value.trim();
-        if (!date) { alert('Επιλέξτε ημερομηνία!'); return; }
-
-        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        kolymata.push({ referee: loggedRef, date, timeSlot, reason });
-        localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
-
-        let refNotifications = JSON.parse(localStorage.getItem('eps_referee_notifications') || "{}");
-        if (refNotifications[loggedRef]) {
-            delete refNotifications[loggedRef];
-            localStorage.setItem('eps_referee_notifications', JSON.stringify(refNotifications));
+        let matchContainer = document.getElementById('myRefereeMatchesContainer');
+        if (matchContainer) {
+            matchContainer.innerHTML = myMatchesList.length > 0 ? `<ul>${myMatchesList.join('')}</ul>` : '<p>Κανένας ορισμός σε αγώνα ακόμη.</p>';
         }
 
-        alert('✅ Το κώλυμά σας καταχωρήθηκε και ενημερώθηκε άμεσα η Επιτροπή!');
-        document.getElementById('refKolymataDate').value = '';
-        document.getElementById('refKolymataReason').value = '';
-        loadRefereePanelData();
+        // 5. Στατιστικά Παρουσίων (Εβδομαδιαία, Μηνιαία, Ετήσια)
+        let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]").filter(a => a.referee === currentLoggedInReferee);
+        
+        let now = new Date();
+        let currentWeek = getWeekNumber(now);
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+
+        let weekClasses = 0, weekTrainings = 0;
+        let monthClasses = 0, monthTrainings = 0;
+        let yearClasses = 0, yearTrainings = 0;
+        let totalClasses = 0, totalTrainings = 0;
+
+        attendances.forEach(a => {
+            let aDate = new Date(a.timestamp || now);
+            if (a.type === 'Μάθημα') totalClasses++;
+            if (a.type === 'Προπόνηση') totalTrainings++;
+
+            if (aDate.getFullYear() === currentYear) {
+                if (a.type === 'Μάθημα') yearClasses++;
+                if (a.type === 'Προπόνηση') yearTrainings++;
+
+                if (aDate.getMonth() === currentMonth) {
+                    if (a.type === 'Μάθημα') monthClasses++;
+                    if (a.type === 'Προπόνηση') monthTrainings++;
+                }
+
+                if (getWeekNumber(aDate) === currentWeek) {
+                    if (a.type === 'Μάθημα') weekClasses++;
+                    if (a.type === 'Προπόνηση') weekTrainings++;
+                }
+            }
+        });
+
+        document.getElementById('statWeekly').textContent = `${weekClasses} / ${weekTrainings}`;
+        document.getElementById('statMonthly').textContent = `${monthClasses} / ${monthTrainings}`;
+        document.getElementById('statYearly').textContent = `${yearClasses} / ${yearTrainings}`;
+
+        document.getElementById('tblTotalMatches').textContent = totalMatches;
+        document.getElementById('tblRefMatches').textContent = refMatches;
+        document.getElementById('tblAsstMatches').textContent = asstMatches;
+        document.getElementById('tblTrainings').textContent = totalTrainings;
+        document.getElementById('tblLessons').textContent = totalClasses;
     }
 
-    function deleteRefereeKolytma(index) {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
-        let myKolymata = kolymata.filter(k => k.referee === loggedRef);
-        let target = myKolymata[index];
-
-        let updated = kolymata.filter(k => !(k.referee === loggedRef && k.date === target.date && k.timeSlot === target.timeSlot));
-        localStorage.setItem('eps_kolymata', JSON.stringify(updated));
-        alert('🗑️ Το κώλυμα διαγράφηκε και αφαιρέθηκε ταυτόχρονα από τον πίνακα της Επιτροπής!');
-        loadRefereePanelData();
-    }
-
-    function submitRefereeClass() {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        let title = document.getElementById('refClassTitle').value.trim();
-        let codeInput = document.getElementById('refClassSecretInput').value.trim();
-        let secretCode = localStorage.getItem('eps_class_secret_code') || "EPS2026";
-
-        if (!title || !codeInput) { alert('Συμπληρώστε τίτλο και συνθηματικό!'); return; }
-        if (codeInput !== secretCode) { alert('❌ Λάθος συνθηματικό μαθήματος!'); return; }
-
-        let classes = JSON.parse(localStorage.getItem('eps_classes') || "[]");
-        classes.push({ referee: loggedRef, title, date: new Date().toISOString().split('T')[0] });
-        localStorage.setItem('eps_classes', JSON.stringify(classes));
-        alert('✅ Η παρουσία σας στο μάθημα καταγράφηκε!');
-        document.getElementById('refClassTitle').value = '';
-        document.getElementById('refClassSecretInput').value = '';
-    }
-
-    function submitRefereeTraining() {
-        let loggedRef = sessionStorage.getItem('eps_referee_logged');
-        let date = document.getElementById('refTrainingDate').value;
-        let type = document.getElementById('refTrainingType').value.trim();
-        let codeInput = document.getElementById('refTrainingSecretInput').value.trim();
-        let secretCode = localStorage.getItem('eps_training_secret_code') || "RUN2026";
-
-        if (!date || !type || !codeInput) { alert('Συμπληρώστε όλα τα πεδία και το συνθηματικό!'); return; }
-        if (codeInput !== secretCode) { alert('❌ Λάθος συνθηματικό προπόνησης!'); return; }
-
-        let trainings = JSON.parse(localStorage.getItem('eps_trainings') || "[]");
-        trainings.push({ referee: loggedRef, date, type });
-        localStorage.setItem('eps_trainings', JSON.stringify(trainings));
-        alert('✅ Η προπόνησή σας καταγράφηκε!');
-        document.getElementById('refTrainingDate').value = '';
-        document.getElementById('refTrainingType').value = '';
-        document.getElementById('refTrainingSecretInput').value = '';
+    function getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+        let yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+        let weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+        return weekNo;
     }
 </script>
 
