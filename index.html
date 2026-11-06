@@ -102,6 +102,36 @@
         </p>
     </div>
 
+    <!-- ΡΥΘΜΙΣΗ ΚΩΔΙΚΩΝ ΑΣΦΑΛΕΙΑΣ ΓΙΑ ΜΑΘΗΜΑΤΑ & ΠΡΟΠΟΝΗΣΕΙΣ -->
+    <div class="card-box no-print">
+        <h3>🔑 Ρύθμιση Κωδικών Ασφαλείας Παρουσιών</h3>
+        <div class="grid-2">
+            <div>
+                <div class="form-group">
+                    <label>Κωδικός Μαθήματος:</label>
+                    <input type="text" id="adminLessonCodeInput" placeholder="π.χ. MATH2026">
+                </div>
+                <button class="btn-success" onclick="saveAdminLessonCode()">💾 Αποθήκευση Κωδικού Μαθήματος</button>
+            </div>
+            <div>
+                <div class="form-group">
+                    <label>Κωδικός Προπόνησης:</label>
+                    <input type="text" id="adminTrainingCodeInput" placeholder="π.χ. PROP2026">
+                </div>
+                <button class="btn-success" onclick="saveAdminTrainingCode()">💾 Αποθήκευση Κωδικού Προπόνησης</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ΠΡΟΒΟΛΗ ΥΠΟΒΛΗΘΕΝΤΩΝ ΠΑΡΟΥΣΙΩΝ -->
+    <div class="card-box no-print">
+        <h3>📋 Συγκεντρωτικές Παρουσίες Διαιτητών</h3>
+        <button class="toggle-btn" onclick="toggleSection('adminAttendancesContent')">👁️ Προβολή Παρουσίων</button>
+        <div id="adminAttendancesContent" class="collapsible-content">
+            <div id="adminAttendancesContainer"><p>Δεν υπάρχουν καταχωρημένες παρουσίες.</p></div>
+        </div>
+    </div>
+
     <!-- ΧΕΙΡΟΚΙΝΗΤΗ ΚΑΤΑΧΩΡΙΣΗ ΓΗΠΕΔΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ -->
     <div class="card-box no-print">
         <h3>🏟️ Χειροκίνητη Προσθήκη Γηπέδων (Α', Β'1, Β'2 & Κύπελλο)</h3>
@@ -231,6 +261,18 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <span>👤 Συνδεδεμένος Διαιτητής: <strong id="loggedInRefNameDisplay"></strong></span>
         <button class="btn-danger" style="padding: 6px 12px; font-size:14px;" onclick="logoutReferee()">🚪 Αποσύνδεση</button>
+    </div>
+
+    <div class="card-box">
+        <h3>📚 Δήλωση Παρουσίας σε Μάθημα</h3>
+        <div class="form-group"><label>Κωδικός Ασφαλείας Μαθήματος:</label><input type="text" id="refLessonCodeInput" placeholder="Εισάγετε τον κωδικό"></div>
+        <button class="btn-success" onclick="submitLessonAttendance()">✅ Υποβολή Παρουσίας Μαθήματος</button>
+    </div>
+
+    <div class="card-box">
+        <h3>🏃 Δήλωση Παρουσίας σε Προπόνηση</h3>
+        <div class="form-group"><label>Κωδικός Ασφαλείας Προπόνησης:</label><input type="text" id="refTrainingCodeInput" placeholder="Εισάγετε τον κωδικό"></div>
+        <button class="btn-success" onclick="submitTrainingAttendance()">✅ Υποβολή Παρουσίας Προπόνησης</button>
     </div>
 
     <div class="card-box">
@@ -471,6 +513,7 @@
         loadPromotionRelegationDropdowns();
         renderCustomStadiumsList();
         renderCupMatches();
+        loadAdminAttendanceCodesUI();
     };
 
     function showScreen(screen) {
@@ -498,6 +541,8 @@
             loadAdminDocuments();
             loadPromotionRelegationDropdowns();
             renderCustomStadiumsList();
+            loadAdminAttendanceCodesUI();
+            loadAdminAttendancesList();
         } else {
             alert('❌ Λάθος κωδικός επιτροπής!');
         }
@@ -528,6 +573,75 @@
     function toggleSection(id) {
         let elem = document.getElementById(id);
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
+    }
+
+    // Διαχείριση Κωδικών Παρουσίων από Επιτροπή
+    function saveAdminLessonCode() {
+        let code = document.getElementById('adminLessonCodeInput').value.trim();
+        if(!code) { alert('Εισάγετε κωδικό μαθήματος!'); return; }
+        localStorage.setItem('eps_lesson_code', code);
+        alert('✅ Ο κωδικός μαθήματος αποθηκεύτηκε!');
+    }
+
+    function saveAdminTrainingCode() {
+        let code = document.getElementById('adminTrainingCodeInput').value.trim();
+        if(!code) { alert('Εισάγετε κωδικό προπόνησης!'); return; }
+        localStorage.setItem('eps_training_code', code);
+        alert('✅ Ο κωδικός προπόνησης αποθηκεύτηκε!');
+    }
+
+    function loadAdminAttendanceCodesUI() {
+        let lCode = localStorage.getItem('eps_lesson_code') || '';
+        let tCode = localStorage.getItem('eps_training_code') || '';
+        let lInput = document.getElementById('adminLessonCodeInput');
+        let tInput = document.getElementById('adminTrainingCodeInput');
+        if(lInput) lInput.value = lCode;
+        if(tInput) tInput.value = tCode;
+    }
+
+    function loadAdminAttendancesList() {
+        let container = document.getElementById('adminAttendancesContainer');
+        if(!container) return;
+        let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
+        if(attendances.length === 0) { container.innerHTML = '<p>Δεν υπάρχουν καταχωρημένες παρουσίες.</p>'; return; }
+        let html = `<table><tr><th>Διαιτητής</th><th>Τύπος</th><th>Ημερομηνία</th></tr>`;
+        attendances.forEach(a => {
+            html += `<tr><td><strong>${a.referee}</strong></td><td>${a.type}</td><td>${a.date}</td></tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+    }
+
+    // Υποβολή Παρουσίας από Διαιτητή
+    function submitLessonAttendance() {
+        let inputCode = document.getElementById('refLessonCodeInput').value.trim();
+        let correctCode = localStorage.getItem('eps_lesson_code');
+        if(!correctCode) { alert('Η επιτροπή δεν έχει ορίσει κωδικό μαθήματος ακόμη.'); return; }
+        if(inputCode !== correctCode) { alert('❌ Λάθος κωδικός ασφαλείας μαθήματος!'); return; }
+
+        let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
+        let today = new Date().toLocaleString();
+        // Έλεγχος αν έχει ήδη δηλώσει σήμερα
+        attendances.push({ referee: currentLoggedInReferee, type: 'Μάθημα', date: today });
+        localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
+        alert('✅ Η παρουσία σας στο μάθημα δηλώθηκε επιτυχώς!');
+        document.getElementById('refLessonCodeInput').value = '';
+        loadAdminAttendancesList();
+    }
+
+    function submitTrainingAttendance() {
+        let inputCode = document.getElementById('refTrainingCodeInput').value.trim();
+        let correctCode = localStorage.getItem('eps_training_code');
+        if(!correctCode) { alert('Η επιτροπή δεν έχει ορίσει κωδικό προπόνησης ακόμη.'); return; }
+        if(inputCode !== correctCode) { alert('❌ Λάθος κωδικός ασφαλείας προπόνησης!'); return; }
+
+        let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
+        let today = new Date().toLocaleString();
+        attendances.push({ referee: currentLoggedInReferee, type: 'Προπόνηση', date: today });
+        localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
+        alert('✅ Η παρουσία σας στην προπόνηση δηλώθηκε επιτυχώς!');
+        document.getElementById('refTrainingCodeInput').value = '';
+        loadAdminAttendancesList();
     }
 
     function dataURItoBlob(dataURI) {
@@ -920,7 +1034,7 @@
     }
 
     function resetAssignments() {
-        if (!confirm('🔄 Επαναφορά πίνακα στην αρχική προ ορισμών;')) return;
+        if (!confirm('🔄 Επαναφορά πίνακα στην αρχική προ ορισμών?')) return;
         const cat = document.getElementById('categorySelect').value;
         const md = document.getElementById('matchdaySelect').value;
         let savedAssignments = JSON.parse(localStorage.getItem('eps_assignments') || "{}");
@@ -944,7 +1058,7 @@
         alert('🔄 Ο πίνακας επαναφέρθηκε επιτυχώς!');
     }
 
-    /* === ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ (ΜΕ ΚΟΥΜΠΙ ΟΡΙΣΜΩΝ & ΔΥΝΑΜΙΚΗ ΠΡΟΣΘΗΚΗ ΑΓΩΝΩΝ) === */
+    /* === ΔΙΑΧΕΙΡΙΣΗ ΚΥΠΕΛΛΟΥ (ΜΕ ΚΟΥΜΠΙ ΟΡΙΣΜΩΝ & ΔΥΝΑΜΙΚΗ ΠΡΟΣΘΗΚΗ ΑΓΩΝΩΝ - ΧΕΙΡΟΓΡΑΦΟ Η ΑΠΟ ΛΙΣΤΑ ΓΗΠΕΔΟ) === */
     function toggleCupDefinitions() {
         let box = document.getElementById('cupDefinitionsContainer');
         if (box.style.display === 'none' || box.style.display === '') {
@@ -988,7 +1102,7 @@
 
         let html = `<table><tr>
             <th>Γηπεδούχος - Φιλοξενούμενος</th>
-            <th>🏟️ Γήπεδο</th>
+            <th>🏟️ Γήπεδο (Επιλογή ή Χειρόγραφο)</th>
             <th>📅 Ημ/νία & Ώρα</th>
             <th>Διαιτητής</th>
             <th>Α' Βοηθός</th>
@@ -1001,7 +1115,7 @@
         cupMatches.forEach((m, index) => {
             let homeOptions = '<option value="">-- Γηπεδούχος --</option>' + seniorTeams.map(t => `<option value="${t}" ${t===m.home?'selected':''}>${t}</option>`).join('');
             let awayOptions = '<option value="">-- Φιλοξενούμενος --</option>' + seniorTeams.map(t => `<option value="${t}" ${t===m.away?'selected':''}>${t}</option>`).join('');
-            let stadiumOptions = '<option value="">-- Γήπεδο --</option>' + customStadiums.map(st => `<option value="${st}" ${st===m.stadium?'selected':''}>${st}</option>`).join('');
+            let stadiumOptions = '<option value="">-- Επιλογή Γηπέδου --</option>' + customStadiums.map(st => `<option value="${st}" ${st===m.stadium?'selected':''}>${st}</option>`).join('');
             let postCheck = m.postponed ? 'checked' : '';
 
             html += `<tr>
@@ -1009,7 +1123,12 @@
                     <select id="cup_home_${index}" style="margin-bottom:5px;">${homeOptions}</select>
                     <select id="cup_away_${index}">${awayOptions}</select>
                 </td>
-                <td><select id="cup_stadium_${index}">${stadiumOptions}</select></td>
+                <td>
+                    <select id="cup_stadium_select_${index}" onchange="document.getElementById('cup_stadium_${index}').value = this.value;" style="margin-bottom:5px;">
+                        ${stadiumOptions}
+                    </select>
+                    <input type="text" id="cup_stadium_${index}" value="${m.stadium}" placeholder="ή πληκτρολογήστε χειρόγραφα...">
+                </td>
                 <td><input type="datetime-local" id="cup_datetime_${index}" value="${m.datetime}"></td>
                 <td><select id="cup_ref_${index}_0">${getRefereeOptions(m.ref0, false)}</select></td>
                 <td><select id="cup_ref_${index}_1">${getRefereeOptions(m.ref1, false)}</select></td>
@@ -1031,7 +1150,7 @@
         cupMatches.forEach((m, index) => {
             let home = document.getElementById(`cup_home_${index}`).value;
             let away = document.getElementById(`cup_away_${index}`).value;
-            let stadium = document.getElementById(`cup_stadium_${index}`).value;
+            let stadium = document.getElementById(`cup_stadium_${index}`).value.trim().toUpperCase();
             let datetime = document.getElementById(`cup_datetime_${index}`).value;
             let postponed = document.getElementById(`cup_postponed_${index}`).checked;
             let ref0 = postponed ? 'ΑΝΑΒΑΛΛΕΤΑΙ' : document.getElementById(`cup_ref_${index}_0`).value;
@@ -1175,6 +1294,7 @@
         if (kolContainer) {
             kolContainer.innerHTML = kolymata.length === 0 ? '<p>Κανένα κώλυμα.</p>' : kolymata.map(k => `<div class="alert-box"><p><strong>${k.referee}</strong> | ${k.date} (${k.timeSlot}) | ${k.reason || '-'}</p></div>`).join('');
         }
+        loadAdminAttendancesList();
     }
 
     function addNewRefereeManual() {
