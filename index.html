@@ -574,6 +574,13 @@
         renderAdminRefereePasswordsTable();
         loadEvaluatedListBuilder();
         loadAdminDocuments();
+
+        // 🔄 Αυτόματος έλεγχος ειδοποιήσεων κάθε 3 δευτερόλεπτα για τον συνδεδεμένο διαιτητή
+        setInterval(() => {
+            if (currentLoggedInReferee && document.getElementById('refereeMainPanel').style.display === 'block') {
+                loadRefereePortalData();
+            }
+        }, 3000);
     };
 
     function showScreen(screen) {
@@ -632,7 +639,6 @@
         document.getElementById('loggedInRefNameDisplay').textContent = refName;
         document.getElementById('refPasswordLogin').value = '';
         
-        // 🔄 ΕΝΣΩΜΑΤΩΜΕΝΗ ΔΙΟΡΘΩΣΗ: Φόρτωση δεδομένων και ειδοποιήσεων αμέσως στη σύνδεση του διαιτητή
         loadRefereePortalData();
     }
 
@@ -647,10 +653,12 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
-    // --- ΣΥΝΔΕΣΗ 1: ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ ΠΡΟΣ ΔΙΑΙΤΗΤΕΣ ---
+    // --- ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ ΠΡΟΣ ΔΙΑΙΤΗΤΕΣ ---
     function sendKolymataNotification() {
+        let timestamp = new Date().getTime(); // Προσθήκη timestamp ώστε να ανιχνεύεται σαν νέα αλλαγή
+        localStorage.setItem('eps_kolymata_notification_time', timestamp);
         localStorage.setItem('eps_kolymata_notification', '⚠️ ΥΠΕΝΘΥΜΙΣΗ: Παρακαλείσθε να δηλώσετε εγκαίρως τα τυχόν κώλυμά σας για τους προσεχείς αγώνες!');
-        alert('📢 Η ειδοποίηση δήλωσης κωλυμάτων εστάλη επιτυχώς σε όλους τους διαιτητές!');
+        alert('📢 Η ειδοποίηση δήλωσης κωλυμάτων εστάλη επιτυχώς σε όλους τους διαιτητές και εμφανίστηκε ζωντανά στις καρτέλες τους!');
     }
 
     function printKolymataReport() {
@@ -711,7 +719,6 @@
         container.innerHTML = html;
     }
 
-    // --- ΣΥΝΔΕΣΗ 4: ΔΗΛΩΣΗ ΠΑΡΟΥΣΙΩΝ ΜΑΘΗΜΑΤΩΝ & ΠΡΟΠΟΝΗΣΕΩΝ (ΑΠΟ ΔΙΑΙΤΗΤΗ ΠΡΟΣ ΕΠΙΤΡΟΠΗ) ---
     function submitLessonAttendance() {
         let inputCode = document.getElementById('refLessonCodeInput').value.trim();
         let correctCode = localStorage.getItem('eps_lesson_code');
@@ -768,7 +775,6 @@
         }
     }
 
-    // --- ΣΥΝΔΕΣΗ 3: ΑΠΟΣΤΟΛΗ ΕΓΓΡΑΦΩΝ/ΦΩΤΟΓΡΑΦΙΩΝ ΑΠΟ ΔΙΑΙΤΗΤΗ ΠΡΟΣ ΕΠΙΤΡΟΠΗ ---
     function uploadRefereeDocument() {
         let docType = document.getElementById('refUploadDocType').value;
         let fileInput = document.getElementById('refUploadFile');
@@ -842,7 +848,6 @@
         }
     }
 
-    // --- ΣΥΝΔΕΣΗ 2: ΔΗΛΩΣΗ & ΑΠΟΘΗΚΕΥΣΗ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΔΙΑΙΤΗΤΗ ΠΡΟΣ ΕΠΙΤΡΟΠΗ ---
     function submitRefereeKolytma() {
         let date = document.getElementById('refKolymataDate').value;
         let timeSlot = document.getElementById('refKolymataTimeSlot').value;
