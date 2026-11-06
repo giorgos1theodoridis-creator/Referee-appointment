@@ -43,7 +43,7 @@
             body { background: white; }
             header, .no-print, button, .card-box.no-print, .code-box { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
-            #matchesContainer, #cupMatchesContainer, #cupDefinitionsContainer, #kolymataPrintableSection { display: block !important; }
+            #matchesContainer, #cupMatchesContainer, #cupDefinitionsContainer { display: block !important; }
             table { font-size: 13px; width: 100%; border-collapse: collapse; }
             th, td { padding: 8px; border: 1px solid #000 !important; color: #000 !important; }
             th { background-color: #1b365d !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -645,6 +645,7 @@
         elem.style.display = (elem.style.display === "block") ? "none" : "block";
     }
 
+    // --- ΣΥΝΔΕΣΗ 1: ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΕΠΙΤΡΟΠΗ ΠΡΟΣ ΔΙΑΙΤΗΤΕΣ ---
     function sendKolymataNotification() {
         localStorage.setItem('eps_kolymata_notification', '⚠️ ΥΠΕΝΘΥΜΙΣΗ: Παρακαλείσθε να δηλώσετε εγκαίρως τα τυχόν κώλυμά σας για τους προσεχείς αγώνες!');
         alert('📢 Η ειδοποίηση δήλωσης κωλυμάτων εστάλη επιτυχώς σε όλους τους διαιτητές!');
@@ -654,7 +655,7 @@
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         let printWindow = window.open('', '_blank');
         let html = `<!DOCTYPE html><html lang="el"><head><meta charset="UTF-8"><title>Εκτύπωση Κωλυμάτων Διαιτητών</title>
-        <style>body{font-family:Arial,sans-serif;padding:20px;} h2{color:#1b365d;text-align:center;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #000;padding:8px;text-align:left;} th{background:#1b365d;color:#white;}</style></head>
+        <style>body{font-family:Arial,sans-serif;padding:20px;} h2{color:#1b365d;text-align:center;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #000;padding:8px;text-align:left;} th{background:#1b365d;color:white;}</style></head>
         <body><h2>Ε.Π.Σ. ΔΡΑΜΑΣ - Κατάσταση Κωλυμάτων Διαιτητών</h2>`;
         if(kolymata.length === 0) {
             html += `<p>Δεν υπάρχουν καταχωρημένα κώλυματα.</p>`;
@@ -708,6 +709,7 @@
         container.innerHTML = html;
     }
 
+    // --- ΣΥΝΔΕΣΗ 4: ΔΗΛΩΣΗ ΠΑΡΟΥΣΙΩΝ ΜΑΘΗΜΑΤΩΝ & ΠΡΟΠΟΝΗΣΕΩΝ (ΑΠΟ ΔΙΑΙΤΗΤΗ ΠΡΟΣ ΕΠΙΤΡΟΠΗ) ---
     function submitLessonAttendance() {
         let inputCode = document.getElementById('refLessonCodeInput').value.trim();
         let correctCode = localStorage.getItem('eps_lesson_code');
@@ -716,9 +718,11 @@
 
         let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
         let today = new Date().toLocaleString();
+        
+        // Αποφυγή διπλής εγγραφής την ίδια ημέρα από τον ίδιο διαιτητή
         attendances.push({ referee: currentLoggedInReferee, type: 'Μάθημα', date: today });
         localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
-        alert('✅ Η παρουσία σας στο μάθημα δηλώθηκε επιτυχώς!');
+        alert('✅ Η παρουσία σας στο μάθημα δηλώθηκε επιτυχώς και καταχωρήθηκε στην Επιτροπή!');
         document.getElementById('refLessonCodeInput').value = '';
         loadAdminAttendancesList();
     }
@@ -731,9 +735,10 @@
 
         let attendances = JSON.parse(localStorage.getItem('eps_attendances_log') || "[]");
         let today = new Date().toLocaleString();
+        
         attendances.push({ referee: currentLoggedInReferee, type: 'Προπόνηση', date: today });
         localStorage.setItem('eps_attendances_log', JSON.stringify(attendances));
-        alert('✅ Η παρουσία σας στην προπόνηση δηλώθηκε επιτυχώς!');
+        alert('✅ Η παρουσία σας στην προπόνηση δηλώθηκε επιτυχώς και καταχωρήθηκε στην Επιτροπή!');
         document.getElementById('refTrainingCodeInput').value = '';
         loadAdminAttendancesList();
     }
@@ -762,6 +767,7 @@
         }
     }
 
+    // --- ΣΥΝΔΕΣΗ 3: ΑΠΟΣΤΟΛΗ ΕΓΓΡΑΦΩΝ/ΦΩΤΟΓΡΑΦΙΩΝ ΑΠΟ ΔΙΑΙΤΗΤΗ ΠΡΟΣ ΕΠΙΤΡΟΠΗ ---
     function uploadRefereeDocument() {
         let docType = document.getElementById('refUploadDocType').value;
         let fileInput = document.getElementById('refUploadFile');
@@ -777,7 +783,7 @@
                 fileData: e.target.result
             });
             localStorage.setItem('eps_referee_documents', JSON.stringify(docs));
-            alert('✅ Το έγγραφο / φωτογραφία ανέβηκε επιτυχώς!');
+            alert('✅ Το έγγραφο / φωτογραφία ανέβηκε επιτυχώς και είναι άμεσα ορατό στην Επιτροπή!');
             fileInput.value = '';
             loadRefereePortalData();
             loadAdminDocuments();
@@ -786,6 +792,7 @@
     }
 
     function loadRefereePortalData() {
+        // Εμφάνιση ειδοποίησης κωλυμάτων από την επιτροπή
         let notifMsg = localStorage.getItem('eps_kolymata_notification');
         let notifContainer = document.getElementById('refereeNotificationsContainer');
         if(notifContainer && notifMsg) {
@@ -834,6 +841,7 @@
         }
     }
 
+    // --- ΣΥΝΔΕΣΗ 2: ΔΗΛΩΣΗ & ΑΠΟΘΗΚΕΥΣΗ ΚΩΛΥΜΑΤΩΝ ΑΠΟ ΔΙΑΙΤΗΤΗ ΠΡΟΣ ΕΠΙΤΡΟΠΗ ---
     function submitRefereeKolytma() {
         let date = document.getElementById('refKolymataDate').value;
         let timeSlot = document.getElementById('refKolymataTimeSlot').value;
@@ -842,7 +850,7 @@
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         kolymata.push({ referee: currentLoggedInReferee, date, timeSlot, reason });
         localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
-        alert('✅ Το κώλυμα δηλώθηκε επιτυχώς και προστατεύεστε από ορισμό!');
+        alert('✅ Το κώλυμα δηλώθηκε επιτυχώς και εμφανίζεται άμεσα στη live παρακολούθηση της Επιτροπής!');
         document.getElementById('refKolymataReason').value = '';
         loadRefereePortalData();
         loadAllAdminData();
@@ -852,7 +860,7 @@
         let kolymata = JSON.parse(localStorage.getItem('eps_kolymata') || "[]");
         kolymata.splice(idx, 1);
         localStorage.setItem('eps_kolymata', JSON.stringify(kolymata));
-        alert('✅ Το κώλυμα αποσύρθηκε και είστε ξανά διαθέσιμος!');
+        alert('✅ Το κώλυμα αποσύρθηκε και ενημερώθηκε η Επιτροπή!');
         loadRefereePortalData();
         loadAllAdminData();
     }
